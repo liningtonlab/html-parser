@@ -15,7 +15,7 @@ def main():
 
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
-    inp_file = Path(r"C:\Users\maras\Desktop\JNP_html_tables\terps.html")
+    inp_file = Path(r"C:\Users\maras\Desktop\html-parser\tests\test_table.html")
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
     rows = souping.soup_id_rows(soup)
