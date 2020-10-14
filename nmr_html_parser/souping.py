@@ -118,7 +118,13 @@ def compound_number(compounds,headers):
     elif any("1" or "2" in s for s in headers):
         return len(headers)-1
     elif any("Î´C" or "Î´H" in s for s in headers): # With this case when only this header, columns not working
-        return None
+        search = ['Î´H', 'Î´C']
+        result = {k: 0 for k in search}
+        for item in headers:
+            for search_item in search:
+                if search_item in item:
+                    result[search_item] += 1
+        return result  #Have to get to check both values, if one is 0 output other or check is values same to output
     else:
         return None
 # with headers, the elements are in strings, but can go through each character and:
