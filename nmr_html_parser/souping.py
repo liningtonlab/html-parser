@@ -71,18 +71,35 @@ def get_columns(rows, headers):
     # Split each peice of data in cell into new columns and convert numbers from strings to float
 #def column_parser(columns):
     #Take columns into function, which is list of list of each column,
+        # Theory
         #if: ', C(H,H2,H3)',' m(s,d...etc)' - ***MIGHT be able to split after comma
             # some have ', d (6.1)' or ', dd (10.2, 6.1)' - ***WILL be split after comma, so then can be split by brackets()
-    # TRY spliting cell up by comma first(Hopefully it doesn't split stuff in brackets***IT DOES...***) ['76.7, CH2'],['4.47, dd (10.2, 6.1)']
-        # Have a list of columns of CHs and HNMR splitting ['76.7','CH2'] + ['4,47','dd (10.2,' 6.1)']
-            #move C,CH,CH2,CH3 into new columns(lists), need to separate HNMR splitting and coupling constants ['76.7'],['CH2']/ ['4,47'],['dd (10.2,' 6.1)']
-                # Separate splitting from coupling constant by brackets
-        # original 2D list of columns should only have numbers in string and can convert to float ['76.7'],['4,47']
+        #Test
+        # 1. Have a list of columns of Carbon shifts/CHs and HNMR shifts splitting
+        #[['40.8, C', '45.6, CH', '32.1, CH2', '', '38.7, CH2', '', '150.0, C', '55.4, CH', '27.3, CH2', '', '150.1, CH'], ['5.02, d (6.1)', '', '4.47, dd (10.2, 6.1)', '4.17, dd (10.2, 1.9)']]
+        # Spliting cell up by first occurence of comma(using split(",", 1))
+                # Giving: [['40.8', ' C'], ['45.6', ' CH'], ['32.1', ' CH2'], [''], ['38.7', ' CH2'], [''], ['150.0', ' C'], ['55.4', ' CH'], ['27.3', ' CH2'], [''], ['150.1', ' CH'], ['5.02', ' d (6.1)'], [''], ['4.47', ' dd (10.2, 6.1)'], ['4.17', ' dd (10.2, 1.9)']]
+
+        # 2. Move C,CH,CH2,CH3 into new columns(lists), need to separate HNMR splitting and coupling constants ['76.7'],['CH2']/ ['4,47'],['dd (10.2, 6.1)']
+                # Separate splitting from coupling constant by splitting at commas(brackets) and converting into separate lists of splitting pattern and coupling constants
+                    # ['dd (10.2, 6.1)'] into ["dd", "(10.2, 6.1)"], separate the lists ["dd"], ["(10.2,6.1)"]
+                        # For most cases removing brackets would allow conversion to float, but with special case of dd with two coupling constants the comma would through it off
+                            # If multiple numbers(2 at most), likely convert to list of string numbers with brackets/commas removed, can be iterated over to convert to float
+
+        # 3. Columns of chemical shifts should only have numbers in string and can convert to float ['76.7'],['4,47']
+            # Same for the coupling contants
+
+        # In the end have: Columns with Carbon and Hydrogen chemical shifts with numbers in float not string, Columns with Carbon type(ex. CH/CH3) and splitting pattern in strings,
+        #and Columns with coupling constants in float
+
 
     #Need to check column to see to if C/H NMR
-        # Carbon = simple, just split at column and separate into 2 lists
-        # Proton is more complex since it the splitting can also have commas if dd (10.2,6.1)
-            # Maybe just make a special case for 
+        # Carbon = simple, just split at column and separate into 2 lists by looking for CH/CH2...etc
+        # Proton is more complex since the splitting can vary and have multiple numbers.
+            # First separate H chemical shifts from the splitting/coupling into 2 separate lists by if first character thats not space is/is not a number
+                # Then separate splitting/coupling into 2 separate lists by if first character a number or letter
+                    # Most splitting usually m or s, occasionally d (6.1) or dd (4.3,10.2)
+                        # Make case for if d or dd, or has number(or brackets) then split into another list and can convert everything to float
 
 # Get table type function
     # Have Auto-detect, if fails to return type then ask for input
