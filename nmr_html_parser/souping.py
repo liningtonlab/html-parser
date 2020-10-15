@@ -36,10 +36,10 @@ def inputs(filepath):
 
 
 def soup_id_headers(soup):
-    thead = soup.find("table")
+    #thead = soup.find("table")
     header_1 = [
         cell_clean(i)
-        for i in thead.find_all("th", class_="colsep0 rowsep0")
+        for i in soup.find_all("th", class_="colsep0 rowsep0")
     ]
     header_2 = [x for x in header_1 if x != ""]
     # header_2 = []
@@ -49,8 +49,6 @@ def soup_id_headers(soup):
     # print(header_2)  # *******PRINT TEST*******
     return header_2
 
-
-# TODO: Figure out why this duplicates print out of header_2, other wise works(Could be better method)
 def num_columns(headers):
     ncol = len(headers)
     # print(ncol)
@@ -62,10 +60,10 @@ def cell_clean(i):
 
 
 def soup_comp_id(soup):
-    thead = soup.find("table")
+    #thead = soup.find("table")
     header_1 = [
         cell_clean(i)
-        for i in thead.find_all("th", class_="rowsep1 colsep0")
+        for i in soup.find_all("th", class_="rowsep1 colsep0")
     ]
     # print(header_1)
     return header_1
@@ -81,42 +79,36 @@ def soup_id_rows(soup):
 
 
 def get_columns(rows, headers):
-    # TODO: Have it working in main file, but getting headers to be called and print out like in num_columns
     columns = [[x[j] for x in rows] for j in range(len(headers))]
     # print(columns)
     return columns
 
-
-# Once get columns, Can split each peice of data in cell into new columns and convert numbers from strings to float
+# Column parser function
+    # Once get columns, Can split each peice of data in cell into new columns and convert numbers from strings to float
 
 
 # Get table type function
-# Have Auto-detect, if fails to return type then ask for input
-# 1. ***SEMI-WORKING*** - REGEX(see oct6th_test_regex.py for code/info)
-# def is_match(regex, text):
-# pattern = re.compile(regex, search_character)
-# return pattern.search(search_character) is not None
-# 2. ***REQUIRES READING*** - String arguements
-# Search through strings in HTML, not searching by HTML <tags>
+    # Have Auto-detect, if fails to return type then ask for input
+        # 1. ***SEMI-WORKING*** - REGEX(see oct6th_test_regex.py for code/info)
+            # def is_match(regex, text):
+            # pattern = re.compile(regex, search_character)
+            # return pattern.search(search_character) is not None
+    # 2. ***REQUIRES READING*** - String arguments
+            # Search through strings in HTML, not searching by HTML <tags>
+            # BUT it pulls entire tag with it
 
-
-# Detect
-# 1. If primary headers contain I^C/I^H can tell what types;if I^C, carbon; if I^H, proton and if I^C and I^H, both
-# 2. If no headers(just numbers)
-# Search rows for splitting(s,d,t,m)/Values between 1-10 to see if H
-# If values 10-100 and nothing else them must be C
-
-# Determine # of compounds functions; Likely using same detect method as above.
-# 1. If double header type, count number of "secondary" headers to get # comps.
-# 2. If single header type, count number of I^C/I^H(repeats signify extra # comps)
-# 3. Only numbers, search for strings of digits ("1","2"...etc) in primary headers and add each hit to counter to get # comps.
+        # Detection method
+        # 1. If primary headers contain I^C/I^H can tell what types;if I^C, carbon; if I^H, proton and if I^C and I^H, both
+        # 2. If no headers(just numbers)
+            # Search rows for splitting(s,d,t,m)/Values between 1-10 to see if H
+            # If values 10-100 and nothing else them must be C
 
 def compound_number(compounds,headers):
     if compounds: # 1
         return len(compounds)
     elif any("1" or "2" in s for s in headers): # 2
         return len(headers)-1
-    if any("Î´C" or "Î´H" in s for s in headers): # 3
+    elif any("Î´C" or "Î´H" in s for s in headers): # 3
         search = ['Î´H', 'Î´C']
         result = {k: 0 for k in search}
         for item in headers:
