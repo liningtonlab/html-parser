@@ -112,22 +112,20 @@ def get_columns(rows, headers):
 # 3. Only numbers, search for strings of digits ("1","2"...etc) in primary headers and add each hit to counter to get # comps.
 
 def compound_number(compounds,headers):
-    #with compounds(from comp_id), if list of compounds exists, count number of elements in list to get # compounds
-    if compounds:
+    if compounds: # 1
         return len(compounds)
-    elif any("1" or "2" in s for s in headers):
+    elif any("1" or "2" in s for s in headers): # 2
         return len(headers)-1
-    elif any("Î´C" or "Î´H" in s for s in headers): # With this case when only this header, columns not working
+    if any("Î´C" or "Î´H" in s for s in headers): # 3
         search = ['Î´H', 'Î´C']
         result = {k: 0 for k in search}
         for item in headers:
             for search_item in search:
                 if search_item in item:
                     result[search_item] += 1
-        return result  #Have to get to check both values, if one is 0 output other or check is values same to output
+        if result['Î´H'] == result['Î´C']:
+            return result.get('Î´H')
+        else:
+            return max(result.values())
     else:
         return None
-# with headers, the elements are in strings, but can go through each character and:
-# if strings of 1,2,3...9,0, then length of headers-1=# of comps, since position no. is disregarded by -1
-# else search for I^H/I^C and have count +1 for each hit
-# also if has both I^H/I^C compare end counts to confirm
