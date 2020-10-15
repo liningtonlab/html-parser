@@ -68,8 +68,21 @@ def get_columns(rows, headers):
     return columns
 
 # Column parser function
-    # Once get columns, Can split each peice of data in cell into new columns and convert numbers from strings to float
+    # Split each peice of data in cell into new columns and convert numbers from strings to float
+#def column_parser(columns):
+    #Take columns into function, which is list of list of each column,
+        #if: ', C(H,H2,H3)',' m(s,d...etc)' - ***MIGHT be able to split after comma
+            # some have ', d (6.1)' or ', dd (10.2, 6.1)' - ***WILL be split after comma, so then can be split by brackets()
+    # TRY spliting cell up by comma first(Hopefully it doesn't split stuff in brackets***IT DOES...***) ['76.7, CH2'],['4.47, dd (10.2, 6.1)']
+        # Have a list of columns of CHs and HNMR splitting ['76.7','CH2'] + ['4,47','dd (10.2,' 6.1)']
+            #move C,CH,CH2,CH3 into new columns(lists), need to separate HNMR splitting and coupling constants ['76.7'],['CH2']/ ['4,47'],['dd (10.2,' 6.1)']
+                # Separate splitting from coupling constant by brackets
+        # original 2D list of columns should only have numbers in string and can convert to float ['76.7'],['4,47']
 
+    #Need to check column to see to if C/H NMR
+        # Carbon = simple, just split at column and separate into 2 lists
+        # Proton is more complex since it the splitting can also have commas if dd (10.2,6.1)
+            # Maybe just make a special case for 
 
 # Get table type function
     # Have Auto-detect, if fails to return type then ask for input
