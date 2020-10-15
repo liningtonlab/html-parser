@@ -22,31 +22,20 @@ Created on Fri Oct  9 16:04:54 2020
 from pathlib import Path
 from bs4 import BeautifulSoup
 
-
 def inputs(filepath):
     inp_file1 = Path(filepath)
     with inp_file1.open() as f:
         soup = BeautifulSoup(f.read(), "lxml")
-    # table = soup.find("table")
-    # Could get it to return table removing line inside soup_id_headers, but may need whole soup
     # print(soup.prettify())
     return soup
 
-    # List of primary headers with extra spaces removed; list from find_all(), Apply function
-
-
 def soup_id_headers(soup):
-    #thead = soup.find("table")
     header_1 = [
         cell_clean(i)
         for i in soup.find_all("th", class_="colsep0 rowsep0")
     ]
     header_2 = [x for x in header_1 if x != ""]
-    # header_2 = []
-    # for x in header_1:
-    # if x != "":
-    # header_2.append(x)
-    # print(header_2)  # *******PRINT TEST*******
+    # print(header_2)
     return header_2
 
 def num_columns(headers):
@@ -54,13 +43,10 @@ def num_columns(headers):
     # print(ncol)
     return ncol
 
-
 def cell_clean(i):
     return i.text.replace("\n", "").strip()
 
-
 def soup_comp_id(soup):
-    #thead = soup.find("table")
     header_1 = [
         cell_clean(i)
         for i in soup.find_all("th", class_="rowsep1 colsep0")
@@ -68,15 +54,13 @@ def soup_comp_id(soup):
     # print(header_1)
     return header_1
 
-
 def soup_id_rows(soup):
     rows = [
         [cell_clean(j) for j in i.find_all("td")]
-        for i in soup.find("table").tbody.find_all("tr")
+        for i in soup.tbody.find_all("tr")
     ]
     # print(rows)
     return rows
-
 
 def get_columns(rows, headers):
     columns = [[x[j] for x in rows] for j in range(len(headers))]
