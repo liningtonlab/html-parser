@@ -69,7 +69,7 @@ def get_columns(rows, headers):
 
 def clean_cell(i):
     return i.split(",", 1)
-# Column parser function
+# Column parser functions
     # Split each peice of data in cell into new columns and convert numbers from strings to float
 def column_parser_splitcomma(columns):
     #Take columns into function, which is list of list of each column
@@ -84,13 +84,16 @@ def column_parser_splitcomma(columns):
     #       textnew = item.split(",", 1)
     #       result_1.append(textnew)
     return RESULT_1
-#def column_parser_Carbonclean(input):
-    # REsult_2 = []
-    #for list in input:
-        #for item in list:
-            #for element in item:
-                #if any("C" or "CH" or "CH2" or "CH3" in element for element in item):
-                    #REsult_2.append(element)
+def column_parser_Carbonclean(input):
+    # destroys entire list of list of list, now which column is what.
+        # Have to rethink
+    result_2 = []
+    for list in input:
+        for item in list:
+            for element in item:
+                if any("C" or "CH" or "CH2" or "CH3" in element for element in item):
+                    result_2.append(element)
+    return  result_2
 
         # 2. Move C,CH,CH2,CH3 into new columns(lists), need to separate HNMR splitting and coupling constants ['76.7'],['CH2']/ ['4,47'],['dd (10.2, 6.1)']
                 # Separate splitting from coupling constant by splitting at commas(brackets) and converting into separate lists of splitting pattern and coupling constants
