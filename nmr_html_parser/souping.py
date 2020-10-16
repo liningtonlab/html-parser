@@ -28,7 +28,6 @@ def inputs(filepath):
     inp_file1 = Path(filepath)
     with inp_file1.open() as f:
         soup = BeautifulSoup(f.read(), "lxml")
-    # print(soup.prettify())
     return soup
 
 def no_space_2dlist(list_list):
@@ -50,25 +49,25 @@ def cell_clean(i):
 
 def soup_comp_id(soup):
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="rowsep1 colsep0")]
-    # print(header_1)
     return header_1
 
 
 def soup_id_rows(soup):
-    rows = [
-        [cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")
-    ]
-    # print(rows)
+    rows =  [[cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")]
     return rows
 
 
 def get_columns(rows, headers):
     columns = [[x[j] for x in rows] for j in range(len(headers))]
-    # print(columns)
     return columns
 
-#def get_atom_index_column(columns):
-    #
+def get_atom_index_column(columns):
+    column_index = enumerate(columns)
+
+    # return values for: atom_index_column, atom_index_idx
+    # atom_index should be first column so can take that list and go from there
+    # enumerate the list of columns so that positional index and atom_index can be returned
+
 
 # Column parser functions
 def clean_celler(i):
@@ -129,7 +128,6 @@ def column_parser_Carbonclean(input):
 # 2. If no headers(just numbers)
 # Search rows for splitting(s,d,t,m)/Values between 1-10 to see if H
 # If values 10-100 and nothing else them must be C
-
 
 def compound_number(compounds, headers):
     if compounds:  # 1

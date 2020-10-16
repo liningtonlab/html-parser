@@ -32,7 +32,7 @@ def main():
     # You don't have to do you all at once, so just start on the carbon detection
     # Now that we have all the columns, we want to split this into atom_index, data columns (C and/or H), and other
     # I would do something like the following
-    # Make sure to filter out empty rows within a given column
+    # Make sure to filter out empty rows within a given column - *CHECK^
     # atom_index_column, atom_index_idx = souping.get_atom_index_column(columns)
     # for idx, col in enumerate(columns):
         # 1. If atom index, ignore because we detected this about
@@ -52,12 +52,10 @@ def main():
         # You'll also need some sort of mechanism for sorting the data from the above
         # loop into the appropriate compounds
 
-    column_parse = souping.column_parser_splitcomma(columns)
-    tester = souping.column_parser_Carbonclean(column_parse)
     # print(rows)
-    #print([[x for x in i if x != ""] for i in columns])
-    print(souping.no_space_2dlist(columns))
     print(columns)
+    # print([[x for x in i if x != ""] for i in columns])
+    print(souping.no_space_2dlist(columns))
     print(headers)
     print(comps)
     print(compound_num)
