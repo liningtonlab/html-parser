@@ -67,18 +67,22 @@ def get_columns(rows, headers):
     # print(columns)
     return columns
 
+def clean_cell(i):
+    return x.split(",", 1)
 # Column parser function
     # Split each peice of data in cell into new columns and convert numbers from strings to float
 #def column_parser(columns):
-    #Take columns into function, which is list of list of each column,
-        # Theory
-        #if: ', C(H,H2,H3)',' m(s,d...etc)' - ***MIGHT be able to split after comma
-            # some have ', d (6.1)' or ', dd (10.2, 6.1)' - ***WILL be split after comma, so then can be split by brackets()
-        #Test
+    #Take columns into function, which is list of list of each column
         # 1. Have a list of columns of Carbon shifts/CHs and HNMR shifts splitting
         #[['40.8, C', '45.6, CH', '32.1, CH2', '', '38.7, CH2', '', '150.0, C', '55.4, CH', '27.3, CH2', '', '150.1, CH'], ['5.02, d (6.1)', '', '4.47, dd (10.2, 6.1)', '4.17, dd (10.2, 1.9)']]
         # Spliting cell up by first occurence of comma(using split(",", 1))
                 # Giving: [['40.8', ' C'], ['45.6', ' CH'], ['32.1', ' CH2'], [''], ['38.7', ' CH2'], [''], ['150.0', ' C'], ['55.4', ' CH'], ['27.3', ' CH2'], [''], ['150.1', ' CH'], ['5.02', ' d (6.1)'], [''], ['4.47', ' dd (10.2, 6.1)'], ['4.17', ' dd (10.2, 1.9)']]
+    result_1 = []
+    #RESULT_1 = [[clean_cell(item)for item in list] for list in text]
+    #for list in text:
+        #for item in list:
+            #textnew = item.split(",", 1)
+            #result_1.append(textnew)
 
         # 2. Move C,CH,CH2,CH3 into new columns(lists), need to separate HNMR splitting and coupling constants ['76.7'],['CH2']/ ['4,47'],['dd (10.2, 6.1)']
                 # Separate splitting from coupling constant by splitting at commas(brackets) and converting into separate lists of splitting pattern and coupling constants
@@ -100,6 +104,7 @@ def get_columns(rows, headers):
                 # Then separate splitting/coupling into 2 separate lists by if first character a number or letter
                     # Most splitting usually m or s, occasionally d (6.1) or dd (4.3,10.2)
                         # Make case for if d or dd, or has number(or brackets) then split into another list and can convert everything to float
+
 
 # Get table type function
     # Have Auto-detect, if fails to return type then ask for input
