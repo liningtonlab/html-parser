@@ -55,10 +55,11 @@ def main():
     column_parse = souping.column_parser_splitcomma(columns)
     tester = souping.column_parser_Carbonclean(column_parse)
     # print(rows)
-    # print(columns)
+    print([[x for x in i if x != ""] for i in columns])
+    print(columns)
     print(headers)
     print(comps)
-    # print(compound_num)
+    print(compound_num)
     # print(column_parse)
     # print(tester)
 
