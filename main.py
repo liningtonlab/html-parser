@@ -33,13 +33,16 @@ def main():
     # Now that we have all the columns, we want to split this into atom_index, data columns (C and/or H), and other
     # I would do something like the following
     # Make sure to filter out empty rows within a given column - *CHECK^
-    # atom_index_column, atom_index_idx = souping.get_atom_index_column(columns)
-    # for idx, col in enumerate(columns):
+    atom_index_idx, atom_index_column  = souping.get_atom_index_column(columns)
+    print(atom_index_idx, souping.no_space_list(atom_index_column))
+    #for idx, col in enumerate(columns):
         # 1. If atom index, ignore because we detected this about
-        # if idx == atom_index_idx:
-            # continue
+        #if idx == atom_index_idx:
+            #continue
+
         # 2. Detect if C or H (you can use the headers to help with this)
         # And parse appropriately into dict output
+
         # col_type = souping.detect_column_type(headers, idx, col)
         # if col_type == "carbon":
             # data = souping.parse_carbon_column(atom_index_column, col)

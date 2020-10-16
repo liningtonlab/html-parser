@@ -30,12 +30,15 @@ def inputs(filepath):
         soup = BeautifulSoup(f.read(), "lxml")
     return soup
 
+def no_space_list(list):
+    return [x for x in list if x != ""]
+
 def no_space_2dlist(list_list):
     return [[x for x in list if x != ""] for list in list_list]
 
 def soup_id_headers(soup):
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="colsep0 rowsep0")]
-    return [x for x in header_1 if x != ""]
+    return no_space_list(header_1)
 
 
 def num_columns(headers):
@@ -62,11 +65,18 @@ def get_columns(rows, headers):
     return columns
 
 def get_atom_index_column(columns):
-    column_index = enumerate(columns)
-
+    return list(enumerate(columns))[0]
+    #returns atom_index_column_index, atom_index_column
     # return values for: atom_index_column, atom_index_idx
     # atom_index should be first column so can take that list and go from there
     # enumerate the list of columns so that positional index and atom_index can be returned
+
+#detect the table type to determine which column type could be present??
+#def detect_column_type(headers, idx, col):
+# might make based on numerical value, 0-13 for H, 15 - 200 for carbon; but numbers could go outside of ranges
+# might have to assign the headers to the column and then search headers for C, since C/CH2 not always in column
+    #Carbon = looking for C in header
+
 
 
 # Column parser functions
