@@ -71,7 +71,7 @@ def clean_cell(i):
     return i.split(",", 1)
 # Column parser function
     # Split each peice of data in cell into new columns and convert numbers from strings to float
-def column_parser(columns):
+def column_parser_splitcomma(columns):
     #Take columns into function, which is list of list of each column
         # 1. Have a list of columns of Carbon shifts/CHs and HNMR shifts splitting
         #[['40.8, C', '45.6, CH', '32.1, CH2', '', '38.7, CH2', '', '150.0, C', '55.4, CH', '27.3, CH2', '', '150.1, CH'], ['5.02, d (6.1)', '', '4.47, dd (10.2, 6.1)', '4.17, dd (10.2, 1.9)']]
@@ -79,11 +79,18 @@ def column_parser(columns):
                 # Giving: [['40.8', ' C'], ['45.6', ' CH'], ['32.1', ' CH2'], [''], ['38.7', ' CH2'], [''], ['150.0', ' C'], ['55.4', ' CH'], ['27.3', ' CH2'], [''], ['150.1', ' CH'], ['5.02', ' d (6.1)'], [''], ['4.47', ' dd (10.2, 6.1)'], ['4.17', ' dd (10.2, 1.9)']]
     #result_1 = []
     RESULT_1 = [[clean_cell(item)for item in list] for list in columns]
+    # for list in text:
+        # for item in list:
+    #       textnew = item.split(",", 1)
+    #       result_1.append(textnew)
     return RESULT_1
-    #for list in text:
+#def column_parser_Carbonclean(input):
+    # REsult_2 = []
+    #for list in input:
         #for item in list:
-            #textnew = item.split(",", 1)
-            #result_1.append(textnew)
+            #for element in item:
+                #if any("C" or "CH" or "CH2" or "CH3" in element for element in item):
+                    #REsult_2.append(element)
 
         # 2. Move C,CH,CH2,CH3 into new columns(lists), need to separate HNMR splitting and coupling constants ['76.7'],['CH2']/ ['4,47'],['dd (10.2, 6.1)']
                 # Separate splitting from coupling constant by splitting at commas(brackets) and converting into separate lists of splitting pattern and coupling constants
