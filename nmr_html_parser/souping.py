@@ -31,17 +31,16 @@ def inputs(filepath):
     # print(soup.prettify())
     return soup
 
+def no_space_2dlist(list_list):
+    return [[x for x in list if x != ""] for list in list_list]
 
 def soup_id_headers(soup):
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="colsep0 rowsep0")]
-    header_2 = [x for x in header_1 if x != ""]
-    # print(header_2)
-    return header_2
+    return [x for x in header_1 if x != ""]
 
 
 def num_columns(headers):
     ncol = len(headers)
-    # print(ncol)
     return ncol
 
 
