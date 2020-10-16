@@ -89,11 +89,11 @@ def column_parser_Carbonclean(input):
     # destroys entire list of list of list, now which column is what.
         # Search through each column in the list, if it has "C" or "CH" or "CH2" or "CH3" in it. then format it
         # Might need to have be like get_rows where multiple list made then appended together
-    Carbon_search = re.complie(r'C',r'CH',r'CH2',r'CH3')
+    #Carbon_search = re.complie(r'C',r'CH',r'CH2',r'CH3')
     result_2 = []
     for column in input:
         for item in column:
-            if item == " C" or " CH" or " CH2" or " CH3":
+            if type(item) is list:
                  result_2.append((item))
     return  result_2
 
