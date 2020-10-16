@@ -40,42 +40,41 @@ def soup_id_headers(soup):
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="colsep0 rowsep0")]
     return no_space_list(header_1)
 
-
 def num_columns(headers):
     ncol = len(headers)
     return ncol
 
-
 def cell_clean(i):
     return i.text.replace("\n", "").strip()
-
 
 def soup_comp_id(soup):
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="rowsep1 colsep0")]
     return header_1
 
-
 def soup_id_rows(soup):
     rows =  [[cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")]
     return rows
-
 
 def get_columns(rows, headers):
     columns = [[x[j] for x in rows] for j in range(len(headers))]
     return columns
 
-def get_atom_index_column(columns):
-    return list(enumerate(columns))[0]
-    #returns atom_index_column_index, atom_index_column
-    # return values for: atom_index_column, atom_index_idx
-    # atom_index should be first column so can take that list and go from there
-    # enumerate the list of columns so that positional index and atom_index can be returned
+def attach_headers_to_columns(headers,columns):
+    # assign headers to columns, likely with dictionaries
 
-#detect the table type to determine which column type could be present??
-#def detect_column_type(headers, idx, col):
+def get_atom_index_column(columns):
+    # enumerate the list of columns so that positional index and atom_index can be returned
+    return list(enumerate(columns))[0]
+    # returns atom_index_column_index, atom_index_column
+    # atom_index should be first column so can take that list and go from there
+
+
+# detect the table type to determine which column type could be present??
+# def detect_column_type(headers, idx, col):
 # might make based on numerical value, 0-13 for H, 15 - 200 for carbon; but numbers could go outside of ranges
 # might have to assign the headers to the column and then search headers for C, since C/CH2 not always in column
-    #Carbon = looking for C in header
+    # Carbon = looking for C in header, 15-200ppm and sometimes C,CH,CH2 in column cells
+    # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cells
 
 
 
@@ -110,7 +109,6 @@ def column_parser_Carbonclean(input):
 
     # 3. Columns of chemical shifts should only have numbers in string and can convert to float ['76.7'],['4,47']
     # Same for the coupling contants
-
     # In the end have: Columns with Carbon and Hydrogen chemical shifts with numbers in float not string, Columns with Carbon type(ex. CH/CH3) and splitting pattern in strings,
     # and Columns with coupling constants in float
 
@@ -121,7 +119,6 @@ def column_parser_Carbonclean(input):
     # Then separate splitting/coupling into 2 separate lists by if first character a number or letter
     # Most splitting usually m or s, occasionally d (6.1) or dd (4.3,10.2)
     # Make case for if d or dd, or has number(or brackets) then split into another list and can convert everything to float
-
 
 # Get table type function
 # Have Auto-detect, if fails to return type then ask for input
