@@ -21,6 +21,7 @@ Created on Fri Oct  9 16:04:54 2020
 
 from pathlib import Path
 from bs4 import BeautifulSoup
+import re
 
 def inputs(filepath):
     inp_file1 = Path(filepath)
@@ -67,7 +68,7 @@ def get_columns(rows, headers):
     # print(columns)
     return columns
 
-def clean_cell(i):
+def clean_celler(i):
     return i.split(",", 1)
 # Column parser functions
     # Split each peice of data in cell into new columns and convert numbers from strings to float
@@ -78,7 +79,7 @@ def column_parser_splitcomma(columns):
         # Spliting cell up by first occurence of comma(using split(",", 1))
                 # Giving: [['40.8', ' C'], ['45.6', ' CH'], ['32.1', ' CH2'], [''], ['38.7', ' CH2'], [''], ['150.0', ' C'], ['55.4', ' CH'], ['27.3', ' CH2'], [''], ['150.1', ' CH'], ['5.02', ' d (6.1)'], [''], ['4.47', ' dd (10.2, 6.1)'], ['4.17', ' dd (10.2, 1.9)']]
     #result_1 = []
-    RESULT_1 = [[clean_cell(item)for item in list] for list in columns]
+    RESULT_1 = [[clean_celler(item)for item in list] for list in columns]
     # for list in text:
         # for item in list:
     #       textnew = item.split(",", 1)
@@ -88,12 +89,12 @@ def column_parser_Carbonclean(input):
     # destroys entire list of list of list, now which column is what.
         # Search through each column in the list, if it has "C" or "CH" or "CH2" or "CH3" in it. then format it
         # Might need to have be like get_rows where multiple list made then appended together
+    Carbon_search = re.complie(r'C',r'CH',r'CH2',r'CH3')
     result_2 = []
-    for list in input:
-        for item in list:
-            if any("C" or "CH" or "CH2" or "CH3" in item[1]):
-                for x in item:
-                        result_2.append(x)
+    for column in input:
+        for item in column:
+            if item == " C" or " CH" or " CH2" or " CH3":
+                 result_2.append((item))
     return  result_2
 
         # 2. Move C,CH,CH2,CH3 into new columns(lists), need to separate HNMR splitting and coupling constants ['76.7'],['CH2']/ ['4,47'],['dd (10.2, 6.1)']
