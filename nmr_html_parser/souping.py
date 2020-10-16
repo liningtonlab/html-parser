@@ -86,13 +86,14 @@ def column_parser_splitcomma(columns):
     return RESULT_1
 def column_parser_Carbonclean(input):
     # destroys entire list of list of list, now which column is what.
-        # Have to rethink
+        # Search through each column in the list, if it has "C" or "CH" or "CH2" or "CH3" in it. then format it
+        # Might need to have be like get_rows where multiple list made then appended together
     result_2 = []
     for list in input:
         for item in list:
-            for element in item:
-                if any("C" or "CH" or "CH2" or "CH3" in element for element in item):
-                    result_2.append(element)
+            if any("C" or "CH" or "CH2" or "CH3" in item[1]):
+                for x in item:
+                        result_2.append(x)
     return  result_2
 
         # 2. Move C,CH,CH2,CH3 into new columns(lists), need to separate HNMR splitting and coupling constants ['76.7'],['CH2']/ ['4,47'],['dd (10.2, 6.1)']
