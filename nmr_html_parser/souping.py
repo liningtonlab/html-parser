@@ -98,7 +98,8 @@ def get_atom_index_column(columns):
             dictionary[header] = column
     print(dictionary)
     
-    # With the dictonary, can id each column type if its possible
+    # Column type detection 
+        # With the dictonary, can id each column type if its possible
     for item in dictionary:
   if 'Î´C' in item:
     for i in dictionary[item]:
