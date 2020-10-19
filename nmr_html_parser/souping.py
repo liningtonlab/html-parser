@@ -59,8 +59,33 @@ def get_columns(rows, headers):
     columns = [[x[j] for x in rows] for j in range(len(headers))]
     return columns
 
-def attach_headers_to_columns(headers,columns):
+#def attach_headers_to_columns(headers,columns):
     # assign headers to columns, likely with dictionaries
+    '''dictionary = {}
+    print(headers)
+    same_header_variator = ""
+    for header, column in zip(headers, columns):
+        if header in dictionary:
+            same_header_variator = same_header_variator + " "
+            dictionary[header + same_header_variator] = column
+        else:
+            dictionary[header] = column
+    print(dictionary)
+    for item in dictionary:
+  if 'Î´C' in item:
+    for i in dictionary[item]:
+      # Probably need regex here
+        if ', C' or ', CH' or ', CH2' or ', CH3': # Garbage line replace
+          i.strip(', C' or ', CH' or ', CH2' or ', CH3') # Garbage line replace
+    print(item + '\n CARBON')
+    print(dictionary[item])
+  elif 'Î´H' in item:
+    print(item + '\n PROTON')
+    print(dictionary[item])
+  else:
+    print("Column data type unknown, must be atom position or non-C/H NMR!")
+    print(dictionary[item])'''
+
 
 def get_atom_index_column(columns):
     # enumerate the list of columns so that positional index and atom_index can be returned
@@ -69,7 +94,7 @@ def get_atom_index_column(columns):
     # atom_index should be first column so can take that list and go from there
 
 
-# detect the table type to determine which column type could be present??
+# first detect the table type to determine which column type could be present??
 # def detect_column_type(headers, idx, col):
 # might make based on numerical value, 0-13 for H, 15 - 200 for carbon; but numbers could go outside of ranges
 # might have to assign the headers to the column and then search headers for C, since C/CH2 not always in column
