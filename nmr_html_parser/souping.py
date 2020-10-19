@@ -84,7 +84,8 @@ def get_atom_index_column(columns):
     # returns atom_index_column_index, atom_index_column
     # atom_index should be first column so can take that list and go from there
 
-#def attach_headers_to_columns(headers,columns):
+# TODO: get function working(worked in repl)
+# def attach_headers_to_columns(headers,columns):
     # assign headers to columns, with dictionaries
     '''dictionary = {}
     print(headers)

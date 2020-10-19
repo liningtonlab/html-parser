@@ -33,8 +33,9 @@ def main():
     # Now that we have all the columns, we want to split this into atom_index, data columns (C and/or H), and other
     # I would do something like the following
     # Make sure to filter out empty rows within a given column - *CHECK^
-    atom_index_idx, atom_index_column  = souping.get_atom_index_column(columns)
-    print(atom_index_idx, souping.no_space_list(atom_index_column))
+
+    #atom_index_idx, atom_index_column  = souping.get_atom_index_column(columns)
+    #print(atom_index_idx, souping.no_space_list(atom_index_column)) # prints out atom positon and its index, alwasy first
     #for idx, col in enumerate(columns):
         # 1. If atom index, ignore because we detected this about
         #if idx == atom_index_idx:
@@ -58,7 +59,7 @@ def main():
     # print(rows)
     print(columns)
     # print([[x for x in i if x != ""] for i in columns])
-    print(souping.no_space_2dlist(columns))
+    print(souping.no_space_2dlist(columns)) # No spaces
     print(headers)
     print(comps)
     print(compound_num)
