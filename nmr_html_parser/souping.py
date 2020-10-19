@@ -84,11 +84,9 @@ def get_atom_index_column(columns):
     # returns atom_index_column_index, atom_index_column
     # atom_index should be first column so can take that list and go from there
 
-# TODO: get function working(worked in repl)
-# def attach_headers_to_columns(headers,columns):
+def attach_headers_to_columns(headers,columns):
     # assign headers to columns, with dictionaries
-    '''dictionary = {}
-    print(headers)
+    dictionary = {}
     same_header_variator = ""
     for header, column in zip(headers, columns):
         if header in dictionary:
@@ -96,24 +94,28 @@ def get_atom_index_column(columns):
             dictionary[header + same_header_variator] = column
         else:
             dictionary[header] = column
-    print(dictionary)
+    return dictionary
     
-    # Column type detection 
-        # With the dictonary, can id each column type if its possible
-    for item in dictionary:
-  if 'Î´C' in item:
-    for i in dictionary[item]:
-      # Probably need regex here
-        if ', C' or ', CH' or ', CH2' or ', CH3': # Garbage line replace
-          i.strip(', C' or ', CH' or ', CH2' or ', CH3') # Garbage line replace
-    print(item + '\n CARBON')
-    print(dictionary[item])
-  elif 'Î´H' in item:
-    print(item + '\n PROTON')
-    print(dictionary[item])
-  else:
-    print("Column data type unknown, must be atom position or non-C/H NMR!")
-    print(dictionary[item])'''
+    # TODO: Column type detection
+    # first detect the table type to determine which column type could be present??
+    # def detect_column_type(headers, idx, col):
+    # might make based on numerical value, 0-13 for H, 15 - 200 for carbon; but numbers could go outside of ranges
+    # might have to assign the headers to the column and then search headers for C, since C/CH2 not always in column
+    # Carbon = looking for C in header, 15-200ppm and sometimes C,CH,CH2 in column cells
+    # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cell
+
+def column_id(dict):
+    for item in dict:
+      if 'Î´C' in item:
+        #for i in dict[item]:
+          # Need regex here
+            #if ', C' or ', CH' or ', CH2' or ', CH3':
+              #i.strip(', C' or ', CH' or ', CH2' or ', CH3')
+        print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
+      elif 'Î´H' in item:
+        print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
+      else:
+        print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
 
  # TODO: Get table type function
 # Have Auto-detect, if fails to return type then ask for input
@@ -130,16 +132,6 @@ def get_atom_index_column(columns):
 # 2. If no headers(just numbers)
 # Search rows for splitting(s,d,t,m)/Values between 1-10 to see if H
 # If values 10-100 and nothing else them must be C
-
-# TODO: Get column type function
-# first detect the table type to determine which column type could be present??
-# def detect_column_type(headers, idx, col):
-# might make based on numerical value, 0-13 for H, 15 - 200 for carbon; but numbers could go outside of ranges
-# might have to assign the headers to the column and then search headers for C, since C/CH2 not always in column
-    # Carbon = looking for C in header, 15-200ppm and sometimes C,CH,CH2 in column cells
-    # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cells
-
-
 
 # Column parser functions
 def clean_celler(i):

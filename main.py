@@ -57,15 +57,18 @@ def main():
         # loop into the appropriate compounds
 
     # print(rows)
+
     print(columns)
     # print([[x for x in i if x != ""] for i in columns])
-    print(souping.no_space_2dlist(columns)) # No spaces
+    # print(souping.no_space_2dlist(columns)) # No spaces
+
     print(headers)
     print(comps)
     print(compound_num)
-    # print(column_parse)
-    # print(tester)
-
+    header_column_dict = souping.attach_headers_to_columns(headers, columns)
+    print(header_column_dict)
+    column_type = souping.column_id(header_column_dict)
+    print(column_type)
 
 # Best practice to use this for scripts
 if __name__ == "__main__":
