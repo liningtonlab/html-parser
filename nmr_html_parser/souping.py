@@ -51,6 +51,25 @@ def soup_comp_id(soup):
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="rowsep1 colsep0")]
     return header_1
 
+def compound_number(compounds, headers):
+    if compounds:  # 1
+        return len(compounds)
+    elif any("1" or "2" in s for s in headers):  # 2
+        return len(headers) - 1
+    elif any("Î´C" or "Î´H" in s for s in headers):  # 3
+        search = ["Î´H", "Î´C"]
+        result = {k: 0 for k in search}
+        for item in headers:
+            for search_item in search:
+                if search_item in item:
+                    result[search_item] += 1
+        if result["Î´H"] == result["Î´C"]:
+            return result.get("Î´H")
+        else:
+            return max(result.values())
+    else:
+        return None
+
 def soup_id_rows(soup):
     rows =  [[cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")]
     return rows
@@ -58,6 +77,12 @@ def soup_id_rows(soup):
 def get_columns(rows, headers):
     columns = [[x[j] for x in rows] for j in range(len(headers))]
     return columns
+
+def get_atom_index_column(columns):
+    # enumerate the list of columns so that positional index and atom_index can be returned
+    return list(enumerate(columns))[0]
+    # returns atom_index_column_index, atom_index_column
+    # atom_index should be first column so can take that list and go from there
 
 #def attach_headers_to_columns(headers,columns):
     # assign headers to columns, with dictionaries
@@ -88,14 +113,23 @@ def get_columns(rows, headers):
     print("Column data type unknown, must be atom position or non-C/H NMR!")
     print(dictionary[item])'''
 
+ # TODO: Get table type function
+# Have Auto-detect, if fails to return type then ask for input
+# 1. ***SEMI-WORKING*** - REGEX(see oct6th_test_regex.py for code/info)
+# def is_match(regex, text):
+# pattern = re.compile(regex, search_character)
+# return pattern.search(search_character) is not None
+# 2. ***REQUIRES READING*** - String arguments
+# Search through strings in HTML, not searching by HTML <tags>
+# BUT it pulls entire tag with it
 
-def get_atom_index_column(columns):
-    # enumerate the list of columns so that positional index and atom_index can be returned
-    return list(enumerate(columns))[0]
-    # returns atom_index_column_index, atom_index_column
-    # atom_index should be first column so can take that list and go from there
+# Detection method
+# 1. If primary headers contain I^C/I^H can tell what types;if I^C, carbon; if I^H, proton and if I^C and I^H, both
+# 2. If no headers(just numbers)
+# Search rows for splitting(s,d,t,m)/Values between 1-10 to see if H
+# If values 10-100 and nothing else them must be C
 
-
+# TODO: Get column type function
 # first detect the table type to determine which column type could be present??
 # def detect_column_type(headers, idx, col):
 # might make based on numerical value, 0-13 for H, 15 - 200 for carbon; but numbers could go outside of ranges
@@ -147,37 +181,3 @@ def column_parser_Carbonclean(input):
     # Most splitting usually m or s, occasionally d (6.1) or dd (4.3,10.2)
     # Make case for if d or dd, or has number(or brackets) then split into another list and can convert everything to float
 
-# Get table type function
-# Have Auto-detect, if fails to return type then ask for input
-# 1. ***SEMI-WORKING*** - REGEX(see oct6th_test_regex.py for code/info)
-# def is_match(regex, text):
-# pattern = re.compile(regex, search_character)
-# return pattern.search(search_character) is not None
-# 2. ***REQUIRES READING*** - String arguments
-# Search through strings in HTML, not searching by HTML <tags>
-# BUT it pulls entire tag with it
-
-# Detection method
-# 1. If primary headers contain I^C/I^H can tell what types;if I^C, carbon; if I^H, proton and if I^C and I^H, both
-# 2. If no headers(just numbers)
-# Search rows for splitting(s,d,t,m)/Values between 1-10 to see if H
-# If values 10-100 and nothing else them must be C
-
-def compound_number(compounds, headers):
-    if compounds:  # 1
-        return len(compounds)
-    elif any("1" or "2" in s for s in headers):  # 2
-        return len(headers) - 1
-    elif any("Î´C" or "Î´H" in s for s in headers):  # 3
-        search = ["Î´H", "Î´C"]
-        result = {k: 0 for k in search}
-        for item in headers:
-            for search_item in search:
-                if search_item in item:
-                    result[search_item] += 1
-        if result["Î´H"] == result["Î´C"]:
-            return result.get("Î´H")
-        else:
-            return max(result.values())
-    else:
-        return None
