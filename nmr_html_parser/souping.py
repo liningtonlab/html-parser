@@ -125,7 +125,7 @@ def column_id(dict):
 # return pattern.search(search_character) is not None
 # 2. ***REQUIRES READING*** - String arguments
 # Search through strings in HTML, not searching by HTML <tags>
-# BUT it pulls entire tag with it
+# BUT it pulls entire tag with it, could use to search for pattern in whole table and pull tag and have input to confirm
 
 # Detection method
 # 1. If primary headers contain I^C/I^H can tell what types;if I^C, carbon; if I^H, proton and if I^C and I^H, both
@@ -133,7 +133,10 @@ def column_id(dict):
 # Search rows for splitting(s,d,t,m)/Values between 1-10 to see if H
 # If values 10-100 and nothing else them must be C
 
-# Column parser functions
+
+
+# Old column parser function
+    # Splits based on first occurence of comma
 def clean_celler(i):
     return i.split(",", 1)
 def column_parser_splitcomma(columns):
