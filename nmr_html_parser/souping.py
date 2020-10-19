@@ -60,7 +60,7 @@ def get_columns(rows, headers):
     return columns
 
 #def attach_headers_to_columns(headers,columns):
-    # assign headers to columns, likely with dictionaries
+    # assign headers to columns, with dictionaries
     '''dictionary = {}
     print(headers)
     same_header_variator = ""
@@ -71,6 +71,8 @@ def get_columns(rows, headers):
         else:
             dictionary[header] = column
     print(dictionary)
+    
+    # With the dictonary, can id each column type if its possible
     for item in dictionary:
   if 'Î´C' in item:
     for i in dictionary[item]:
