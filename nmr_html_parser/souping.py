@@ -106,25 +106,35 @@ def attach_headers_to_columns(headers,columns):
 
 def column_id(dict):
     # Below ids the column based on headers, so this first then if it fails have to look in each cell
+    CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
+    CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
+    regex_pattern_1 = re.compile(r'Î´C, type *')
+    C_type = []
+    Carbon_spec = []
     for item in dict:
       if 'Î´C' in item:
+          print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
+      for value in dict[item]:
+        if CNMR_pattern_1.search(value):
+            C_type.append(CNMR_pattern_2.search(value).group())
+            Carbon_spec.append(CNMR_pattern_1.sub("", value))
+        elif "" == value:
+            C_type.append(value)
+            Carbon_spec.append(value)
+        else:
+            None
+    dict['Carbon Type'] = C_type
+    return C_type, Carbon_spec,
+              #elif 'Î´H' in item:
+          #same for Proton; make pattern for splitting, coupling constanst(6.12 (dd, 16.0, 6.4)/4.85 (td, 7.3, 4.2)/7.26 (m)/8.14 (brs) or , dddd (18.6, 13.2, 5.4, 2.4)/dd (10.2, 1.9)/d (2.8)/1.09, s/3.62, m/br d (11.0))
         #for i in dict[item]:
           # Need regex here
             #if ', C' or ', CH' or ', CH2' or ', CH3':
               #i.strip(', C' or ', CH' or ', CH2' or ', CH3')
-        print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
-      elif 'Î´H' in item:
-        print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
+        #print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
       #else:
         #print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
-    # works on list, change to dict; ids each cell in column
-     # should just look at headers; like below code. Then if nothing, then look at each cell for clues to id
-    '''CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
-    for pep in Carbon_NMR:
-        if CNMR_pattern_1.search(pep):
-            print(pep + ' - CNMR Table')
-        else:
-            print('Unidentified')'''
+
 
 '''def column_clean(Carbon_NMR)
     # works on list, modify for dict; fix the lost blank spaces
