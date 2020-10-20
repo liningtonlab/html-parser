@@ -104,7 +104,7 @@ def attach_headers_to_columns(headers,columns):
     # Carbon = looking for C in header, 15-200ppm and sometimes C,CH,CH2 in column cells
     # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cell
 
-def column_id(dict):
+def column_id_cleaner(dict):
     # Below ids the column based on headers, so this first then if it fails have to look in each cell
     CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
@@ -112,51 +112,30 @@ def column_id(dict):
     C_type = []
     Carbon_spec = []
     for item in dict:
-      if 'Î´C' in item:
-          print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
+      c_type1 = []
+      C_type.append(c_type1)
+      if regex_pattern_1.search(item): #
+        print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
+      elif 'Î´H' in item:
+        print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
+      else:
+        print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
       for value in dict[item]:
-        if CNMR_pattern_1.search(value):
-            C_type.append(CNMR_pattern_2.search(value).group())
-            Carbon_spec.append(CNMR_pattern_1.sub("", value))
-        elif "" == value:
-            C_type.append(value)
+        if CNMR_pattern_1.search(value): #if CNMR_pattern_1 found with .search regex:
+            c_type1.append(CNMR_pattern_2.search(value).group()) #append item to new list
+            Carbon_spec.append(CNMR_pattern_1.sub("", value)) # while removing from original
+        #elif HNMR_pattern_1.search(value):
+            # same for Proton; make pattern for splitting,
+            # coupling constanst(6.12 (dd, 16.0, 6.4)/4.85 (td, 7.3, 4.2)/7.26 (m)/8.14 (brs) or , dddd (18.6, 13.2, 5.4, 2.4)/dd (10.2, 1.9)/d (2.8)/1.09, s/3.62, m/br d (11.0))
+        elif "" == value: # elif " "(blank space, could be from regex search; append to list, but keep in original
+            c_type1.append(value)
             Carbon_spec.append(value)
-        else:
+        else: # Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
             None
-    dict['Carbon Type'] = C_type
-    return C_type, Carbon_spec,
-              #elif 'Î´H' in item:
-          #same for Proton; make pattern for splitting, coupling constanst(6.12 (dd, 16.0, 6.4)/4.85 (td, 7.3, 4.2)/7.26 (m)/8.14 (brs) or , dddd (18.6, 13.2, 5.4, 2.4)/dd (10.2, 1.9)/d (2.8)/1.09, s/3.62, m/br d (11.0))
-        #for i in dict[item]:
-          # Need regex here
-            #if ', C' or ', CH' or ', CH2' or ', CH3':
-              #i.strip(', C' or ', CH' or ', CH2' or ', CH3')
-        #print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
-      #else:
-        #print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
 
-
-'''def column_clean(Carbon_NMR)
-    # works on list, modify for dict; fix the lost blank spaces
-    CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
-    Carbon_spec = [CNMR_pattern_1.sub("", item) for item in Carbon_NMR]
-
-    # TODO: **New way, untested that would keep blank spaces in both original and new list.**
-    # For loop: for item in Carbon_NMR:
-    # if CNMR_pattern_1 found with .search regex:
-    # append item to new list, while removing from orgininal
-    # elif " "(blank space, could be from regex search or just maybe if that character)
-    # same as above. append to list, by keep in orgininal
-    # else:
-    # might have to remove anything that isnt a chemical shit(number)or random character
-    # Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
-
-    # Convert string to list to get all carbon types, but lost blank spa
-    string = ''.join(Carbon_NMR)
-    # Lost blank spaces and column index.
-    # Probably need to get Carbon atom index and add to each element in list then take out atom position with the carbon type
-    Carbon_type = re.findall(r'CH3|CH2|CH|C', string)
-    return Carbon_spec,Carbon_type'''
+    dict['Carbon Type'] = C_type # Currently adding C_type as one list of values, need to break it up into a different key for each set of values.\
+        # Also determine which compound number its for; otherwise make 1,2,3... etc based on occurence from left to right in table
+    return C_type, Carbon_spec
 
  # TODO: Get table type function
 # Have Auto-detect, if fails to return type then ask for input
@@ -173,49 +152,4 @@ def column_id(dict):
 # 2. If no headers(just numbers)
 # Search rows for splitting(s,d,t,m)/Values between 1-10 to see if H
 # If values 10-100 and nothing else them must be C
-
-
-
-# Old column parser function
-    # Splits based on first occurence of comma
-def clean_celler(i):
-    return i.split(",", 1)
-def column_parser_splitcomma(columns):
-    # result_1 = []
-    RESULT_1 = [[clean_celler(item) for item in list] for list in columns]
-    # for list in text:
-    # for item in list:
-    #       textnew = item.split(",", 1)
-    #       result_1.append(textnew)
-    return RESULT_1
-def column_parser_Carbonclean(input):
-    # destroys entire list of list of list, now which column is what.
-    # Search through each column in the list, if it has "C" or "CH" or "CH2" or "CH3" in it. then format it
-    # Might need to have be like get_rows where multiple list made then appended together
-    # Carbon_search = re.complie(r'C',r'CH',r'CH2',r'CH3')
-    result_2 = []
-    for column in input:
-        for item in column:
-            if type(item) is list:
-                result_2.append((item))
-    return result_2
-
-    # 2. Move C,CH,CH2,CH3 into new columns(lists), need to separate HNMR splitting and coupling constants ['76.7'],['CH2']/ ['4,47'],['dd (10.2, 6.1)']
-    # Separate splitting from coupling constant by splitting at commas(brackets) and converting into separate lists of splitting pattern and coupling constants
-    # ['dd (10.2, 6.1)'] into ["dd", "(10.2, 6.1)"], separate the lists ["dd"], ["(10.2,6.1)"]
-    # For most cases removing brackets would allow conversion to float, but with special case of dd with two coupling constants the comma would through it off
-    # If multiple numbers(2 at most), likely convert to list of string numbers with brackets/commas removed, can be iterated over to convert to float
-
-    # 3. Columns of chemical shifts should only have numbers in string and can convert to float ['76.7'],['4,47']
-    # Same for the coupling contants
-    # In the end have: Columns with Carbon and Hydrogen chemical shifts with numbers in float not string, Columns with Carbon type(ex. CH/CH3) and splitting pattern in strings,
-    # and Columns with coupling constants in float
-
-    # Need to check column to see to if C/H NMR
-    # Carbon = simple, just split at column and separate into 2 lists by looking for CH/CH2...etc
-    # Proton is more complex since the splitting can vary and have multiple numbers.
-    # First separate H chemical shifts from the splitting/coupling into 2 separate lists by if first character thats not space is/is not a number
-    # Then separate splitting/coupling into 2 separate lists by if first character a number or letter
-    # Most splitting usually m or s, occasionally d (6.1) or dd (4.3,10.2)
-    # Make case for if d or dd, or has number(or brackets) then split into another list and can convert everything to float
 
