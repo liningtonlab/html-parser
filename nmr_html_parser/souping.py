@@ -104,16 +104,8 @@ def attach_headers_to_columns(headers,columns):
     # Carbon = looking for C in header, 15-200ppm and sometimes C,CH,CH2 in column cells
     # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cell
 
-'''def column_id(dict):
-    # works on list, change to dict; ids each cell in column
-        # should just look at headers; like below code. Then if nothing, then look at each cell for clues to id
-    CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
-    for pep in Carbon_NMR:
-        if CNMR_pattern_1.search(pep):
-            print(pep + ' - CNMR Table')
-        else:
-            print('Unidentified')
-    # Below ids the column
+def column_id(dict):
+    # Below ids the column based on headers, so this first then if it fails have to look in each cell
     for item in dict:
       if 'Î´C' in item:
         #for i in dict[item]:
@@ -123,8 +115,16 @@ def attach_headers_to_columns(headers,columns):
         print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
       elif 'Î´H' in item:
         print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
-      else:
-        print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))'''
+      #else:
+        #print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
+    # works on list, change to dict; ids each cell in column
+     # should just look at headers; like below code. Then if nothing, then look at each cell for clues to id
+    '''CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
+    for pep in Carbon_NMR:
+        if CNMR_pattern_1.search(pep):
+            print(pep + ' - CNMR Table')
+        else:
+            print('Unidentified')'''
 
 '''def column_clean(Carbon_NMR)
     # works on list, modify for dict; fix the lost blank spaces
