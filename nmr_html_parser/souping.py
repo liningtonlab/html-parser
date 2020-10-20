@@ -105,7 +105,16 @@ def attach_headers_to_columns(headers,columns):
     # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cell
 
 def column_id(dict):
-    for item in dict:
+    # works on list, change to dict; ids each cell in column
+        # should just look at headers; like below code.
+    CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
+    for pep in Carbon_NMR:
+        if CNMR_pattern_1.search(pep):
+            print(pep + ' - CNMR Table')
+        else:
+            print('Unidentified')
+    # Below ids the column
+    '''for item in dict:
       if 'Î´C' in item:
         #for i in dict[item]:
           # Need regex here
@@ -115,7 +124,28 @@ def column_id(dict):
       elif 'Î´H' in item:
         print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
       else:
-        print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
+        print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))'''
+def column_clean(Carbon_NMR)
+    # works on list, modify for dict; fix the lost blank spaces
+    CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
+    Carbon_spec = [CNMR_pattern_1.sub("", item) for item in Carbon_NMR]
+
+    # TODO: **New way, untested that would keep blank spaces in both original and new list.**
+    # For loop: for item in Carbon_NMR:
+    # if CNMR_pattern_1 found with .search regex:
+    # append item to new list, while removing from orgininal
+    # elif " "(blank space, could be from regex search or just maybe if that character)
+    # same as above. append to list, by keep in orgininal
+    # else:
+    # might have to remove anything that isnt a chemical shit(number)or random character
+    # Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
+
+    # Convert string to list to get all carbon types, but lost blank spa
+    string = ''.join(Carbon_NMR)
+    # Lost blank spaces and column index.
+    # Probably need to get Carbon atom index and add to each element in list then take out atom position with the carbon type
+    Carbon_type = re.findall(r'CH3|CH2|CH|C', string)
+    return Carbon_spec,Carbon_type
 
  # TODO: Get table type function
 # Have Auto-detect, if fails to return type then ask for input
