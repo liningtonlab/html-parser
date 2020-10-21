@@ -87,7 +87,7 @@ def get_atom_index_column(columns):
 def attach_headers_to_columns(headers,columns):
     # assign headers to columns, with dictionaries
     dictionary = {}
-    same_header_variator = ""
+    same_header_variator = "" # Might need to modify, but could be blank spaces affecting results
     for header, column in zip(headers, columns):
         if header in dictionary:
             same_header_variator = same_header_variator + " "
@@ -103,7 +103,8 @@ def attach_headers_to_columns(headers,columns):
     # might have to assign the headers to the column and then search headers for C, since C/CH2 not always in column
     # Carbon = looking for C in header, 15-200ppm and sometimes C,CH,CH2 in column cells
     # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cell
-
+def all_same(items):
+    return all(x == items[0] for x in items)
 def column_id_cleaner(dict):
     # Below ids the column based on headers, so this first then if it fails have to look in each cell
     CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
@@ -115,8 +116,12 @@ def column_id_cleaner(dict):
       c_type1 = []
       Carbon_spec1 = []
       Carbon_spec.append(Carbon_spec1)
-      C_type.append(c_type1)
-      if regex_pattern_1.search(item): #
+      if all_same(c_type1):
+          None
+      elif not all_same(c_type1):
+          C_type.append(c_type1)
+      #C_type.append(c_type1)
+      if regex_pattern_1.search(item):
         print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
       elif 'Î´H' in item:
         print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
@@ -134,9 +139,10 @@ def column_id_cleaner(dict):
             Carbon_spec1.append(value)
         else: # Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
             None
-    dict[item] = Carbon_spec
+    # TODO: TRY THIS FIRST ON WEDNESDAY;
+    dict[item] = Carbon_spec1 # Might just need to first remove blanks from list
 
-    dict['Carbon Type'] = C_type # Currently adding C_type as one list of values, need to break it up(check if list is empty; if so remove from 2d list) into a different key for each set of values.
+    dict['Carbon Type'] = c_type1 # Currently adding C_type as one list of values, need to break it up(check if list is empty; if so remove from 2d list) into a different key for each set of values.
         # Also determine which compound number its for; otherwise make 1,2,3... etc based on occurence from left to right in table
     return C_type, Carbon_spec
 
