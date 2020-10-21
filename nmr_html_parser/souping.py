@@ -25,33 +25,43 @@ import re
 
 
 def inputs(filepath):
+    '''Takes filepath as input and returns BeautifulSoup object'''
     inp_file1 = Path(filepath)
     with inp_file1.open() as f:
         soup = BeautifulSoup(f.read(), "lxml")
     return soup
 
-def no_space_list(list):
-    return [x for x in list if x != ""]
-
-def no_space_2dlist(list_list):
-    return [[x for x in list if x != ""] for list in list_list]
-
-def soup_id_headers(soup):
-    header_1 = [cell_clean(i) for i in soup.find_all("th", class_="colsep0 rowsep0")]
-    return no_space_list(header_1)
-
+# Simple Functions
 def num_columns(headers):
     ncol = len(headers)
     return ncol
-
+def no_space_list(list):
+    return [x for x in list if x != ""]
+def no_space_2dlist(list_list):
+    return [[x for x in list if x != ""] for list in list_list]
 def cell_clean(i):
+    '''Takes string converting to text, removing line breaks/empty elements, strips extra whitespace'''
     return i.text.replace("\n", "").strip()
+def all_same(items):
+    '''Takes list and checks if all the elements in said list are the same, returning True if so'''
+    return all( map(lambda x: x == items[0], items ) )
 
+def soup_id_headers(soup):
+    '''Takes soup object and returns column headers'''
+    header_1 = [cell_clean(i) for i in soup.find_all("th", class_="colsep0 rowsep0")]
+    return no_space_list(header_1)
 def soup_comp_id(soup):
+    '''Takes soup object and returns compound identification headers'''
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="rowsep1 colsep0")]
     return header_1
+def soup_id_rows(soup):
+    '''Takes soup object and returns rows'''
+    rows =  [[cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")]
+    return rows
 
 def compound_number(compounds, headers):
+    '''Takes primary headers and compound id headers and returns the number of compounds.
+    Based on len of compound id headers, numbers in main headers or number of hits of IH/IC'''
     if compounds:  # 1
         return len(compounds)
     elif any("1" or "2" in s for s in headers):  # 2
@@ -70,22 +80,18 @@ def compound_number(compounds, headers):
     else:
         return None
 
-def soup_id_rows(soup):
-    rows =  [[cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")]
-    return rows
-
 def get_columns(rows, headers):
+    '''Takes rows and length of headers to get columns based on 2D list index from rows'''
     columns = [[x[j] for x in rows] for j in range(len(headers))]
     return columns
 
 def get_atom_index_column(columns):
-    # enumerate the list of columns so that positional index and atom_index can be returned
+    '''enumerate the list of columns so that positional index and atom_index can be returned'''
     return list(enumerate(columns))[0]
-    # returns atom_index_column_index, atom_index_column
     # atom_index should be first column so can take that list and go from there
 
 def attach_headers_to_columns(headers,columns):
-    # assign headers to columns, with dictionaries
+    '''Takes header as key assigning to list of column values using a dictionary'''
     dictionary = {}
     same_header_variator = "" # Might need to modify, but could be blank spaces affecting results
     for header, column in zip(headers, columns):
@@ -103,26 +109,23 @@ def attach_headers_to_columns(headers,columns):
     # might have to assign the headers to the column and then search headers for C, since C/CH2 not always in column
     # Carbon = looking for C in header, 15-200ppm and sometimes C,CH,CH2 in column cells
     # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cell
-def all_same(items):
-    return all(x == items[0] for x in items)
+
 def column_id_cleaner(dict):
-    # Below ids the column based on headers, so this first then if it fails have to look in each cell
+    # Regex patterns
     CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
     regex_pattern_1 = re.compile(r'Î´C, type *')
+    
+    #2D lists
     C_type = []
     Carbon_spec = []
-    for item in dict:
+    
+    for item in dict: # Iterating over each element(column) in dictionary
       c_type1 = []
       Carbon_spec1 = []
-      Carbon_spec.append(Carbon_spec1)
-      if all_same(c_type1):
-          None
-      elif not all_same(c_type1):
-          C_type.append(c_type1)
-      #C_type.append(c_type1)
-      if regex_pattern_1.search(item):
+      if regex_pattern_1.search(item): # If headers match regex pattern
         print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
+    
       elif 'Î´H' in item:
         print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
       else:
@@ -139,11 +142,19 @@ def column_id_cleaner(dict):
             Carbon_spec1.append(value)
         else: # Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
             None
-    # TODO: TRY THIS FIRST ON WEDNESDAY;
-    dict[item] = Carbon_spec1 # Might just need to first remove blanks from list
+              
+      # Removing unrelevant list, also replacing dict with new cleaned chemical shift column       
+      if all_same(c_type1) == False:
+          C_type.append(c_type1)
+      if all_same(Carbon_spec1) == False:
+          Carbon_spec.append(Carbon_spec1)
+          dict[item] = Carbon_spec1
 
-    dict['Carbon Type'] = c_type1 # Currently adding C_type as one list of values, need to break it up(check if list is empty; if so remove from 2d list) into a different key for each set of values.
-        # Also determine which compound number its for; otherwise make 1,2,3... etc based on occurence from left to right in table
+    # Counter to id compound C-type and appending new columns to dict
+    Counter = 0
+    for i in C_type:
+        Counter = Counter + 1
+        dict['Carbon Type ' + str(Counter)] = i
     return C_type, Carbon_spec
 
  # TODO: Get table type function
