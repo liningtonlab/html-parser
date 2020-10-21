@@ -113,6 +113,8 @@ def column_id_cleaner(dict):
     Carbon_spec = []
     for item in dict:
       c_type1 = []
+      Carbon_spec1 = []
+      Carbon_spec.append(Carbon_spec1)
       C_type.append(c_type1)
       if regex_pattern_1.search(item): #
         print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
@@ -123,17 +125,18 @@ def column_id_cleaner(dict):
       for value in dict[item]:
         if CNMR_pattern_1.search(value): #if CNMR_pattern_1 found with .search regex:
             c_type1.append(CNMR_pattern_2.search(value).group()) #append item to new list
-            Carbon_spec.append(CNMR_pattern_1.sub("", value)) # while removing from original
+            Carbon_spec1.append(CNMR_pattern_1.sub("", value)) # while removing from original
         #elif HNMR_pattern_1.search(value):
             # same for Proton; make pattern for splitting,
             # coupling constanst(6.12 (dd, 16.0, 6.4)/4.85 (td, 7.3, 4.2)/7.26 (m)/8.14 (brs) or , dddd (18.6, 13.2, 5.4, 2.4)/dd (10.2, 1.9)/d (2.8)/1.09, s/3.62, m/br d (11.0))
         elif "" == value: # elif " "(blank space, could be from regex search; append to list, but keep in original
             c_type1.append(value)
-            Carbon_spec.append(value)
+            Carbon_spec1.append(value)
         else: # Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
             None
+    dict[item] = Carbon_spec
 
-    dict['Carbon Type'] = C_type # Currently adding C_type as one list of values, need to break it up into a different key for each set of values.\
+    dict['Carbon Type'] = C_type # Currently adding C_type as one list of values, need to break it up(check if list is empty; if so remove from 2d list) into a different key for each set of values.
         # Also determine which compound number its for; otherwise make 1,2,3... etc based on occurence from left to right in table
     return C_type, Carbon_spec
 
