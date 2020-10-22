@@ -27,6 +27,7 @@ def main():
     columns = souping.get_columns(rows, headers)
     header_column_dict = souping.attach_headers_to_columns(headers, columns)
     column_type = souping.column_id_cleaner(header_column_dict)
+    table_type = souping.table_detect(soup, header_column_dict)
 
     # TODO: implement parsing logic for data types
     # You don't have to do you all at once, so just start on the carbon detection
@@ -66,6 +67,7 @@ def main():
     # print(souping.no_space_2dlist(columns)) # No spaces
     print(header_column_dict)
     print(column_type)
+    print(table_type)
 
 # Best practice to use this for scripts
 if __name__ == "__main__":

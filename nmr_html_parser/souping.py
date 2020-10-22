@@ -142,7 +142,7 @@ def column_id_cleaner(dict):
             Carbon_spec1.append(value)
         else: # Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
             None
-              
+
       # Removing unrelevant list, also replacing dict with new cleaned chemical shift column       
       if all_same(c_type1) == False:
           C_type.append(c_type1)
@@ -160,7 +160,8 @@ def column_id_cleaner(dict):
  # TODO: Get table type function
     # Detection method
     # 1. If primary headers contain I^C/I^H(Most cases) can detect table type;if I^C, carbon; if I^H, proton and if I^C and I^H, both
-    '''Î´<sub>H</sub>; (m<sub>,</sub><i>J</i> in Hz)/ mult. (<i>J</i>, Hz)'''
+    '''"<th align="center" class="colsep0 rowsep0">Î´<sub>H</sub>","<th align="center" class="colsep0 rowsep0">Î´<sub>C</sub>",
+"(m<sub>,</sub><i>J</i> in Hz)","mult. (<i>J</i>, Hz)"'''
         # a. Use regex to find th tag then sub tag with string to determine if H and/or C from headers
         # if Carbon,Proton == True, contains both C/HNMR data in table
         # elif Carbon == True, contains CNMR data in table
@@ -170,11 +171,32 @@ def column_id_cleaner(dict):
                 # a. Search rows for splitting(s,d,t,m) and/or  contains C|CH|CH[2-3]
     '''"1.09, s","3.62, m","3.71, br d (11.0)","4.17, dd (10.2, 1.9)","1.09, dddd (18.6, 13.2, 5.4, 2.4)","7.26 (m)","6.12 (dd, 16.0, 6.4)","4.85 (td, 7.3, 4.2)"'''
                 # b. Or else can maybe search strings of numbers in rows, get ones w/ decimal(float) and make a list
+                            # Use REGEX to search with pattern that has('[0-9?].[0-9?], ')
                  # Convert list to float, take average if:
                  # Values between 1-10 to see if H
                     # values 10-100 and nothing else them must be C
 
-#def table_detect(soup):
+def table_detect(soup,dict):
     '''Takes soup object,uses regex/string arguments to detect and return table type, if unknown get user input'''
-    th = soup.findAll("th", align="center", class_="colsep0 rowsep0")
-    C = soup.findAll("sub", string=re.compile("C"))#Don't use findall, look in through th for <sub> w/ string='C'or'H'
+    CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
+
+    # TODO: Figure out regex pattern that can pick all types of splitting/coupling
+    #H_NMR_pattern_1 = ????
+
+    Carbon = soup.find("sub", string=re.compile("C"))#Don't use findall, look in through th for <sub> w/ string='C'or'H'
+    Proton = soup.find("sub", string=re.compile("H"))
+    if Carbon and Proton:
+        return ('Both H1/C13 NMR Table Detected!')
+    elif Carbon:
+        return ('C13 NMR Table Detected!')
+    elif Proton:
+        return (('H1 NMR Table Detected!'))
+    else:
+        for item in dict:  # Iterating over each element(column) in dictionary
+            for value in dict[item]:
+                #if CNMR_pattern_1.search(value) and H_NMR_pattern_1(value):
+                if CNMR_pattern_1.search(value):# change to elif when have HNMR pattern
+                    return ('C13 NMR Table Detected! From cells')
+                # TODO: Add search with proper regex pattern to look in each cell for specific matches that slightly differ
+                #elif #H_NMR_pattern_1(value):
+                    #return 'H1 NMR Table Detected! From cells')
