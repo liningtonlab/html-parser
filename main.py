@@ -26,8 +26,9 @@ def main():
     # Used stored results from previous function calls to run
     columns = souping.get_columns(rows, headers)
     header_column_dict = souping.attach_headers_to_columns(headers, columns)
-    column_type = souping.column_id_cleaner(header_column_dict)
     table_type = souping.table_detect(soup, header_column_dict)
+    column_type = souping.column_id_cleaner(header_column_dict)
+
 
     # TODO: implement parsing logic for data types
     # You don't have to do you all at once, so just start on the carbon detection
