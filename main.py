@@ -25,9 +25,12 @@ def main():
 
     # Used stored results from previous function calls to run
     columns = souping.get_columns(rows, headers)
-    header_column_dict = souping.attach_headers_to_columns(headers, columns)
-    table_type = souping.table_detect(soup, header_column_dict)
+    header_column_dict = souping.attach_headers_to_columns(headers, columns) # out of dict
     column_type = souping.column_id_cleaner(header_column_dict)
+    table_type = souping.table_detect(soup, header_column_dict)
+        # Takes dirty dict, detects table type, might need new input of clean dict for using float numbers,
+        # (if float, then use to calculate average)
+
 
 
     # TODO: implement parsing logic for data types

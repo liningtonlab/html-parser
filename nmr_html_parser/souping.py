@@ -119,7 +119,6 @@ def table_detect(soup,dict):
     '''"1.09, s","3.62, m","3.71, br d (11.0)","4.17, dd (10.2, 1.9)","1.09, dddd (18.6, 13.2, 5.4, 2.4)","7.26 (m)","6.12 (dd, 16.0, 6.4)","4.85 (td, 7.3, 4.2)"'''
 
     # b. Or else can maybe search strings of numbers in rows, get ones w/ decimal(float) and make a list
-    # TODO: This is important
     # Use REGEX to search with pattern that has('\d*[0-9].{1}\d*[0-9],{1}\s{1}')
     # Convert list to float, take average if:
     # Values between 1-10 to see if H
@@ -144,12 +143,15 @@ def table_detect(soup,dict):
         if HNMR_Search and CNMR_Search:
             return ("Both H1/C13 NMR Detected! - From Cells!")
         elif HNMR_Search and not CNMR_Search:
+            # TODO: Have to look furthur, could not have CH/CH2 and need to calculate average(samne if both are false)
             return ("H1 NMR Detected! -  From Cells!")
         elif CNMR_Search and not HNMR_Search:
             return ('H1 NMR Table Detected! - From cells')
         else:
             None
-            # TODO: Add feature to search strings of numbers in rows, get ones w/ decimal(float) and make a list
+            # TODO: Add feature to take floats from value in dict[items] and make a list for each item to calculate average, if:
+                    #TODO: Values between 1-13 to see if H; values 14-100 then must be C
+            # Will need clean dictionary while other detection required unclean dictionary - Make other input in function of clean dict
 def column_id_cleaner(dict):
     # TODO: Column type detection
     # first detect the table type to determine which column type could be present??
@@ -171,13 +173,15 @@ def column_id_cleaner(dict):
     for item in dict: # Iterating over each element(column) in dictionary
       c_type1 = []
       Carbon_spec1 = []
+
+      # TODO: Get better output system like in table detect
       if regex_pattern_1.search(item): # If headers match regex pattern
         print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
-    
-      elif 'Î´H' in item:
+      elif 'Î´H' in item: # TODO: Change to regex
         print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
       else:
         print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
+          
       for value in dict[item]:
         if CNMR_pattern_1.search(value): #if CNMR_pattern_1 found with .search regex:
             c_type1.append(CNMR_pattern_2.search(value).group()) #append item to new list
@@ -191,7 +195,7 @@ def column_id_cleaner(dict):
             Carbon_spec1.append(value)
         else: # Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
             None
-
+            #TODO: Could put decimal to float here;  Use REGEX to search with pattern that has('\d*[0-9].{1}\d*[0-9],{1}\s{1}')
       # Removing unrelevant list, also replacing dict with new cleaned chemical shift column       
       if all_same(c_type1) == False:
           C_type.append(c_type1)
@@ -204,4 +208,5 @@ def column_id_cleaner(dict):
     for i in C_type:
         Counter = Counter + 1
         dict['Carbon Type ' + str(Counter)] = i
+
     return C_type, Carbon_spec
