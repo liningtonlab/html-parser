@@ -14,7 +14,7 @@ from nmr_html_parser import souping
 def main():
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
-    inp_file = Path("./html_files/terps.html")
+    inp_file = Path("./html_files/homosirilins.html")
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
     rows = souping.soup_id_rows(soup)
@@ -26,10 +26,13 @@ def main():
     # Used stored results from previous function calls to run
     columns = souping.get_columns(rows, headers)
     header_column_dict = souping.attach_headers_to_columns(headers, columns) # out of dict
+    print(header_column_dict)
     column_type = souping.column_id_cleaner(header_column_dict)
     table_type = souping.table_detect(soup, header_column_dict)
         # Takes dirty dict, detects table type, might need new input of clean dict for using float numbers,
         # (if float, then use to calculate average)
+    print(column_type)
+    print(table_type)
     column_type_float = souping.columndict_string_to_float(column_type)
 
 
@@ -66,12 +69,12 @@ def main():
     print(comps)
     print(compound_num)
 
-    print(columns)
+    #print(columns)
     # print([[x for x in i if x != ""] for i in columns])
     # print(souping.no_space_2dlist(columns)) # No spaces
     #print(header_column_dict)
-    print(column_type)
-    print(table_type)
+    #print(column_type)
+   # print(table_type)
     print(column_type_float)
 
 

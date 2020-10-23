@@ -171,32 +171,39 @@ def column_id_cleaner(dict):
     CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
     regex_pattern_1 = re.compile(r'Î´C, type *')
-    HNMR_pattern_1 = re.compile(r'(\d*[0-9]\.\d*[0-9]\,\s{1}\w*[s,t,d,m,q,b,r]\s{1})|(\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))')
+    HNMR_pattern_1 = re.compile(r'(\,{1}\s\w*[s,t,d,m,q,b,r]\s?\w*[s,t,d,m,q,b,r]\s?|\,{1}\s\w*[s,t,d,m,q,b,r]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))')
+    HNMR_pattern_2 = re.compile(r'(\s\w*[s,t,d,m,q,b,r]\s?\w*[s,t,d,m,q,b,r]\s?\([0-9]+\.[0-9]\)|\s\w*[s,t,d,m,q,b,r]\s?\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\)|\s\w*[s,t,d,m,q,b,r]\s?)')
     #2D lists
     C_type = []
     Carbon_spec = []
+    H_spec = []
+    H_multiplicity = []
     for item in dict: # Iterating over each element(column) in dictionary
       c_type1 = []
       Carbon_spec1 = []
+      H_spec1 = []
+      H_multiplicity1 = []
       # TODO: Get better output system like in table detect
-      if regex_pattern_1.search(item): # If headers match regex pattern
-        print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
-      elif 'Î´H' in item: # TODO: Change to regex
-        print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
-      else:
-        print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
+      #if regex_pattern_1.search(item): # If headers match regex pattern
+        #print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
+     # elif 'Î´H' in item: # TODO: Change to regex
+       # print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
+      #else:
+       # print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
 
       for value in dict[item]:
         if CNMR_pattern_1.search(value): #if CNMR_pattern_1 found with .search regex:
             c_type1.append(CNMR_pattern_2.search(value).group()) #append item to new list
             Carbon_spec1.append(CNMR_pattern_1.sub("", value)) # while removing from original
         # TODO: Clean HNMR columns
-        #elif HNMR_pattern_1.search(value):
-            # same for Proton; make pattern for splitting,
-            # coupling constanst(6.12 (dd, 16.0, 6.4)/4.85 (td, 7.3, 4.2)/7.26 (m)/8.14 (brs) or , dddd (18.6, 13.2, 5.4, 2.4)/dd (10.2, 1.9)/d (2.8)/1.09, s/3.62, m/br d (11.0))
+        elif HNMR_pattern_1.search(value):
+            H_multiplicity1.append(HNMR_pattern_2.search(value).group())  # append item to new list
+            H_spec1.append(HNMR_pattern_1.sub("", value))
         elif "" == value: # elif " "(blank space, could be from regex search; append to list, but keep in original
             c_type1.append(value)
             Carbon_spec1.append(value)
+            H_spec1.append(value)
+            H_multiplicity1.append(value)
         else:# Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
             None
 
@@ -206,11 +213,20 @@ def column_id_cleaner(dict):
       if all_same(Carbon_spec1) == False:
           Carbon_spec.append(Carbon_spec1)
           dict[item] = Carbon_spec1
+      if all_same(H_multiplicity1) == False:
+          H_multiplicity.append(H_multiplicity1)
+      if all_same(H_spec1) == False:
+          H_spec.append(H_spec1)
+          dict[item] = H_spec1
+
     # Counter to id compound C-type and appending new columns to dict
     Counter = 0
     for i in C_type:
         Counter = Counter + 1
         dict['Carbon Type ' + str(Counter)] = i
+    for x in H_multiplicity:
+        Counter = Counter + 1
+        dict['Multiplicity & Coupling Constants ' + str(Counter)] = x
     return dict
 
 #TODO: Conversion of columns to float(need to get HNMR columns cleaned for data, lost in conversion)
