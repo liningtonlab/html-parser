@@ -224,14 +224,15 @@ def column_id_cleaner(dict):
     for i in C_type:
         Counter = Counter + 1
         dict['Carbon Type ' + str(Counter)] = i
+    Counter_2 = 0
     for x in H_multiplicity:
-        Counter = Counter + 1
-        dict['Multiplicity & Coupling Constants ' + str(Counter)] = x
+        Counter_2 = Counter_2 + 1
+        dict['Multiplicity & Coupling Constants ' + str(Counter_2)] = x
     return dict
 
 #TODO: Conversion of columns to float(need to get HNMR columns cleaned for data, lost in conversion)
 def columndict_string_to_float(dict):
-    float_pattern = re.compile(r'(\d*[0-9].{1}\d*[0-9])')
+    float_pattern = re.compile(r'(^\d*[0-9].{1}\d*[0-9])')# change to must begin with
     for item in dict:
         spec_float1 = []
         for value in dict[item]:
