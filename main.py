@@ -30,7 +30,7 @@ def main():
     table_type = souping.table_detect(soup, header_column_dict)
         # Takes dirty dict, detects table type, might need new input of clean dict for using float numbers,
         # (if float, then use to calculate average)
-
+    column_type_float = souping.columndict_string_to_float(column_type)
 
 
     # TODO: implement parsing logic for data types
@@ -69,9 +69,11 @@ def main():
     print(columns)
     # print([[x for x in i if x != ""] for i in columns])
     # print(souping.no_space_2dlist(columns)) # No spaces
-    print(header_column_dict)
+    #print(header_column_dict)
     print(column_type)
     print(table_type)
+    print(column_type_float)
+
 
 # Best practice to use this for scripts
 if __name__ == "__main__":
