@@ -107,7 +107,7 @@ def attach_headers_to_columns(headers,columns):
     return dictionary
 
 
-def table_detect(soup,dict):
+def table_detect(soup,dict,dict2):
     # Detection method
     # 1. If primary headers contain I^C/I^H(Most cases) can detect table type;if I^C, carbon; if I^H, proton and if I^C and I^H, both
     '''"<th align="center" class="colsep0 rowsep0">Î´<sub>H</sub>",
@@ -146,6 +146,8 @@ def table_detect(soup,dict):
                     HNMR_Search = True
                 elif re.search(r'(\d*[0-9]\.\d*[0-9])(\,\sCH3|\,\sCH2|\,\sCH|\,\sC)', value):
                     CNMR_Search = True
+                else:
+                    continue
         if HNMR_Search and CNMR_Search:
             return ("Both H1/C13 NMR Detected! - From Cells!")
         elif HNMR_Search and not CNMR_Search:
@@ -154,10 +156,49 @@ def table_detect(soup,dict):
         elif CNMR_Search and not HNMR_Search:
             return ('H1 NMR Table Detected! - From cells')
         else:
-            None
+            CNMR = False
+            HNMR = False
+            average_list = []
+            for item in dict2:
+                value_list = []
+                for value in dict2[item]:
+                    if type(value) == float:
+                        value_list.append(value)
+                if all_same(value_list) == False:
+                    average = sum(value_list) / len(value_list)
+                    average_list.append(average)
+                    print(average_list)
+                    if 14.0 <= average <= 100.0:
+                        CNMR = True
+                        continue
+                    elif 0.0 <= average <= 13.5:
+                        HNMR = True
+                        continue
+            if CNMR and HNMR == True:
+                return ("Both H1/C13 NMR Detected! - From chemical shifts!")
+            elif HNMR and not CNMR:
+                return ("H1 NMR Detected! -  From chemical shifts!")
+            elif CNMR and not HNMR:
+                return ('H1 NMR Table Detected! - From chemical shifts!')
+            else:
+                while True:
+                    ask = input("Detection Failure - What kind of table if this? (H,C or Both)")
+                    if ask.lower().upper() == "H":
+                        HNMR = True
+                        print('HNMR')
+                        break
+                    elif ask.lower().upper() == "C":
+                        CNMR = True
+                        print('CNMR')
+                        break
+                    elif ask.lower().upper() == "BOTH":
+                        CNMR = True
+                        HNMR = True
+                        print('Both')
+                        break
+                    else:
+                        print("I don't understand, please try again.")
             # TODO: Add feature to take floats from value in dict[items] and make a list for each item to calculate average, if:
-                    #TODO: Values between 1-13 to see if H; values 14-100 then must be C
-            # Will need clean dictionary while other detection required unclean dictionary - Make other input in function of clean dict
 
 def column_id_cleaner(dict):
     # TODO: Column type detection
@@ -195,9 +236,8 @@ def column_id_cleaner(dict):
         if CNMR_pattern_1.search(value): #if CNMR_pattern_1 found with .search regex:
             c_type1.append(CNMR_pattern_2.search(value).group()) #append item to new list
             Carbon_spec1.append(CNMR_pattern_1.sub("", value)) # while removing from original
-        # TODO: Clean HNMR columns
-        elif HNMR_pattern_1.search(value):
-            H_multiplicity1.append(HNMR_pattern_2.search(value).group())  # append item to new list
+        elif HNMR_pattern_1.search(value): # Same as CNMR, but for HNMR
+            H_multiplicity1.append(HNMR_pattern_2.search(value).group())
             H_spec1.append(HNMR_pattern_1.sub("", value))
         elif "" == value: # elif " "(blank space, could be from regex search; append to list, but keep in original
             c_type1.append(value)
@@ -206,10 +246,9 @@ def column_id_cleaner(dict):
             H_multiplicity1.append(value)
         else:# Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
             None
-
-      # Removing unrelevant list, also replacing dict with new cleaned chemical shift column       
+      # Removing irrelevant list, also replacing dict with new cleaned chemical shift column
       if all_same(c_type1) == False:
-          C_type.append(c_type1)
+        C_type.append(c_type1)
       if all_same(Carbon_spec1) == False:
           Carbon_spec.append(Carbon_spec1)
           dict[item] = Carbon_spec1
@@ -230,8 +269,12 @@ def column_id_cleaner(dict):
         dict['Multiplicity & Coupling Constants ' + str(Counter_2)] = x
     return dict
 
-#TODO: Conversion of columns to float(need to get HNMR columns cleaned for data, lost in conversion)
 def columndict_string_to_float(dict):
+    ''' Takes dictionary that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number
+    if string begins with it (regex pattern(^\d*[0-9].{1}\d*[0-9]) recognized) and convert to float in a new list, then
+    replace dict[item](for item in dict(INPUT)) with new list.
+    INPUT: dictionary
+    OUTPUT: returns dictionary with float numbers if regex pattern recognized'''
     float_pattern = re.compile(r'(^\d*[0-9].{1}\d*[0-9])')# change to must begin with
     for item in dict:
         spec_float1 = []
@@ -239,9 +282,9 @@ def columndict_string_to_float(dict):
             if float_pattern.search(value):
                 for spec_value in float_pattern.findall(value):
                     spec_float1.append(spec_value)
-            elif "" == value: # elif " "(blank space, could be from regex search; append to list, but keep in original
+            elif "" == value:
                 spec_float1.append(value)
-        if all_same(spec_float1)==False:
+        if all_same(spec_float1)== False:
             spec_results = []
             for i in spec_float1:
                 if not if_blank(i):
