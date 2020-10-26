@@ -1,41 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Oct 12 11:41:54 2020
-
-@author: maras
-"""
-# Use this file as a personal testing group to make sure all the functions
-# work (return what you expect) and work as part of the overall data pipeline
-from pprint import pprint  # Pretty Printer
-from pathlib import Path
-from nmr_html_parser import souping
-
-
-def main():
-    # The ultimate aim here is to create a function which takes as an input and HTML file
-    # and writes the output file somewhere
-    inp_file = Path("./html_files/terps_table.html")
-    soup = souping.inputs(inp_file)
-    headers = souping.soup_id_headers(soup)
-    rows = souping.soup_id_rows(soup)
-    # You call these functions but do nothing with them
-        #souping.num_columns(headers)
-    comps = souping.soup_comp_id(soup)
-    compound_num = souping.compound_number(comps, headers)
-
-    # Used stored results from previous function calls to run
-    columns = souping.get_columns(rows, headers)
-    header_column_dict = souping.attach_headers_to_columns(headers, columns) # out of dict
-    print(header_column_dict)
-    column_type = souping.column_id_cleaner(header_column_dict)
-    column_type_float = souping.columndict_string_to_float(column_type)
-    table_type = souping.table_detect(soup, header_column_dict,column_type_float )
-        # (if float, then use to calculate average)
-    print(column_type)
-    print(table_type)
-
-
-
     # TODO: implement parsing logic for data types
     # You don't have to do you all at once, so just start on the carbon detection
     # Now that we have all the columns, we want to split this into atom_index, data columns (C and/or H), and other
@@ -63,6 +28,41 @@ def main():
 
         # You'll also need some sort of mechanism for sorting the data from the above
         # loop into the appropriate compounds
+@author: maras
+"""
+# Use this file as a personal testing group to make sure all the functions
+# work (return what you expect) and work as part of the overall data pipeline
+
+from pprint import pprint  # Pretty Printer
+from pathlib import Path
+from nmr_html_parser import souping
+import json
+
+
+
+def main():
+    # The ultimate aim here is to create a function which takes as an input and HTML file
+    # and writes the output file somewhere
+    inp_file = Path("./html_files/terps_table.html")
+    soup = souping.inputs(inp_file)
+    headers = souping.soup_id_headers(soup)
+    rows = souping.soup_id_rows(soup)
+    # You call these functions but do nothing with them
+        #souping.num_columns(headers)
+    comps = souping.soup_comp_id(soup)
+    compound_num = souping.compound_number(comps, headers)
+
+    # Used stored results from previous function calls to run
+    columns = souping.get_columns(rows, headers)
+    header_column_dict = souping.attach_headers_to_columns(headers, columns) # out of dict
+    print(header_column_dict)
+    column_type = souping.column_id_cleaner(header_column_dict)
+    column_type_float = souping.columndict_string_to_float(column_type)
+    table_type = souping.table_detect(soup, header_column_dict,column_type_float )
+        # (if float, then use to calculate average)
+    print(column_type)
+    print(table_type)
+
 
 # TODO: Just Print Results
     print(headers)
@@ -75,7 +75,7 @@ def main():
     #print(header_column_dict)
     #print(column_type)
    # print(table_type)
-    print(column_type_float)
+    print(column_type_float) #print(json.dumps(column_type_float, indent=1) print(column_type_float)
 
 
 # Best practice to use this for scripts
