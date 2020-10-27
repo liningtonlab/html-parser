@@ -30,6 +30,7 @@ def inputs(filepath):
     with inp_file1.open() as f:
         soup = BeautifulSoup(f.read(), "lxml")
     return soup
+# TODO: ADD function to parse html source code(soup) to find and replace error-causing characters like: &nbsp; and '
 
 # Simple Functions
 def num_columns(headers):
@@ -121,7 +122,7 @@ def table_detect(soup,dict,dict2):
     # b. Or else can maybe search strings of numbers in rows, get ones w/ decimal(float) and make a list
     # Use REGEX to search with pattern that has('\d*[0-9].{1}\d*[0-9],{1}\s{1}'). Convert list to float, take average if: Values between 1-10 to see if H; values 10-250 and nothing else them must be C
 
-    '''Takes soup object,uses regex/string arguments to detect and return table type, if unknown get user input'''
+    '''Takes soup object, dictionary of column cells, dictionary of cell floats. Uses regex/string arguments and calculates float averages to detect and return table type'''
     Carbon = soup.find("sub", string=re.compile("C"))#Don't use findall, look in through th for <sub> w/ string='C'or'H'
     Proton = soup.find("sub", string=re.compile("H"))
     if Carbon and Proton:
@@ -189,6 +190,7 @@ def table_detect(soup,dict,dict2):
                         print("I don't understand, please try again.")'''
 
 def column_id_cleaner(dict):
+    '''Takes dictionary of columns with headers. Searchs keys first for regex patterns to detect if column will contain H/C NMR, then each cell for regex patterns'''
     # Column type detection
     # first detect the table type to determine which column type could be present??def detect_column_type(headers, idx, col):
     # might make based on numerical value, 0-13 for H, 15 - 200 for carbon; but numbers could go outside of ranges
@@ -197,12 +199,14 @@ def column_id_cleaner(dict):
     # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cell
 
     # Regex patterns
+    # TODO: Add other possible multiplicity regex patterns
     CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
     regex_pattern_1 = re.compile(r'Î´C')
     regex_pattern_2 = re.compile(r'Î´H')
     HNMR_pattern_1 = re.compile(r'(\,{1}\s\w*[s,t,d,m,q,b,r,q]\s?\w*[s,t,d,m,q,b,r,q]\s?|\,{1}\s\w*[s,t,d,m,q,b,r,q]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))')
     HNMR_pattern_2 = re.compile(r'(\s\w*[s,t,d,m,q,b,r,q]\s?\w*[s,t,d,m,q,b,r,q]\s?\([0-9]+\.[0-9]\)|\s\w*[s,t,d,m,q,b,r,q]\s?\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\)|\s\w*[s,t,d,m,q,b,r,q]\s?)')
+
     #2D lists
     C_type = []
     Carbon_spec = []
@@ -214,35 +218,16 @@ def column_id_cleaner(dict):
       H_spec1 = []
       H_multiplicity1 = []
 
-      # TODO: Add function that cuts down on reapeated lines of code (only variables change)
       if regex_pattern_1.search(item): # If headers match regex pattern
           print(item + '\nColumn Data Type: CARBON' + '\n' + str(dict[item]))
-          for value in dict[item]:
-              if CNMR_pattern_1.search(value):  # if CNMR_pattern_1 found with .search regex:
-                  c_type1.append(CNMR_pattern_2.search(value).group())  # append item to new list
-                  Carbon_spec1.append(CNMR_pattern_1.sub("", value))  # while removing from original
-              elif "" == value:  # elif " "(blank space, could be from regex search; append to list, but keep in original
-                  c_type1.append(value)
-                  Carbon_spec1.append(value)
-                  H_spec1.append(value)
-                  H_multiplicity1.append(value)
-      elif regex_pattern_2.search(item): # TODO: Change to regex
+      elif regex_pattern_2.search(item):
           print(item + '\nColumn Data Type: PROTON' + '\n' + str(dict[item]))
-          for value in dict[item]:
-              if HNMR_pattern_1.search(value): # Same as CNMR, but for HNMR
-                 H_multiplicity1.append(HNMR_pattern_2.search(value).group())
-                 H_spec1.append(HNMR_pattern_1.sub("", value))
-              elif "" == value:  # elif " "(blank space, could be from regex search; append to list, but keep in original
-                  c_type1.append(value)
-                  Carbon_spec1.append(value)
-                  H_spec1.append(value)
-                  H_multiplicity1.append(value)
       else:
         print(item + '\nColumn data type unknown, must be atom position or non-C/H NMR!' + '\n' + str(dict[item]))
         None
         # Might need other cleaning method if random stuff appears with different tables(ones that return special charcters)
 
-      '''for value in dict[item]:
+      for value in dict[item]:
         if CNMR_pattern_1.search(value): #if CNMR_pattern_1 found with .search regex:
             c_type1.append(CNMR_pattern_2.search(value).group()) #append item to new list
             Carbon_spec1.append(CNMR_pattern_1.sub("", value)) # while removing from original
@@ -253,8 +238,9 @@ def column_id_cleaner(dict):
             c_type1.append(value)
             Carbon_spec1.append(value)
             H_spec1.append(value)
-            H_multiplicity1.append(value)'''
-
+            H_multiplicity1.append(value)
+        else:
+            None
       # Removing irrelevant list, also replacing dict with new cleaned chemical shift column
       if all_same(c_type1) == False:
         C_type.append(c_type1)
@@ -303,11 +289,17 @@ def columndict_string_to_float(dict):
             dict[item] = spec_results
     return dict
 
+# TODO: Sort each data column into appropriate compounds
 #def from_float_to_sorted_data(float_dict):
     # 1. Since dict are ordered, put first index(atom position).
-    # 2. If key has IH, make H and same for IC being C
-# TODO: Sort each data column into appropriate compounds
-    # With these tables types, atom position always first
-     # Need to use id of table/column to figure out column layout pattern, so it can sorted into the right final place
-     # ex. first values will be atom position, gets put into that info group, then IC type/IH for comp1 then IC/IH for comp 2
-     # for 2 comps, 2 C types and 2 multiplicity; hopefully 3 or more comps will follow same pattern
+
+    # 2. Use num_comp to determine number of compounds and table_detect to determine if H/C present; data sorted into the right final place
+        # This will determine layout pattern: (First item in dict will be atom position)
+            # Usually for both pattern is: atom_position + (IH + IC)n, n = # of comps
+            # Then for single: atom_position + (IC or IH)n, n = # of comps
+            # Since NMR tables don't expect to see many other column types beside 2DNMR(Could ID if 1D works out), label as other
+            ## for 2 comps, 2 C types and 2 multiplicity; that is added to end of dictionary after column cleaning
+
+   # 3. Sort column data into either: atom position, Proton, Carbon or other. Which then can be dumped into JSON file to output(See Goal in README.md).
+
+
