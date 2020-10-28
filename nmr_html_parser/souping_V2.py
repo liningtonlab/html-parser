@@ -178,32 +178,32 @@ def column_id_cleaner_list(d2_list):
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
     regex_pattern_1 = re.compile(r'Î´C')
     regex_pattern_2 = re.compile(r'Î´H')
-    HNMR_pattern_1 = re.compile(r'(\,{1}\s\w*[s,t,d,m,q,b,r,q]\s?\w*[s,t,d,m,q,b,r,q]\s?|\,{1}\s\w*[s,t,d,m,q,b,r,q]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))')
-    HNMR_pattern_2 = re.compile(r'(\s\w*[s,t,d,m,q,b,r,q]\s?\w*[s,t,d,m,q,b,r,q]\s?\([0-9]+\.[0-9]\)|\s\w*[s,t,d,m,q,b,r,q]\s?\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\)|\s\w*[s,t,d,m,q,b,r,q]\s?)')
+    HNMR_pattern_1 = re.compile(r'(\,{1}\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?|\,{1}\s\w*[s,t,d,m,q,b,r,q,h]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))')
+    HNMR_pattern_2 = re.compile(r'(\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9]\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?)')
 
     #2D lists
     C_type = []
     Carbon_spec = []
     H_spec = []
-    H_multiplicity = []
+    H_multiplicity_J = []
     for item in d2_list: # Iterating over each element(column) in dictionary
       c_type1 = []
       Carbon_spec1 = []
       H_spec1 = []
-      H_multiplicity1 = []
+      H_multiplicity_J1 = []
 
       for value in item:
         if CNMR_pattern_1.search(value): #if CNMR_pattern_1 found with .search regex:
             c_type1.append(CNMR_pattern_2.search(value).group()) #append item to new list
             Carbon_spec1.append(CNMR_pattern_1.sub("", value)) # while removing from original
         elif HNMR_pattern_1.search(value): # Same as CNMR, but for HNMR
-            H_multiplicity1.append(HNMR_pattern_2.search(value).group())
+            H_multiplicity_J1.append(HNMR_pattern_2.search(value).group())
             H_spec1.append(HNMR_pattern_1.sub("", value))
         elif "" == value: # elif " "(blank space, could be from regex search; append to list, but keep in original
             c_type1.append(value)
             Carbon_spec1.append(value)
             H_spec1.append(value)
-            H_multiplicity1.append(value)
+            H_multiplicity_J1.append(value)
         else:
             None
       # Removing irrelevant list, also replacing dict with new cleaned chemical shift column
@@ -212,21 +212,25 @@ def column_id_cleaner_list(d2_list):
       if all_same(Carbon_spec1) == False:
           Carbon_spec.append(Carbon_spec1)
 
-      if all_same(H_multiplicity1) == False:
-          H_multiplicity.append(H_multiplicity1)
+      if all_same(H_multiplicity_J1) == False:
+          H_multiplicity_J.append(H_multiplicity_J1)
       if all_same(H_spec1) == False:
           H_spec.append(H_spec1)
 
-    # Counter to id compound C-type and appending new columns to dict
-    Counter = 0
-    '''for i in C_type:
-        Counter = Counter + 1
-        dict['Carbon Type ' + str(Counter)] = i
-    Counter_2 = 0
-    for x in H_multiplicity:
-        Counter_2 = Counter_2 + 1
-        dict['Multiplicity & Coupling Constants ' + str(Counter_2)] = x'''
-    return H_spec,Carbon_spec,H_multiplicity,C_type
+    # TODO: Split up the multiplicity and coupling constant
+    for compound in H_multiplicity_J:
+        for val in compound if
+            # if blank("")
+                # append blank("") to J_list
+                # append blank("") to H_multiplicity
+            # if just charcter[s,m,d,t...etc]|could have space like br d
+                # remove any extra spaces from H_multiplicity
+                # append blank("") to J_list
+            # if .?[s,t,d,m,q,b,r,q,h] (anything in parentheses)
+                # remove the coupling constants(parentheses and anything in it) and any extra spaces from H_multiplicity
+                # anything in the parentheses will be added to J_list
+
+    return H_spec,Carbon_spec,H_multiplicity_J,C_type
 def column2dlist_string_to_float(d2_list):
     ''' Takes dictionary that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number
     if string begins with it (regex pattern(^\d*[0-9].{1}\d*[0-9]) recognized) and convert to float in a new list, then

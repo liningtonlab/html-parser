@@ -41,7 +41,7 @@ from nmr_html_parser import souping_V2
 def main():
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
-    inp_file = Path("./html_files/type12.html")
+    inp_file = Path("./html_files/type11.html")
     soup = souping_V2.inputs(inp_file)
     headers = souping_V2.soup_id_headers(soup)
     rows = souping_V2.soup_id_rows(soup)
@@ -60,10 +60,11 @@ def main():
 
     atom_index = columns[0]
     H_spec, Carbon_spec, H_multiplicity, C_type = souping_V2.column_id_cleaner_list(columns)
-    print(atom_index,H_spec, Carbon_spec, H_multiplicity, C_type)
     float_H_spec = souping_V2.column2dlist_string_to_float(H_spec)
     float_Carbon_spec = souping_V2.column2dlist_string_to_float(Carbon_spec)
-    print(float_H_spec,float_Carbon_spec)
+    print(atom_index, float_H_spec, float_Carbon_spec, H_multiplicity, C_type)
+
+
 '''for i in column_type2:
         floats = souping_V2.column2dlist_string_to_float(i)
         table_detect = souping_V2.table_detect(soup,columns,floats)
