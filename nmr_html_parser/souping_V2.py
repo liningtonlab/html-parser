@@ -144,7 +144,6 @@ def table_detect(soup,d2list,float_d2list):
             elif CNMR and not HNMR:
                 return ('H1 NMR Table Detected! - From chemical shifts!')
             else:
-                 # TODO: USER input if failure
                 '''while True:
                     ask = input("Detection Failure - What kind of table if this? (H,C or Both)")
                     if ask.lower().upper() == "H":
@@ -180,7 +179,10 @@ def column_id_cleaner_list(d2_list):
     regex_pattern_2 = re.compile(r'Î´H')
     HNMR_pattern_1 = re.compile(r'(\,{1}\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?|\,{1}\s\w*[s,t,d,m,q,b,r,q,h]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))')
     HNMR_pattern_2 = re.compile(r'(\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9]\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?)')
-
+    HNMR_pattern_2a = re.compile(r'(\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?|\s\w*[s,t,d,m,q,b,r,q,h]\s?)')
+    HNMR_pattern_2ab = re.compile(r'(^\s*)')
+    HNMR_pattern_2b = re.compile(r'(\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9]\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\))')
+    HNMR_pattern_2ba = re.compile(r'\(([^\)]+)\)')
     #2D lists
     C_type = []
     Carbon_spec = []
@@ -218,19 +220,29 @@ def column_id_cleaner_list(d2_list):
           H_spec.append(H_spec1)
 
     # TODO: Split up the multiplicity and coupling constant
+    J_coupling = []
+    H_multiplicity = []
     for compound in H_multiplicity_J:
-        for val in compound if
-            # if blank("")
-                # append blank("") to J_list
-                # append blank("") to H_multiplicity
-            # if just charcter[s,m,d,t...etc]|could have space like br d
-                # remove any extra spaces from H_multiplicity
-                # append blank("") to J_list
-            # if .?[s,t,d,m,q,b,r,q,h] (anything in parentheses)
-                # remove the coupling constants(parentheses and anything in it) and any extra spaces from H_multiplicity
-                # anything in the parentheses will be added to J_list
-
-    return H_spec,Carbon_spec,H_multiplicity_J,C_type
+        ##J_coupling1 = []
+        #H_multiplicity1 = []
+        for val in compound:
+            if "":
+                J_coupling.append(val) #append to J_list
+            elif HNMR_pattern_2a.search(val):#REGEX here    #just charcter[s,m,d,t...etc]|could have space like br d
+                H_multiplicity.append(HNMR_pattern_2ab.sub("", val)) # remove any extra spaces from H_multiplicity ie ' s' or ' br d' to 's' or 'br d'
+                # TODO: remove any extra spaces after ei 's ' or 'br '
+                J_coupling.append("")
+            elif HNMR_pattern_2b.search(val):
+                J_coupling.append(HNMR_pattern_2ba.search(value).group())
+                H_multiplicity.append(HNMR_pattern_2ab.sub("", val))
+    # if .?[s,t,d,m,q,b,r,q,h] (anything in parentheses)
+    # remove the coupling constants(parentheses and anything in it) and any extra spaces from H_multiplicity
+    # anything in the parentheses will be added to J_list
+        #if all_same(H_multiplicity1) == False:
+           # H_multiplicity.append(H_multiplicity)
+        #if all_same(J_coupling1) == False:
+            #J_coupling.append(J_coupling1)
+    return H_spec,Carbon_spec,H_multiplicity,J_coupling,C_type
 def column2dlist_string_to_float(d2_list):
     ''' Takes dictionary that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number
     if string begins with it (regex pattern(^\d*[0-9].{1}\d*[0-9]) recognized) and convert to float in a new list, then
@@ -258,9 +270,10 @@ def column2dlist_string_to_float(d2_list):
     return new_result
 
 
-# TODO: Sort each data column into appropriate compounds
-#def from_float_to_sorted_data(float_dict):
-    # 1. Since dict are ordered, put first index(atom position).
+# TODO: Put all columns and clean parsed data in tabular intermediate data type (see Jeff's message)
+
+# JSON output don't know if shuld remove yet
+    # 1. Since lists are ordered, put first index(atom position).
 
     # 2. Use num_comp to determine number of compounds and table_detect to determine if H/C present; data sorted into the right final place
         # This will determine layout pattern: (First item in dict will be atom position)
