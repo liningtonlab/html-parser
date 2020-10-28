@@ -35,53 +35,43 @@ Created on Mon Oct 12 11:41:54 2020
 
 from pprint import pprint  # Pretty Printer
 from pathlib import Path
-from nmr_html_parser import souping
-import json
-
+from nmr_html_parser import souping_V2
 
 
 def main():
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
     inp_file = Path("./html_files/type12.html")
-    soup = souping.inputs(inp_file)
-    headers = souping.soup_id_headers(soup)
-    rows = souping.soup_id_rows(soup)
-    # You call these functions but do nothing with them
-        #souping.num_columns(headers)
-    comps = souping.soup_comp_id(soup)
-    compound_num = souping.compound_number(comps, headers)
+    soup = souping_V2.inputs(inp_file)
+    headers = souping_V2.soup_id_headers(soup)
+    rows = souping_V2.soup_id_rows(soup)
+    comps = souping_V2.soup_comp_id(soup)
+    compound_num = souping_V2.compound_number(comps, headers)
 
     # Used stored results from previous function calls to run
-    columns = souping.get_columns(rows, headers)
+    columns = souping_V2.get_columns(rows, headers)
     #columns = souping.no_space_2dlist(columns) Can remove spaces, if not all have splitting, which goes where??
 
-    header_column_dict = souping.attach_headers_to_columns(headers, columns) # out of dict
-    print(header_column_dict)
-    column_type = souping.column_id_cleaner(header_column_dict)
-    column_type_float = souping.columndict_string_to_float(column_type)
-    table_type = souping.table_detect(soup, header_column_dict,column_type_float )
-    print(column_type)
-    print(table_type)
-
-
-# TODO: Just Print Results
+# TODO: Print Results
     print(headers)
     print(comps)
     print(compound_num)
-
     print(columns)
-    column_type2 = souping.column_id_cleaner_list(columns)
-    print(column_type2)
-    for i in column_type2:
-        floats = souping.column2dlist_string_to_float(i)
-        print(floats)
-    # print([[x for x in i if x != ""] for i in columns])
-    # print(souping.no_space_2dlist(columns)) # No spaces
-    #print(header_column_dict)
-    #print(column_type)
-   # print(table_type)
-    #print(column_type_float) #print(json.dumps(column_type_float, indent=1) print(column_type_float)
+
+    atom_index = columns[0]
+    H_spec, Carbon_spec, H_multiplicity, C_type = souping_V2.column_id_cleaner_list(columns)
+    print(atom_index,H_spec, Carbon_spec, H_multiplicity, C_type)
+    float_H_spec = souping_V2.column2dlist_string_to_float(H_spec)
+    float_Carbon_spec = souping_V2.column2dlist_string_to_float(Carbon_spec)
+    print(float_H_spec,float_Carbon_spec)
+'''for i in column_type2:
+        floats = souping_V2.column2dlist_string_to_float(i)
+        table_detect = souping_V2.table_detect(soup,columns,floats)
+
+        if floats:
+            print(floats)
+            print(table_detect + str('using "columns" variable in main.py'))'''
+
 
 
 # Best practice to use this for scripts

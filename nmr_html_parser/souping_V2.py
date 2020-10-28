@@ -55,9 +55,9 @@ def compound_number(compounds, headers):
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC'''
     if compounds:  # 1
         return len(compounds)
-    elif any("1" or "2" in s for s in headers):  # 2
+    elif any("1" or "2" in s for s in headers):  # 2 Maybe use regex
         return len(headers) - 1
-    elif any("Î´C" or "Î´H" in s for s in headers):  # 3
+    elif any("Î´C" or "Î´H" in s for s in headers):  # 3;  Change to regex pattern (Could have spaces, H/C in one, different characters)
         search = ["Î´H", "Î´C"]
         result = {k: 0 for k in search}
         for item in headers:
@@ -83,7 +83,7 @@ def get_atom_index_column(columns):
 
 
 # TODO: modify to accept columns(2dlist) by removing 2 dict inputs and puting 2dlist, and it should work
-def table_detect(soup,dict,dict2):
+def table_detect(soup,d2list,float_d2list):
     # Detection method
  # 1. If primary headers contain I^C/I^H(Most cases) can detect table type;if I^C, carbon; if I^H, proton and if I^C and I^H, both
     '''"<th align="center" class="colsep0 rowsep0">Î´<sub>H</sub>","<th align="center" class="colsep0 rowsep0">Î´<sub>C</sub>","(m<sub>,</sub><i>J</i> in Hz)","mult. (<i>J</i>, Hz)"'''
@@ -106,8 +106,8 @@ def table_detect(soup,dict,dict2):
     elif Proton:
         return (('H1 NMR Table Detected!'))
     else:
-        for item in dict:  # Iterating over each element(column) in dictionary
-            for value in dict[item]:
+        for item in d2list:  # Iterating over each element(column) in dictionary
+            for value in item:
                 if re.search(r'(\d*[0-9]\.\d*[0-9]\,\s{1}\w*[s,t,d,m,q,b,r]\s{1})|(\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))', value):
                     HNMR_Search = True
                 elif re.search(r'(\d*[0-9]\.\d*[0-9])(\,\sCH3|\,\sCH2|\,\sCH|\,\sC)', value):
@@ -122,9 +122,9 @@ def table_detect(soup,dict,dict2):
             return ('H1 NMR Table Detected! - From cells')
         else:
             average_list = []
-            for item in dict2:
+            for item in float_d2list:
                 value_list = []
-                for value in dict2[item]:
+                for value in item:
                     if type(value) == float:
                         value_list.append(value)
                 if all_same(value_list) == False:
@@ -226,7 +226,7 @@ def column_id_cleaner_list(d2_list):
     for x in H_multiplicity:
         Counter_2 = Counter_2 + 1
         dict['Multiplicity & Coupling Constants ' + str(Counter_2)] = x'''
-    return H_spec,Carbon_spec #,H_multiplicity,C_type
+    return H_spec,Carbon_spec,H_multiplicity,C_type
 def column2dlist_string_to_float(d2_list):
     ''' Takes dictionary that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number
     if string begins with it (regex pattern(^\d*[0-9].{1}\d*[0-9]) recognized) and convert to float in a new list, then
