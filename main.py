@@ -62,7 +62,8 @@ def main():
     H_spec, Carbon_spec, H_multiplicity, J_coupling, C_type = souping_V2.column_id_cleaner_list(columns)
     float_H_spec = souping_V2.column2dlist_string_to_float(H_spec)
     float_Carbon_spec = souping_V2.column2dlist_string_to_float(Carbon_spec)
-    print(atom_index, float_H_spec, float_Carbon_spec, H_multiplicity, C_type)
+    print(atom_index, float_H_spec, float_Carbon_spec, H_multiplicity, J_coupling, C_type)
+
 
 
 '''for i in column_type2:

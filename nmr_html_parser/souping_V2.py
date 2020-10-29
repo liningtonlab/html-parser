@@ -177,12 +177,14 @@ def column_id_cleaner_list(d2_list):
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
     regex_pattern_1 = re.compile(r'Î´C')
     regex_pattern_2 = re.compile(r'Î´H')
-    HNMR_pattern_1 = re.compile(r'(\,{1}\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?|\,{1}\s\w*[s,t,d,m,q,b,r,q,h]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))')
-    HNMR_pattern_2 = re.compile(r'(\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9]\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?)')
-    HNMR_pattern_2a = re.compile(r'(\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?|\s\w*[s,t,d,m,q,b,r,q,h]\s?)')
-    HNMR_pattern_2ab = re.compile(r'(^\s*)')
-    HNMR_pattern_2b = re.compile(r'(\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9]\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s\w*[s,t,d,m,q,b,r,q,h]\s?\w*[s,t,d,m,q,b,r,q,h]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\))')
-    HNMR_pattern_2ba = re.compile(r'\(([^\)]+)\)')
+    HNMR_pattern_1 = re.compile(r'(\,{1}\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?|\,{1}\s\w*[stdmqbrqh]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))')
+    HNMR_pattern_2 = re.compile(r'(\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9]\)|\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?|\s?\w*[stdmqbrqh]\s?)')
+    HNMR_pattern_2a = re.compile(r'(\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?$|\s?\w*[stdmqbrqh]\s?$)')
+
+    HNMR_pattern_2b = re.compile(r'(\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9]\)|\s\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\))')
+    HNMR_pattern_2ba = re.compile(r'(\(([^\)]+)\))') # TODO: Prob not just anythin in bracket, also don't include parentheses
+    HNMR_pattern_2bb = re.compile(r'(\w*[stdmqbrqh]\s?\w*[stdmqbrqh]|\w*[stdmqbrqh])')
+
     #2D lists
     C_type = []
     Carbon_spec = []
@@ -223,25 +225,21 @@ def column_id_cleaner_list(d2_list):
     J_coupling = []
     H_multiplicity = []
     for compound in H_multiplicity_J:
-        ##J_coupling1 = []
-        #H_multiplicity1 = []
+        J_coupling1 = []
+        H_multiplicity1 = []
         for val in compound:
-            if "":
-                J_coupling.append(val) #append to J_list
+            if HNMR_pattern_2b.search(val):
+                J_coupling1.append(HNMR_pattern_2ba.search(val).group())
+                H_multiplicity1.append(HNMR_pattern_2bb.search(val).group())
             elif HNMR_pattern_2a.search(val):#REGEX here    #just charcter[s,m,d,t...etc]|could have space like br d
-                H_multiplicity.append(HNMR_pattern_2ab.sub("", val)) # remove any extra spaces from H_multiplicity ie ' s' or ' br d' to 's' or 'br d'
-                # TODO: remove any extra spaces after ei 's ' or 'br '
-                J_coupling.append("")
-            elif HNMR_pattern_2b.search(val):
-                J_coupling.append(HNMR_pattern_2ba.search(value).group())
-                H_multiplicity.append(HNMR_pattern_2ab.sub("", val))
-    # if .?[s,t,d,m,q,b,r,q,h] (anything in parentheses)
-    # remove the coupling constants(parentheses and anything in it) and any extra spaces from H_multiplicity
-    # anything in the parentheses will be added to J_list
-        #if all_same(H_multiplicity1) == False:
-           # H_multiplicity.append(H_multiplicity)
-        #if all_same(J_coupling1) == False:
-            #J_coupling.append(J_coupling1)
+                H_multiplicity1.append(HNMR_pattern_2bb.search(val).group())
+                J_coupling1.append("")
+            elif "" == val:
+                J_coupling1.append(val) #append to J_list
+                H_multiplicity1.append(val)
+        J_coupling.append(J_coupling1)
+        H_multiplicity.append(H_multiplicity1)
+
     return H_spec,Carbon_spec,H_multiplicity,J_coupling,C_type
 def column2dlist_string_to_float(d2_list):
     ''' Takes dictionary that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number
