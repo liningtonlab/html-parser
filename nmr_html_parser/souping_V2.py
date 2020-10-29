@@ -8,7 +8,8 @@ Created on Fri Oct  9 16:04:54 2020
 from pathlib import Path
 from bs4 import BeautifulSoup
 import re
-
+import csv
+from itertools import zip_longest
 
 def inputs(filepath):
     '''Takes filepath as input and returns BeautifulSoup object'''
@@ -267,7 +268,15 @@ def column2dlist_string_to_float(d2_list):
             new_result.append(spec_results)
     return new_result
 
-
+def tabular_csv(atom_index,float_H_spec,float_Carbon_spec,H_multiplicity,J_coupling,C_type):
+    for cspec, ctype, hspec, multi, coupling in zip(float_Carbon_spec, C_type, float_H_spec, H_multiplicity,J_coupling):
+        f = [atom_index, cspec, ctype, hspec, multi, coupling]
+        export_data = zip_longest(*f, fillvalue='')
+        with open('comp.csv', 'w', encoding="ISO-8859-1", newline='') as myfile:
+            wr = csv.writer(myfile)
+            wr.writerow(('atom_index', 'cspec', 'ctype', 'hspec', 'multi', 'coupling'))
+            wr.writerows(export_data)
+        myfile.close()
 # TODO: Put all columns and clean parsed data in tabular intermediate data type (see Jeff's message)
 
 # JSON output don't know if shuld remove yet
