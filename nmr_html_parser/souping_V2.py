@@ -268,15 +268,22 @@ def column2dlist_string_to_float(d2_list):
             new_result.append(spec_results)
     return new_result
 
-def tabular_csv(atom_index,float_H_spec,float_Carbon_spec,H_multiplicity,J_coupling,C_type):
-    for cspec, ctype, hspec, multi, coupling in zip(float_Carbon_spec, C_type, float_H_spec, H_multiplicity,J_coupling):
-        f = [atom_index, cspec, ctype, hspec, multi, coupling]
-        export_data = zip_longest(*f, fillvalue='')
-        with open('comp.csv', 'w', encoding="ISO-8859-1", newline='') as myfile:
-            wr = csv.writer(myfile)
-            wr.writerow(('atom_index', 'cspec', 'ctype', 'hspec', 'multi', 'coupling'))
-            wr.writerows(export_data)
-        myfile.close()
+def compound_export_data_list(atom_index,float_Carbon_spec,C_type,float_H_spec,H_multiplicity,J_coupling):
+  zip_object_list = []
+  for cspec,ctype,hspec,multi,coupling in zip(float_Carbon_spec,C_type,float_H_spec,H_multiplicity,J_coupling):
+    f = [atom_index,cspec,ctype,hspec,multi,coupling]
+    export_data = zip_longest(*f, fillvalue='')
+    zip_object_list.append(export_data)
+  return zip_object_list
+
+def tableto_csv(zip_object_list):
+  with open('input_filename_to_ouput_TBD.csv', 'w', encoding = "ISO-8859-1", newline='') as myfile: # Not sure what encoding
+    #wr=csv.writer(myfile)
+    for export_data in zip_object_list:
+      wr=csv.writer(myfile)
+      wr.writerow(('atom_index','cspec','ctype','hspec','multi','coupling'))
+      wr.writerows(export_data)
+  return myfile.close()
 # TODO: Put all columns and clean parsed data in tabular intermediate data type (see Jeff's message)
 
 # JSON output don't know if shuld remove yet

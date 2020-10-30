@@ -65,7 +65,7 @@ def main():
     print(atom_index, float_H_spec, float_Carbon_spec, H_multiplicity, J_coupling, C_type)
 
 
-
+    souping_V2.tableto_csv(souping_V2.compound_export_data_list(atom_index,float_Carbon_spec,C_type,float_H_spec,H_multiplicity,J_coupling))
 '''for i in column_type2:
         floats = souping_V2.column2dlist_string_to_float(i)
         table_detect = souping_V2.table_detect(soup,columns,floats)
