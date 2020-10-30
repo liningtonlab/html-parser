@@ -10,13 +10,18 @@ from bs4 import BeautifulSoup
 import re
 import csv
 from itertools import zip_longest
-
+from xml.sax.saxutils import unescape
 def inputs(filepath):
     '''Takes filepath as input and returns BeautifulSoup object'''
-    inp_file1 = Path(filepath)
+    inp_file1 = Path(filepath) # UTF-8
     with inp_file1.open() as f:
         soup = BeautifulSoup(f.read(), "lxml")
+        #soup = unescape(soup)
+        # TODO: Try to fix encoding; bs converts to uncode which causes unknown charcacters to encoding to become nonsense
+        # Characters that can’t be represented in your chosen encoding will be converted into numeric XML entity references(OR HTML not sure)
+                # So if can't go to unicode this occurs, must be way to convert back. Also unicode goes back to utf-8 from BS4 output
     return soup
+
 # TODO: ADD function to parse html source code(soup) to find and replace error-causing characters like: &nbsp; and '
 
 # Simple Functions
@@ -238,7 +243,7 @@ def compound_export_data_list(atom_index,float_Carbon_spec,C_type,float_H_spec,H
   return zip_object_list
 
 def tableto_csv(zip_object_list):
-  with open('input_filename_to_ouput_TBD.csv', 'w', encoding = "ISO-8859-1", newline='') as myfile: # Not sure what encoding ISO-8859-1 vs utf-8
+  with open('input_filename_to_ouput_TBD.csv', 'w', encoding = "utf-8", newline='') as myfile: # Not sure what encoding ISO-8859-1 vs utf-8
     #wr=csv.writer(myfile)
     for export_data in zip_object_list:
       wr=csv.writer(myfile)

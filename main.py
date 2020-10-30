@@ -15,7 +15,7 @@ from nmr_html_parser import souping_V2
 def main():
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
-    inp_file = Path("./html_files/type12.html")
+    inp_file = Path("html_files/coding_error.html")
     soup = souping_V2.inputs(inp_file)
     headers = souping_V2.soup_id_headers(soup)
     rows = souping_V2.soup_id_rows(soup)
