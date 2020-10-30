@@ -82,8 +82,6 @@ def get_atom_index_column(columns):
     return list(enumerate(columns))[0]
     # atom_index should be first column so can take that list and go from there
 
-
-# TODO: modify to accept columns(2dlist) by removing 2 dict inputs and puting 2dlist, and it should work
 def table_detect(soup,d2list,float_d2list):
     # Detection method
  # 1. If primary headers contain I^C/I^H(Most cases) can detect table type;if I^C, carbon; if I^H, proton and if I^C and I^H, both
@@ -164,15 +162,11 @@ def table_detect(soup,d2list,float_d2list):
                         print("I don't understand, please try again.")'''
 
 def column_id_cleaner_list(d2_list):
-    '''Takes dictionary of columns with headers. Searchs keys first for regex patterns to detect if column will contain H/C NMR, then each cell for regex patterns'''
+    '''Takes 2dlist of columns . Searchs cells first for regex patterns to detect if column will contain H/C NMR, then each cell for regex patterns'''
     # Column type detection
-    # first detect the table type to determine which column type could be present??def detect_column_type(headers, idx, col):
-    # might make based on numerical value, 0-13 for H, 15 - 200 for carbon; but numbers could go outside of ranges
     # might have to assign the headers to the column and then search headers for C, since C/CH2 not always in column
-    # Carbon = looking for C in header, 15-200ppm and sometimes C,CH,CH2 in column cells
-    # Proton = looking for H/ mult. (J in Hz) in header, 0-13ppm and splitting/coupling constants in column cell
 
-    # Regex patterns
+    # Regex patterns; detect the table type to determine which column type
     # TODO: Add other possible multiplicity regex patterns
     CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
@@ -186,12 +180,11 @@ def column_id_cleaner_list(d2_list):
     HNMR_pattern_2ba = re.compile(r'(\(([^\)]+)\))') # TODO: Prob not just anythin in bracket, also don't include parentheses
     HNMR_pattern_2bb = re.compile(r'(\w*[stdmqbrqh]\s?\w*[stdmqbrqh]|\w*[stdmqbrqh])')
 
-    #2D lists
     C_type = []
     Carbon_spec = []
     H_spec = []
     H_multiplicity_J = []
-    for item in d2_list: # Iterating over each element(column) in dictionary
+    for item in d2_list:
       c_type1 = []
       Carbon_spec1 = []
       H_spec1 = []
@@ -200,7 +193,7 @@ def column_id_cleaner_list(d2_list):
       for value in item:
         if CNMR_pattern_1.search(value): #if CNMR_pattern_1 found with .search regex:
             c_type1.append(CNMR_pattern_2.search(value).group()) #append item to new list
-            Carbon_spec1.append(CNMR_pattern_1.sub("", value)) # while removing from original
+            Carbon_spec1.append(CNMR_pattern_1.sub("", value)) # while removing from original by adding everything but pattern to new list
         elif HNMR_pattern_1.search(value): # Same as CNMR, but for HNMR
             H_multiplicity_J1.append(HNMR_pattern_2.search(value).group())
             H_spec1.append(HNMR_pattern_1.sub("", value))
@@ -216,13 +209,12 @@ def column_id_cleaner_list(d2_list):
         C_type.append(c_type1)
       if all_same(Carbon_spec1) == False:
           Carbon_spec.append(Carbon_spec1)
-
       if all_same(H_multiplicity_J1) == False:
           H_multiplicity_J.append(H_multiplicity_J1)
       if all_same(H_spec1) == False:
           H_spec.append(H_spec1)
 
-    # TODO: Split up the multiplicity and coupling constant
+    # Split up coupling and multiplicity into separate lists
     J_coupling = []
     H_multiplicity = []
     for compound in H_multiplicity_J:
@@ -232,23 +224,23 @@ def column_id_cleaner_list(d2_list):
             if HNMR_pattern_2b.search(val):
                 J_coupling1.append(HNMR_pattern_2ba.search(val).group())
                 H_multiplicity1.append(HNMR_pattern_2bb.search(val).group())
-            elif HNMR_pattern_2a.search(val):#REGEX here    #just charcter[s,m,d,t...etc]|could have space like br d
+            elif HNMR_pattern_2a.search(val):
                 H_multiplicity1.append(HNMR_pattern_2bb.search(val).group())
                 J_coupling1.append("")
             elif "" == val:
-                J_coupling1.append(val) #append to J_list
+                J_coupling1.append(val)
                 H_multiplicity1.append(val)
         J_coupling.append(J_coupling1)
         H_multiplicity.append(H_multiplicity1)
 
     return H_spec,Carbon_spec,H_multiplicity,J_coupling,C_type
+
 def column2dlist_string_to_float(d2_list):
-    ''' Takes dictionary that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number
-    if string begins with it (regex pattern(^\d*[0-9].{1}\d*[0-9]) recognized) and convert to float in a new list, then
-    replace dict[item](for item in dict(INPUT)) with new list.
-    INPUT: dictionary
-    OUTPUT: returns dictionary with float numbers if regex pattern recognized'''
-    float_pattern = re.compile(r'(^\d*[0-9].{1}\d*[0-9])')# change to must begin with
+    ''' Takes 2dlist that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number
+    if string begins with it (regex pattern(^\d*[0-9].{1}\d*[0-9]) recognized) and convert to float in a new list
+    INPUT: 2dlist
+    OUTPUT: returns 2dlist with float numbers if regex pattern recognized'''
+    float_pattern = re.compile(r'(^\d*[0-9].{1}\d*[0-9])')
     new_result = []
     for item in d2_list:
         spec_float1 = []
@@ -277,25 +269,12 @@ def compound_export_data_list(atom_index,float_Carbon_spec,C_type,float_H_spec,H
   return zip_object_list
 
 def tableto_csv(zip_object_list):
-  with open('input_filename_to_ouput_TBD.csv', 'w', encoding = "ISO-8859-1", newline='') as myfile: # Not sure what encoding
+  with open('input_filename_to_ouput_TBD.csv', 'w', encoding = "ISO-8859-1", newline='') as myfile: # Not sure what encoding ISO-8859-1 vs utf-8
     #wr=csv.writer(myfile)
     for export_data in zip_object_list:
       wr=csv.writer(myfile)
       wr.writerow(('atom_index','cspec','ctype','hspec','multi','coupling'))
       wr.writerows(export_data)
   return myfile.close()
-# TODO: Put all columns and clean parsed data in tabular intermediate data type (see Jeff's message)
-
-# JSON output don't know if shuld remove yet
-    # 1. Since lists are ordered, put first index(atom position).
-
-    # 2. Use num_comp to determine number of compounds and table_detect to determine if H/C present; data sorted into the right final place
-        # This will determine layout pattern: (First item in dict will be atom position)
-            # Usually for both pattern is: atom_position + (IH + IC)n, n = # of comps
-            # Then for single: atom_position + (IC or IH)n, n = # of comps
-            # Since NMR tables don't expect to see many other column types beside 2DNMR(Could ID if 1D works out), label as other
-            ## for 2 comps, 2 C types and 2 multiplicity; that is added to end of dictionary after column cleaning
-
-   # 3. Sort column data into either: atom position, Proton, Carbon or other. Which then can be dumped into JSON file to output(See Goal in README.md).
 
 

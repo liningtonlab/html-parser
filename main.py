@@ -1,33 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Oct 12 11:41:54 2020
-    # TODO: implement parsing logic for data types
-    # You don't have to do you all at once, so just start on the carbon detection
-    # Now that we have all the columns, we want to split this into atom_index, data columns (C and/or H), and other
-    # I would do something like the following
-    # Make sure to filter out empty rows within a given column - *CHECK^
 
-    #atom_index_idx, atom_index_column  = souping.get_atom_index_column(columns)
-    #print(atom_index_idx, souping.no_space_list(atom_index_column)) # prints out atom positon and its index, alwasy first
-    #for idx, col in enumerate(columns):
-        # 1. If atom index, ignore because we detected this about
-        #if idx == atom_index_idx:
-            #continue
-
-        # 2. Detect if C or H (you can use the headers to help with this)
-        # And parse appropriately into dict output
-
-        # col_type = souping.detect_column_type(headers, idx, col)
-        # if col_type == "carbon":
-            # data = souping.parse_carbon_column(atom_index_column, col)
-        # elif col_type == "proton":
-            # data = souping.parse_proton_column(atom_index_column, col)
-        # else:
-            # print("Probably not a data column")
-            # This is either because of bad detection or just a non-useful column
-
-        # You'll also need some sort of mechanism for sorting the data from the above
-        # loop into the appropriate compounds
 @author: maras
 """
 # Use this file as a personal testing group to make sure all the functions
@@ -50,9 +24,7 @@ def main():
 
     # Used stored results from previous function calls to run
     columns = souping_V2.get_columns(rows, headers)
-    #columns = souping.no_space_2dlist(columns) Can remove spaces, if not all have splitting, which goes where??
 
-# TODO: Print Results
     print(headers)
     print(comps)
     print(compound_num)
@@ -64,15 +36,8 @@ def main():
     float_Carbon_spec = souping_V2.column2dlist_string_to_float(Carbon_spec)
     print(atom_index, float_H_spec, float_Carbon_spec, H_multiplicity, J_coupling, C_type)
 
-
+    # Turn compound tables into CSV
     souping_V2.tableto_csv(souping_V2.compound_export_data_list(atom_index,float_Carbon_spec,C_type,float_H_spec,H_multiplicity,J_coupling))
-'''for i in column_type2:
-        floats = souping_V2.column2dlist_string_to_float(i)
-        table_detect = souping_V2.table_detect(soup,columns,floats)
-
-        if floats:
-            print(floats)
-            print(table_detect + str('using "columns" variable in main.py'))'''
 
 
 
