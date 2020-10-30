@@ -83,19 +83,7 @@ def get_atom_index_column(columns):
     # atom_index should be first column so can take that list and go from there
 
 def table_detect(soup,d2list,float_d2list):
-    # Detection method
- # 1. If primary headers contain I^C/I^H(Most cases) can detect table type;if I^C, carbon; if I^H, proton and if I^C and I^H, both
-    '''"<th align="center" class="colsep0 rowsep0">Î´<sub>H</sub>","<th align="center" class="colsep0 rowsep0">Î´<sub>C</sub>","(m<sub>,</sub><i>J</i> in Hz)","mult. (<i>J</i>, Hz)"'''
-    # a. Use regex to find th tag then sub tag with string to determine if H and/or C from headers
-    # if Carbon,Proton == True, contains both C/HNMR data in table; elif Carbon == True, contains CNMR data in table;elif Proton == True, contains HNMR data in table
-    # else: have to look further, ex.
- # 2. If no headers(just numbers)
-    # a. Search rows for splitting(s,d,t,m) and/or  contains C|CH|CH[2-3]
-    '''"1.09, s","3.62, m","3.71, br d (11.0)","4.17, dd (10.2, 1.9)","1.09, dddd (18.6,13.2, 5.4, 2.4)","7.26 (m)","6.12 (dd, 16.0, 6.4)","4.85 (td, 7.3, 4.2)"'''
-    # b. Or else can maybe search strings of numbers in rows, get ones w/ decimal(float) and make a list
-    # Use REGEX to search with pattern that has('\d*[0-9].{1}\d*[0-9],{1}\s{1}'). Convert list to float, take average if: Values between 1-10 to see if H; values 10-250 and nothing else them must be C
-
-    '''Takes soup object, dictionary of column cells, dictionary of cell floats. Uses regex/string arguments and calculates float averages to detect and return table type'''
+    '''Takes soup object, 2dlist of column cells, 2dlist of cell floats. Uses regex/string arguments and calculates float averages to detect and return table type'''
     Carbon = soup.find("sub", string=re.compile("C"))#Don't use findall, look in through th for <sub> w/ string='C'or'H'
     Proton = soup.find("sub", string=re.compile("H"))
     if Carbon and Proton:
@@ -105,7 +93,7 @@ def table_detect(soup,d2list,float_d2list):
     elif Proton:
         return (('H1 NMR Table Detected!'))
     else:
-        for item in d2list:  # Iterating over each element(column) in dictionary
+        for item in d2list:
             for value in item:
                 if re.search(r'(\d*[0-9]\.\d*[0-9]\,\s{1}\w*[s,t,d,m,q,b,r]\s{1})|(\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))', value):
                     HNMR_Search = True
@@ -143,37 +131,18 @@ def table_detect(soup,d2list,float_d2list):
             elif CNMR and not HNMR:
                 return ('H1 NMR Table Detected! - From chemical shifts!')
             else:
-                '''while True:
-                    ask = input("Detection Failure - What kind of table if this? (H,C or Both)")
-                    if ask.lower().upper() == "H":
-                        HNMR = True
-                        print('HNMR')
-                        break
-                    elif ask.lower().upper() == "C":
-                        CNMR = True
-                        print('CNMR')
-                        break
-                    elif ask.lower().upper() == "BOTH":
-                        CNMR = True
-                        HNMR = True
-                        print('Both')
-                        break
-                    else:
-                        print("I don't understand, please try again.")'''
+                return None
 
 def column_id_cleaner_list(d2_list):
     '''Takes 2dlist of columns . Searchs cells first for regex patterns to detect if column will contain H/C NMR, then each cell for regex patterns'''
-    # Column type detection
-    # might have to assign the headers to the column and then search headers for C, since C/CH2 not always in column
-
     # Regex patterns; detect the table type to determine which column type
     # TODO: Add other possible multiplicity regex patterns
     CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
     regex_pattern_1 = re.compile(r'Î´C')
     regex_pattern_2 = re.compile(r'Î´H')
-    HNMR_pattern_1 = re.compile(r'(\,{1}\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?|\,{1}\s\w*[stdmqbrqh]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))')
-    HNMR_pattern_2 = re.compile(r'(\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9]\)|\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?|\s?\w*[stdmqbrqh]\s?)')
+    HNMR_pattern_1 = re.compile(r'(\,{1}\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?|\,{1}\s\w*[stdmqbrqh]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\,?\))')
+    HNMR_pattern_2 = re.compile(r'(\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9]\)|\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\,?\)|\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\,?\)|\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?|\s?\w*[stdmqbrqh]\s?)')
     HNMR_pattern_2a = re.compile(r'(\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?$|\s?\w*[stdmqbrqh]\s?$)')
 
     HNMR_pattern_2b = re.compile(r'(\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9]\)|\s\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\))')
