@@ -148,12 +148,14 @@ def column_id_cleaner_list(d2_list):
         # 3. If no splitting(just numbers)
     # TODO: Put in other cell detection methods, ie if just numbers in columns(returns blank list since no detection)
         # 1. If headers; Can use position index in headers to determine location in columns of the data type
-        # 2. No headers;
+            # a. If no CH/CHn in cells(just numbers)
+            # b. If no splitting(just numbers)
+                # 2. No headers;
             # 2a. If there is other info in cells the current program can handle that
             # 2b. If there is just numbers, then have to use get_float_averages() to obatin averages to determine type
     # TODO: Figure out way to try each different detection method if the others fail, if all fail, return program failure
         # TODO: ALSO if no H/C found but, the other type detected(Only one NMR type present) don't return a blank value
-    
+
     CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
     regex_pattern_1 = re.compile(r'Î´C')
