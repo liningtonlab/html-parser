@@ -17,7 +17,7 @@ def inputs(filepath):
     with inp_file1.open() as f:
         soup = BeautifulSoup(f.read(), "lxml")
         #soup = unescape(soup)
-        # TODO: Try to fix encoding; bs converts to uncode which causes unknown charcacters to encoding to become nonsense
+        # TODO: Try to fix encoding; bs converts to unicode which causes unknown charcacters to encoding to become nonsense
         # Characters that can’t be represented in your chosen encoding will be converted into numeric XML entity references(OR HTML not sure)
                 # So if can't go to unicode this occurs, must be way to convert back. Also unicode goes back to utf-8 from BS4 output
     return soup
@@ -45,6 +45,7 @@ def all_same(items):
 # html Table Parsing Functions
 def soup_id_headers(soup):
     '''Takes soup object and returns column headers'''
+    #if soup.find_all("th", class_="colsep0 rowsep0"):
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="colsep0 rowsep0")]
     return no_space_list(header_1)
 def soup_comp_id(soup):
@@ -151,7 +152,8 @@ def column_id_cleaner_list(d2_list):
             # 2a. If there is other info in cells the current program can handle that
             # 2b. If there is just numbers, then have to use get_float_averages() to obatin averages to determine type
     # TODO: Figure out way to try each different detection method if the others fail, if all fail, return program failure
-    # TODO: ALSO if no H/C found but, the other type detected(Only one NMR type present) don't return a blank value
+        # TODO: ALSO if no H/C found but, the other type detected(Only one NMR type present) don't return a blank value
+    
     CNMR_pattern_1 = re.compile(r'\,\sCH3|\,\sCH2|\,\sCH|\,\sC')
     CNMR_pattern_2 = re.compile(r'CH3|CH2|CH|C')
     regex_pattern_1 = re.compile(r'Î´C')
@@ -161,7 +163,7 @@ def column_id_cleaner_list(d2_list):
     HNMR_pattern_2a = re.compile(r'(\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?$|\s?\w*[stdmqbrqh]\s?$)')
 
     HNMR_pattern_2b = re.compile(r'(\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9]\)|\s\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\))')
-    HNMR_pattern_2ba = re.compile(r'(\(([^\)]+)\))') # TODO: Prob not just anythin in bracket, also don't include parentheses
+    HNMR_pattern_2ba = re.compile(r'(\(([^\)]+)\))') # TODO: Prob not just anythin in bracket, also don't include parentheses( Could avoid cleaning later)
     HNMR_pattern_2bb = re.compile(r'(\w*[stdmqbrqh]\s?\w*[stdmqbrqh]|\w*[stdmqbrqh])')
 
     C_type = []
@@ -217,6 +219,7 @@ def column_id_cleaner_list(d2_list):
         J_coupling.append(J_coupling1)
         H_multiplicity.append(H_multiplicity1)
 
+    # TODO: Clean out the parentheses of jcoupling
     return H_spec,Carbon_spec,H_multiplicity,J_coupling,C_type
 
 def column2dlist_string_to_float(d2_list):
@@ -244,21 +247,22 @@ def column2dlist_string_to_float(d2_list):
             new_result.append(spec_results)
     return new_result
 
-def compound_export_data_list(atom_index,float_Carbon_spec,C_type,float_H_spec,H_multiplicity,J_coupling):
-  zip_object_list = []
-  for cspec,ctype,hspec,multi,coupling in zip(float_Carbon_spec,C_type,float_H_spec,H_multiplicity,J_coupling):
-    f = [atom_index,cspec,ctype,hspec,multi,coupling]
-    export_data = zip_longest(*f, fillvalue='')
-    zip_object_list.append(export_data)
-  return zip_object_list
+def data_to_grid(numcomps, aindex, cspec, ctype, hspec, hmult, hcoup):
+  headers = ["atom_index"]
+  data = [aindex]
+  hstring = "{0}_cspec,{0}_ctype,{0}_hspec,{0}_multi,{0}_coupling"
+  for i in range(1, numcomps+1):
+    hl = hstring.format(i).split(",")
+    headers.extend(hl)
+  for j in range(numcomps):
+    data.extend([cspec[j], ctype[j], hspec[j], hmult[j], hcoup[j]])
+  return headers, data
 
-def tableto_csv(zip_object_list):
-  with open('input_filename_to_ouput_TBD.csv', 'w', encoding = "utf-8", newline='') as myfile: # Not sure what encoding ISO-8859-1 vs utf-8
-    #wr=csv.writer(myfile)
-    for export_data in zip_object_list:
-      wr=csv.writer(myfile)
-      wr.writerow(('atom_index','cspec','ctype','hspec','multi','coupling'))
-      wr.writerows(export_data)
-  return myfile.close()
-
+def tableto_csv(headers, data):
+  rows = zip(*data)
+  with open('html_parse_output.csv', 'w', encoding = "UTF-8", newline='') as myfile:
+    wr=csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    wr.writerow(headers)
+    for row in rows:
+      wr.writerow(row)
 
