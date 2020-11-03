@@ -15,7 +15,7 @@ from nmr_html_parser import souping_V2
 def main():
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
-    inp_file = Path("html_files/test_example_2.html")
+    inp_file = Path("html_files/type11.html") # This example has no C/CH/CHn in Carbon column
     soup = souping_V2.inputs(inp_file)
     headers = souping_V2.soup_id_headers(soup)
     rows = souping_V2.soup_id_rows(soup)
@@ -35,8 +35,19 @@ def main():
     float_hspec = souping_V2.column2dlist_string_to_float(hspec)
     float_cspec = souping_V2.column2dlist_string_to_float(cspec)
     print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
-
+    if not float_cspec:
+        columns = souping_V2.column2dlist_string_to_float(columns)
+        float_cspec = souping_V2.get_float_avg(columns)
+        blanks = []
+        for i in float_cspec:
+            blanks1 = []
+            for x in range(len(i)):
+                blanks1.append(r'')
+            blanks.append(blanks1)
+        ctype = blanks
+    print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
     # Turn compound tables into CSV
+
     souping_V2.tableto_csv(*souping_V2.data_to_grid(compound_num, atom_index, float_hspec, float_cspec, hmult, jcoup, ctype))
 
 # Best practice to use this for scripts
