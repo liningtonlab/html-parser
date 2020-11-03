@@ -37,14 +37,14 @@ def main():
     print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
     if not float_cspec:
         columns = souping_V2.column2dlist_string_to_float(columns)
-        float_cspec = souping_V2.get_float_avg(columns)
-        blanks = []
-        for i in float_cspec:
-            blanks1 = []
-            for x in range(len(i)):
-                blanks1.append(r'')
-            blanks.append(blanks1)
-        ctype = blanks
+        cspec,hspec = souping_V2.get_float_avg(columns)
+        float_cspec = cspec
+        ctype = souping_V2.blanks_list(float_cspec)
+    if not float_hspec:
+        columns = souping_V2.column2dlist_string_to_float(columns)
+        cspec, hspec = souping_V2.get_float_avg(columns)
+        float_hspec = hspec
+        hmult,jcoup = souping_V2.blanks_list(float_hspec) # might have to make variables separate
     print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
     # Turn compound tables into CSV
 

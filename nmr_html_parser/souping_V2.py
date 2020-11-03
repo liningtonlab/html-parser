@@ -54,6 +54,16 @@ def all_same(items):
     '''Takes list and checks if all the elements in said list are the same, returning True if so'''
     return all(map(lambda x: x == items[0], items))
 
+def blanks_list(list_length):
+    blanks = []
+    for i in list_length:
+        blanks1 = []
+        for x in range(len(i)):
+            blanks1.append(r'')
+        blanks.append(blanks1)
+    return blanks
+
+
 
 # html Table Parsing Functions
 def soup_id_headers(soup):
@@ -320,4 +330,4 @@ def get_float_avg(dict2):
                 cspec.append(list(item))
             elif 0.0 <= average <= 13.5:
                 hspec.append(list(item))
-    return cspec#, hspec
+    return cspec,hspec
