@@ -15,7 +15,7 @@ from nmr_html_parser import souping_V2
 def main():
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
-    inp_file = Path("html_files/test_example_1.html") # This example has no C/CH/CHn in Carbon column
+    inp_file = Path("html_files/test_example_2.html") # This example has no C/CH/CHn in Carbon column
     soup = souping_V2.inputs(inp_file)
     headers = souping_V2.soup_id_headers(soup)
     rows = souping_V2.soup_id_rows(soup)
