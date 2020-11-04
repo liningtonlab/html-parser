@@ -15,7 +15,7 @@ from nmr_html_parser import souping
 def main():
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
-    inp_file = Path("html_files/test_example_2.html") # This example has no C/CH/CHn in Carbon column
+    inp_file = Path("html_files/type11.html") # This example has no C/CH/CHn in Carbon column
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
     rows = souping.soup_id_rows(soup)
@@ -34,8 +34,11 @@ def main():
     hspec, cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(columns)
     float_hspec = souping.column2dlist_string_to_float(hspec)
     float_cspec = souping.column2dlist_string_to_float(cspec)
+
     print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
-    if not float_cspec:
+    if float_cspec and float_hspec:
+        souping.tableto_csv(*souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
+    elif not float_cspec:
         columns = souping.column2dlist_string_to_float(columns)
         cspec,hspec = souping.get_float_avg(columns)
         float_cspec = cspec
@@ -46,16 +49,19 @@ def main():
         float_hspec = hspec
         hmult,jcoup = souping.blanks_list(float_hspec) # might have to make variables separate
     print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
+
     # Turn compound tables into CSV
-    # souping.tableto_csv(*souping.data_to_grid_Ca(compound_num, atom_index, float_hspec, hmult, jcoup))
     #  TODO: def function for each H/C if only one type
-    # if not float_cspec or ctype:
-    # souping.tableto_csv(*souping.data_to_grid_Ca(compound_num, atom_index, float_hspec, hmult, jcoup))
+    if float_cspec and float_hspec:
+        souping.tableto_csv(*souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
+    elif not float_cspec:
+        souping.tableto_csv(*souping.data_to_grid_Ca(compound_num, atom_index, float_hspec, hmult, jcoup))
     # Means have neither cspec or ctype after using float avg search. Add everything but float_cpsec/ctype
-    # if not ctype:
-    # souping.tableto_csv(*souping.data_to_grid_Cb(compound_num,float_cspec, atom_index, float_hspec, hmult, jcoup))
+    elif not ctype:
+       souping.tableto_csv(*souping.data_to_grid_Cb(compound_num,float_cspec, atom_index, float_hspec, hmult, jcoup))
     # Means have float_cspec, but not ctype. Add everything but ctype
-    # Need two functions, one for each case that takes the according amount of variable to add to CSV
+
+
     # Then the cases for Proton
     # if not float_hspec:
     # all but float_hspec,hmulti,jcoup
@@ -65,11 +71,8 @@ def main():
     # all but jcoup
     # if not hmulti and jcoup:
     # all but hmulti,jcoup
-
     # Need four functions, one for each case
-    if float_cspec and float_hspec:
-        souping.tableto_csv(
-            *souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
+
 # Best practice to use this for scripts
 if __name__ == "__main__":
     main()
