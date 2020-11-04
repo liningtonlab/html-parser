@@ -8,23 +8,18 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 import re
 import csv
-from itertools import zip_longest
-from xml.sax.saxutils import unescape
+import lxml.html
+import lxml.html.clean
 
 
 def inputs(filepath):
     '''Takes filepath as input and returns BeautifulSoup object'''
     inp_file1 = Path(filepath)  # UTF-8
     with inp_file1.open() as f:
-        soup = BeautifulSoup(f.read(), "lxml")
-        # soup = unescape(soup)
-        # TODO: Try to fix encoding; bs converts to unicode which causes unknown charcacters to encoding to become nonsense
-        # Characters that can’t be represented in your chosen encoding will be converted into numeric XML entity references(OR HTML not sure)
-        # So if can't go to unicode this occurs, must be way to convert back. Also unicode goes back to utf-8 from BS4 output
+        f = f.read().encode('cp1252')
+        soup = BeautifulSoup(f, "lxml")
+    
     return soup
-
-
-# TODO: ADD function to parse html source code(soup) to find and replace error-causing characters like: &nbsp; and '
 
 # Simple Functions
 def num_columns(headers):
@@ -195,7 +190,7 @@ def column_id_cleaner_list(d2_list):
     HNMR_pattern_2b = re.compile(
         r'(\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9]\)|\s\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\))')
     HNMR_pattern_2ba = re.compile(
-        r'(\(([^\)]+)\))')  # TODO: Prob not just anythin in bracket, also don't include parentheses( Could avoid cleaning later)
+        r'(?<=\()([^\)]+)(?=\))')
     HNMR_pattern_2bb = re.compile(r'(\w*[stdmqbrqh]\s?\w*[stdmqbrqh]|\w*[stdmqbrqh])')
 
     C_type = []
@@ -251,8 +246,6 @@ def column_id_cleaner_list(d2_list):
                 H_multiplicity1.append(val)
         J_coupling.append(J_coupling1)
         H_multiplicity.append(H_multiplicity1)
-
-    # TODO: Clean out the parentheses of jcoupling
     return H_spec, Carbon_spec, H_multiplicity, J_coupling, C_type
 
 
@@ -314,6 +307,49 @@ def data_to_grid_Cb(numcomps, aindex, cspec, hspec, hmult, hcoup):
         data.extend([cspec[j],hspec[j], hmult[j], hcoup[j]])
     return headers, data
 #  TODO: def function for each H/C if only one type
+def data_to_grid_Ha(numcomps, aindex, cspec, ctype):
+    headers = ["atom_index"]
+    data = [aindex]
+    hstring = "{0}_cspec,{0}_ctype,"
+    for i in range(1, numcomps + 1):
+        hl = hstring.format(i).split(",")
+        headers.extend(hl)
+    for j in range(numcomps):
+        data.extend([cspec[j], ctype[j]])
+    return headers, data
+
+def data_to_grid_Hb(numcomps, aindex, cspec, ctype, hspec, hcoup):
+    headers = ["atom_index"]
+    data = [aindex]
+    hstring = "{0}_cspec,{0}_ctype,{0}_hspec,{0}_coupling"
+    for i in range(1, numcomps + 1):
+        hl = hstring.format(i).split(",")
+        headers.extend(hl)
+    for j in range(numcomps):
+        data.extend([cspec[j], ctype[j], hspec[j], hcoup[j]])
+    return headers, data
+
+def data_to_grid_Hc(numcomps, aindex, cspec, ctype, hspec):
+    headers = ["atom_index"]
+    data = [aindex]
+    hstring = "{0}_cspec,{0}_ctype,{0}_hspec"
+    for i in range(1, numcomps + 1):
+        hl = hstring.format(i).split(",")
+        headers.extend(hl)
+    for j in range(numcomps):
+        data.extend([cspec[j], ctype[j], hspec[j]])
+    return headers, data
+
+def data_to_grid_Hd(numcomps, aindex, cspec, ctype, hspec, hmult):
+    headers = ["atom_index"]
+    data = [aindex]
+    hstring = "{0}_cspec,{0}_ctype,{0}_hspec,{0}_multi"
+    for i in range(1, numcomps + 1):
+        hl = hstring.format(i).split(",")
+        headers.extend(hl)
+    for j in range(numcomps):
+        data.extend([cspec[j], ctype[j], hspec[j], hmult[j]])
+    return headers, data
 
 def tableto_csv(headers, data):
     rows = zip(*data)

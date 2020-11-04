@@ -15,7 +15,7 @@ from nmr_html_parser import souping
 def main():
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
-    inp_file = Path("html_files/type11.html") # This example has no C/CH/CHn in Carbon column
+    inp_file = Path("html_files/coding_error.html") # This example has no C/CH/CHn in Carbon column
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
     rows = souping.soup_id_rows(soup)
@@ -61,7 +61,14 @@ def main():
        souping.tableto_csv(*souping.data_to_grid_Cb(compound_num,float_cspec, atom_index, float_hspec, hmult, jcoup))
     # Means have float_cspec, but not ctype. Add everything but ctype
 
-
+    elif not float_hspec:
+        souping.tableto_csv(*souping.data_to_grid_Ha(compound_num, atom_index, float_cspec, ctype))
+    elif not hmult:
+        souping.tableto_csv(*souping.data_to_grid_Hb(compound_num, atom_index, float_cspec, ctype, float_hspec, jcoup))
+    elif not jcoup:
+        souping.tableto_csv(*souping.data_to_grid_Hc(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult))
+    elif not hmult and jcoup:
+        souping.tableto_csv(*souping.data_to_grid_Hc(compound_num, atom_index, float_cspec, ctype, float_hspec))
     # Then the cases for Proton
     # if not float_hspec:
     # all but float_hspec,hmulti,jcoup
