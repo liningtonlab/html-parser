@@ -8,8 +8,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 import re
 import csv
-import lxml.html
-import lxml.html.clean
+
 
 
 def inputs(filepath):
@@ -18,7 +17,12 @@ def inputs(filepath):
     with inp_file1.open() as f:
         f = f.read().encode('cp1252')
         soup = BeautifulSoup(f, "lxml")
-    
+        #aa = soup.find_all(string= re.compile(r'\xa0'))
+        #for i in aa:
+         #   i.replace(u'\xa0', ' ')
+        # TODO: Remove html references and convert them to proper characters like &nbsp; to ' '
+                # Trying to use lxml.html to do so but, requires way to go through each string and convert like:
+                        # '123.0,&nbsp;s&nbsp;(4.0)' into '123.0, m (4.0)'
     return soup
 
 # Simple Functions
@@ -117,6 +121,7 @@ def get_atom_index_column(columns):
 
 def table_detect(soup, d2list, float_d2list):
     '''Takes soup object, 2dlist of column cells, 2dlist of cell floats. Uses regex/string arguments and calculates float averages to detect and return table type'''
+    # TODO: If use this, can do soup.find("th",string=re.compile("δ")).find("sub",string=re.compile("C"))
     Carbon = soup.find("sub",
                        string=re.compile("C"))  # Don't use findall, look in through th for <sub> w/ string='C'or'H'
     Proton = soup.find("sub", string=re.compile("H"))
