@@ -382,9 +382,9 @@ def data_to_grid_Hd(numcomps, aindex, cspec, ctype, hspec, hmult):
     return headers, data
 
 
-def tableto_csv(headers, data):
+def tableto_csv(headers, data, filename):
     rows = zip(*data)
-    with open("html_parse_output.csv", "w", encoding="UTF-8", newline="") as myfile:
+    with open(filename, "w", encoding="UTF-8", newline="") as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
         wr.writerow(headers)
         for row in rows:

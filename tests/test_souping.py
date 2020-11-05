@@ -20,8 +20,10 @@ def load_expected(fname):
 
 @pytest.mark.parametrize("fname", FILES)
 def test_parse(fname):
+    filename = Path() / "test_outputs" / f"{fname}.csv"
     expected = load_expected(fname + ".csv")
-    output = runner.parse(TESTDIR / "inputs" / f"{fname}.html")
+    runner.parse(TESTDIR / "inputs" / f"{fname}.html",filename)
+    output = pd.read_csv(filename)
     assert_frame_equal(expected, output)
 
 

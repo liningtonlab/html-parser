@@ -2,7 +2,7 @@ from pathlib import Path
 from nmr_html_parser import souping
 
 
-def parse(path):
+def parse(path,filename):
     inp_file = Path(path)  # This example has no C/CH/CHn in Carbon column
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
@@ -22,7 +22,7 @@ def parse(path):
 
     if float_cspec and float_hspec == True:
         souping.tableto_csv(
-            *souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
+            *souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup),filename)
     if not float_cspec:
         columns = souping.column2dlist_string_to_float(columns)
         cspec, hspec = souping.get_float_avg(columns)
@@ -37,19 +37,19 @@ def parse(path):
 
     if float_cspec and float_hspec == True:
         souping.tableto_csv(
-            *souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
+            *souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup),filename)
     elif not float_cspec:
-        souping.tableto_csv(*souping.data_to_grid_Ca(compound_num, atom_index, float_hspec, hmult, jcoup))
+        souping.tableto_csv(*souping.data_to_grid_Ca(compound_num, atom_index, float_hspec, hmult, jcoup),filename)
     elif not ctype:
-        souping.tableto_csv(*souping.data_to_grid_Cb(compound_num, float_cspec, atom_index, float_hspec, hmult, jcoup))
+        souping.tableto_csv(*souping.data_to_grid_Cb(compound_num, float_cspec, atom_index, float_hspec, hmult, jcoup),filename)
 
 
     elif float_hspec == False or not float_hspec:
-        souping.tableto_csv(*souping.data_to_grid_Ha(compound_num, atom_index, float_cspec, ctype))
+        souping.tableto_csv(*souping.data_to_grid_Ha(compound_num, atom_index, float_cspec, ctype),filename)
     elif not hmult:
-        souping.tableto_csv(*souping.data_to_grid_Hb(compound_num, atom_index, float_cspec, ctype, float_hspec, jcoup))
+        souping.tableto_csv(*souping.data_to_grid_Hb(compound_num, atom_index, float_cspec, ctype, float_hspec, jcoup),filename)
     elif not jcoup:
-        souping.tableto_csv(*souping.data_to_grid_Hc(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult))
+        souping.tableto_csv(*souping.data_to_grid_Hc(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult),filename)
     elif float_hspec and not hmult and jcoup:
-        souping.tableto_csv(*souping.data_to_grid_Hc(compound_num, atom_index, float_cspec, ctype, float_hspec))
+        souping.tableto_csv(*souping.data_to_grid_Hc(compound_num, atom_index, float_cspec, ctype, float_hspec),filename)
 
