@@ -2,8 +2,8 @@ from pathlib import Path
 from nmr_html_parser import souping
 
 
-def parse(fname):
-    inp_file = Path(fname)  # This example has no C/CH/CHn in Carbon column
+def parse(path):
+    inp_file = Path(path)  # This example has no C/CH/CHn in Carbon column
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
     rows = souping.soup_id_rows(soup)

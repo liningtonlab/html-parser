@@ -9,7 +9,7 @@ from nmr_html_parser import souping, runner
 
 # Add some real unit tests
 
-FILES = ["test_1", "test_2"]
+FILES = ["test_1", "test_BOTH_double_ai","test_Both_no_CHn","test_Both_no_hmult_jcoup","test_CNMR_only","test_HMNR_ONLY"]
 
 
 def load_expected(fname):
