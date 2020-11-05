@@ -9,20 +9,15 @@ from bs4 import BeautifulSoup
 import re
 import csv
 
-
-
 def inputs(filepath):
     '''Takes filepath as input and returns BeautifulSoup object'''
     inp_file1 = Path(filepath)  # UTF-8
     with inp_file1.open() as f:
-        f = f.read().encode('cp1252')
+        f = f.read()
+        # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
+        f = str(f).replace('&nbsp;', ' ')
+        f = f.encode('cp1252')
         soup = BeautifulSoup(f, "lxml")
-        #aa = soup.find_all(string= re.compile(r'\xa0'))
-        #for i in aa:
-         #   i.replace(u'\xa0', ' ')
-        # TODO: Remove html references and convert them to proper characters like &nbsp; to ' '
-                # Trying to use lxml.html to do so but, requires way to go through each string and convert like:
-                        # '123.0,&nbsp;s&nbsp;(4.0)' into '123.0, m (4.0)'
     return soup
 
 # Simple Functions
