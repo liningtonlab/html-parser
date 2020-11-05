@@ -17,7 +17,7 @@ def inputs(filepath):
         f = f.read()
         # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
         f = str(f).replace("&nbsp;", " ")
-        f = f.encode("cp1252")
+        # f = f.encode("cp1252")
         soup = BeautifulSoup(f, "lxml")
     return soup
 
@@ -68,7 +68,8 @@ def soup_id_headers(soup):
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="colsep0 rowsep0")]
     return no_space_list(header_1)
 
-#TODO: fix for test_CNM_number_headers.html, because headers swapped will compnum and only detected as 1 comp
+
+# TODO: fix for test_CNM_number_headers.html, because headers swapped will compnum and only detected as 1 comp
 def soup_comp_id(soup):
     """Takes soup object and returns compound identification headers"""
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="rowsep1 colsep0")]
@@ -77,22 +78,24 @@ def soup_comp_id(soup):
 
 def soup_id_rows(soup):
     """Takes soup object and returns rows"""
-    rows = [[cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")]
+    rows = [
+        [cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")
+    ]
     print(rows)
     return rows
 
 
-#TODO: fixed above TODO by swapping if and first elif statment; must be better solution
+# TODO: fixed above TODO by swapping if and first elif statment; must be better solution
 def compound_number(compounds, headers):
     """Takes primary headers and compound id headers and returns the number of compounds.
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC"""
     if compounds:
-       return len(compounds)
-    elif any("1" or "2" in s for s in headers):  # 2 Call before if compounds, so that one isnt return for wrong headers
-        return len(headers) - 1
+        return len(compounds)
     elif any(
-        "Î´C" or "Î´H" in s for s in headers
-    ):
+        "1" or "2" in s for s in headers
+    ):  # 2 Call before if compounds, so that one isnt return for wrong headers
+        return len(headers) - 1
+    elif any("Î´C" or "Î´H" in s for s in headers):
         search = ["Î´H", "Î´C"]
         result = {k: 0 for k in search}
         for item in headers:
