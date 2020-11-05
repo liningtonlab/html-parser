@@ -10,14 +10,7 @@ from nmr_html_parser import souping, runner
 # Add some real unit tests
 TESTDIR = Path(__file__).parent
 
-FILES = [
-    "test_1",
-    "test_BOTH_double_ai",
-    "test_Both_no_CHn",
-    "test_Both_no_hmult_jcoup",
-    "test_CNMR_only",
-    "test_HMNR_ONLY",
-]
+FILES = ['test_1','test_Both_no_CHn','test_CNMR_no_headers','test_CNMR_ONLY','test_HNMR_no_headers','test_HNMR_ONLY']
 
 
 def load_expected(fname):
