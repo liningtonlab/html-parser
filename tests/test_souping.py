@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from pathlib import Path
-from nmr_html_parser import souping, runner
+from nmr_html_parser import runner
 
 # Add some real unit tests
 TESTDIR = Path(__file__).parent
@@ -23,6 +23,7 @@ def test_parse(fname):
     expected = load_expected(f"{fname}.csv")
     runner.parse(TESTDIR / "inputs" / f"{fname}.html", filepath)
     output = pd.read_csv(filepath)
+    print(output, expected)
     assert_frame_equal(expected, output)
 
 

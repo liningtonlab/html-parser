@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Oct  9 16:04:54 2020
-
+Created on Fri Nov 6 14:32:54 2020
+************************************Test Version of souping.py, Copy & Paste new data for runner, as to not ruin ******
 @author: maras"""
 
 from pathlib import Path
@@ -273,10 +273,9 @@ def column_id_cleaner_list(d2_list):
 
 
 def column2dlist_string_to_float(d2_list):
-    """ Takes 2dlist that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number
-    if string begins with it (regex pattern(^\d*[0-9].{1}\d*[0-9]) recognized) and convert to float in a new list
-    INPUT: 2dlist
-    OUTPUT: returns 2dlist with float numbers if regex pattern recognized"""
+#Takes nested list that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number if string begins with it
+#(regex pattern(^d*[0-9].{1}\d*[0-9]) recognized) and convert to float in a new list
+#INPUT: d2list and OUTPUT: returns d2list with float numbers if regex pattern recognized"""
     float_pattern = re.compile(r"(^\d*[0-9].{1}\d*[0-9])")
     new_result = []
     for item in d2_list:
@@ -357,9 +356,9 @@ def data_to_grid_Hb(numcomps, aindex, cspec, ctype, hspec):
         data.extend([cspec[j], ctype[j], hspec[j]])
     return headers, data
 
-def tableto_csv(headers, data):
+def tableto_csv(headers, data, filename):
     rows = zip(*data)
-    with open("html_parse_output.csv", "w", encoding="UTF-8", newline="") as myfile:
+    with open(filename, "w", encoding="UTF-8", newline="") as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
         wr.writerow(headers)
         for row in rows:

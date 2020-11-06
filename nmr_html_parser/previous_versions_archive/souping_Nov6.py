@@ -89,28 +89,25 @@ def soup_id_rows(soup):
 def compound_number(compounds, headers):
     """Takes primary headers and compound id headers and returns the number of compounds.
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC"""
-    comp_len = len(compounds)
-    for i in headers:
-        if re.compile(r"\d*[0-9]").search(i):
-            header_len = len(headers) - 1
-            if not comp_len:
-                return header_len
-            elif comp_len == header_len:
-                return header_len
-            elif comp_len != header_len:
-                return max(comp_len,header_len)
-    if any("δC" or "δH" in s for s in headers):
-        search = ["δH", "δC"]
+    if compounds:
+        return len(compounds)
+    elif any(
+        "1" or "2" in s for s in headers
+    ):  # 2 Call before if compounds, so that one isnt return for wrong headers
+        return len(headers) - 1
+    elif any("Î´C" or "Î´H" in s for s in headers):
+        search = ["Î´H", "Î´C"]
         result = {k: 0 for k in search}
         for item in headers:
             for search_item in search:
                 if search_item in item:
                     result[search_item] += 1
-        if result["δH"] == result["δC"]:
-            return result.get("δH")
+        if result["Î´H"] == result["Î´C"]:
+            return result.get("Î´H")
         else:
             return max(result.values())
-
+    else:
+        return None
 
 
 def get_columns(rows, headers):
@@ -341,7 +338,7 @@ def data_to_grid_Cb(numcomps, aindex, cspec, hspec, hmult, hcoup):
 def data_to_grid_Ha(numcomps, aindex, cspec, ctype):
     headers = ["atom_index"]
     data = [aindex]
-    hstring = "{0}_cspec,{0}_ctype,"
+    hstring = "{0}_cspec,{0}_ctype"
     for i in range(1, numcomps + 1):
         hl = hstring.format(i).split(",")
         headers.extend(hl)
@@ -349,7 +346,20 @@ def data_to_grid_Ha(numcomps, aindex, cspec, ctype):
         data.extend([cspec[j], ctype[j]])
     return headers, data
 
-def data_to_grid_Hb(numcomps, aindex, cspec, ctype, hspec):
+
+def data_to_grid_Hb(numcomps, aindex, cspec, ctype, hspec, hcoup):
+    headers = ["atom_index"]
+    data = [aindex]
+    hstring = "{0}_cspec,{0}_ctype,{0}_hspec,{0}_coupling"
+    for i in range(1, numcomps + 1):
+        hl = hstring.format(i).split(",")
+        headers.extend(hl)
+    for j in range(numcomps):
+        data.extend([cspec[j], ctype[j], hspec[j], hcoup[j]])
+    return headers, data
+
+
+def data_to_grid_Hc(numcomps, aindex, cspec, ctype, hspec):
     headers = ["atom_index"]
     data = [aindex]
     hstring = "{0}_cspec,{0}_ctype,{0}_hspec"
@@ -360,9 +370,22 @@ def data_to_grid_Hb(numcomps, aindex, cspec, ctype, hspec):
         data.extend([cspec[j], ctype[j], hspec[j]])
     return headers, data
 
-def tableto_csv(headers, data):
+
+def data_to_grid_Hd(numcomps, aindex, cspec, ctype, hspec, hmult):
+    headers = ["atom_index"]
+    data = [aindex]
+    hstring = "{0}_cspec,{0}_ctype,{0}_hspec,{0}_multi"
+    for i in range(1, numcomps + 1):
+        hl = hstring.format(i).split(",")
+        headers.extend(hl)
+    for j in range(numcomps):
+        data.extend([cspec[j], ctype[j], hspec[j], hmult[j]])
+    return headers, data
+
+
+def tableto_csv(headers, data, filename):
     rows = zip(*data)
-    with open("html_parse_output.csv", "w", encoding="UTF-8", newline="") as myfile:
+    with open(filename, "w", encoding="UTF-8", newline="") as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
         wr.writerow(headers)
         for row in rows:
