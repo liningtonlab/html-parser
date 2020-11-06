@@ -17,7 +17,7 @@ def inputs(filepath):
         f = f.read()
         # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
         f = str(f).replace("&nbsp;", " ")
-        # f = f.encode("cp1252")
+        f = f.encode("cp1252") # May just need to replace
         soup = BeautifulSoup(f, "lxml")
     return soup
 

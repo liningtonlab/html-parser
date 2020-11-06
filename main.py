@@ -15,7 +15,7 @@ from nmr_html_parser import souping
 def main():
     # The ultimate aim here is to create a function which takes as an input and HTML file
     # and writes the output file somewhere
-    inp_file = Path("tests/inputs/test_CNMR_ONLY.html") # This example has no C/CH/CHn in Carbon column
+    inp_file = Path("tests/inputs/test_1.html") # This example has no C/CH/CHn in Carbon column
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
 
@@ -35,12 +35,12 @@ def main():
     hspec, cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(columns)
 
     float_hspec = souping.column2dlist_string_to_float(hspec)
-    if len(float_hspec) < 1:
-        float_hspec = False
+    #if len(float_hspec) < 1:
+        #float_hspec = False
     float_cspec = souping.column2dlist_string_to_float(cspec)
 
     print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
-    if float_cspec and float_hspec == True:
+    if float_cspec and float_hspec:
        souping.tableto_csv(*souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
     if not float_cspec:
         columns = souping.column2dlist_string_to_float(columns)
@@ -57,6 +57,7 @@ def main():
     # might have to make variables separate
     print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
 
+    souping.tableto_csv(*souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
     # Turn compound tables into CSV
     #  TODO: def function for each H/C if only one type
     if float_cspec and float_hspec == True:
