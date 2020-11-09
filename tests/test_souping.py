@@ -5,6 +5,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from pathlib import Path
 from nmr_html_parser import runner
+from nmr_html_parser import column_test
 
 # Add some real unit tests
 TESTDIR = Path(__file__).parent
@@ -26,6 +27,22 @@ def test_parse(fname):
     print(output, expected)
     assert_frame_equal(expected, output)
 
+def load_columns(fname):
+    fpath = TESTDIR / "column_outputs" / fname
+    inp_file1 = Path(fpath)
+    with inp_file1.open() as f:
+        f = f.read()
+    return f
+
+@pytest.mark.parametrize("fname", FILES)
+def test_columns(fname):
+    # take file with expected columns results
+    filepath = Path() / "test_outputs" / f"{fname}.py"
+    expected = load_columns(f"{fname}.py")
+    # run input file, and create column
+    output = column_test.column(TESTDIR / "inputs" / f"{fname}.html", filepath)
+    # Run assertions to check if output matches expected
+    assert expected == output
 
 # def test_inputs():
 #     # Need to make this better
