@@ -14,10 +14,11 @@ def inputs(filepath):
     """Takes filepath as input and returns BeautifulSoup object"""
     inp_file1 = Path(filepath)  # UTF-8
     with inp_file1.open() as f:
-        f = f.read()
+        # minifies html
+        f = "".join([x.strip() for x in f.read().split("\n")])
         # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
         f = str(f).replace("&nbsp;", " ")
-        f = f.encode("cp1252") # May just need to replace
+        f = f.encode("cp1252")
         soup = BeautifulSoup(f, "lxml")
     return soup
 
@@ -73,14 +74,25 @@ def soup_comp_id(soup):
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="rowsep1 colsep0")]
     return header_1
 
+def create_new_td(soup):
+    return soup.new_tag("td")
 
 def soup_id_rows(soup):
     """Takes soup object and returns rows"""
-    rows = [
-        [cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")
-    ]
-    print(rows)
-    return rows
+    rows = soup.tbody.find_all("tr")
+    clean_rows = []
+    for idr, r in enumerate(rows):
+        # want to use next n rows to fill in
+        if any(x.get("rowspan") for x in r.find_all("td")):
+            for idx, x in enumerate(r.find_all("td")):
+                rs = int(x.get("rowspan", 0))
+                if not rs:
+                    continue
+                for i in range(1, rs):
+                    rn = rows[idr + i]
+                    rn.insert(idx, create_new_td(soup))
+        clean_rows.append([cell_clean(j) for j in r.find_all("td")])
+    return clean_rows
 
 
 # TODO: fixed above TODO by swapping if and first elif statment; must be better solution
