@@ -30,6 +30,7 @@ def test_parse(fname):
     print(output, expected)
     assert_frame_equal(expected, output)
 
+# Useless as using list with parametrize
 #def load_columns(fname):
     #fpath = TESTDIR / "column_outputs" / fname
     #inp_file1 = Path(fpath)
