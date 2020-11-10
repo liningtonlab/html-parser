@@ -14,10 +14,11 @@ def inputs(filepath):
     """Takes filepath as input and returns BeautifulSoup object"""
     inp_file1 = Path(filepath)  # UTF-8
     with inp_file1.open() as f:
-        f = f.read()
+        # minifies html
+        f = "".join([x.strip() for x in f.read().split("\n")])
         # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
         f = str(f).replace("&nbsp;", " ")
-        f = f.encode("cp1252") # May just need to replace
+        # f = f.encode("cp1252")  # May just need to replace
         soup = BeautifulSoup(f, "lxml")
     return soup
 
@@ -74,13 +75,28 @@ def soup_comp_id(soup):
     return header_1
 
 
+def create_new_td(soup):
+    return soup.new_tag("td")
+
+
 def soup_id_rows(soup):
     """Takes soup object and returns rows"""
-    rows = [
-        [cell_clean(j) for j in i.find_all("td")] for i in soup.tbody.find_all("tr")
-    ]
-    print(rows)
-    return rows
+    rows = soup.tbody.find_all("tr")
+    clean_rows = []
+    for idr, r in enumerate(rows):
+        # want to use next n rows to fill in
+        if any(x.get("rowspan") for x in r.find_all("td")):
+            for idx, x in enumerate(r.find_all("td")):
+                rs = int(x.get("rowspan", 0))
+                if not rs:
+                    continue
+                for i in range(1, rs):
+                    rn = rows[idr + i]
+                    print(idx)
+                    rn.insert(idx, create_new_td(soup))
+        clean_rows.append([cell_clean(j) for j in r.find_all("td")])
+    print(clean_rows)
+    return clean_rows
 
 
 # TODO: fixed above TODO by swapping if and first elif statment; must be better solution
@@ -96,7 +112,7 @@ def compound_number(compounds, headers):
             elif comp_len == header_len:
                 return header_len
             elif comp_len != header_len:
-                return max(comp_len,header_len)
+                return max(comp_len, header_len)
     if any("δC" or "δH" in s for s in headers):
         search = ["δH", "δC"]
         result = {k: 0 for k in search}
@@ -108,7 +124,6 @@ def compound_number(compounds, headers):
             return result.get("δH")
         else:
             return max(result.values())
-
 
 
 def get_columns(rows, headers):
@@ -127,9 +142,7 @@ def get_atom_index_column(columns):
 def table_detect(soup, d2list, float_d2list):
     """Takes soup object, 2dlist of column cells, 2dlist of cell floats. Uses regex/string arguments and calculates float averages to detect and return table type"""
     # TODO: If use this, can do soup.find("th",string=re.compile("δ")).find("sub",string=re.compile("C"))
-    Carbon = soup.find(
-        "sub", string=re.compile("C")
-    )
+    Carbon = soup.find("sub", string=re.compile("C"))
     Proton = soup.find("sub", string=re.compile("H"))
     if Carbon and Proton:
         return "Both H1/C13 NMR Table Detected!"
@@ -346,6 +359,7 @@ def data_to_grid_Ha(numcomps, aindex, cspec, ctype):
         data.extend([cspec[j], ctype[j]])
     return headers, data
 
+
 def data_to_grid_Hb(numcomps, aindex, cspec, ctype, hspec):
     headers = ["atom_index"]
     data = [aindex]
@@ -356,6 +370,7 @@ def data_to_grid_Hb(numcomps, aindex, cspec, ctype, hspec):
     for j in range(numcomps):
         data.extend([cspec[j], ctype[j], hspec[j]])
     return headers, data
+
 
 def tableto_csv(headers, data):
     rows = zip(*data)
