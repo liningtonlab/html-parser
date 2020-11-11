@@ -131,6 +131,23 @@ def get_columns(rows, headers):
         columns = [[x[j] for x in rows] for j in range(len(headers))]
     return columns
 
+def isListEmpty(inList):
+    for item in inList:
+        if item:
+            return True
+    return False
+
+def get_atom_index(columns,headers):
+    if re.search(r"(^position$|^pos\.?$|^number$|^no\.?$)", headers[0]):
+        atom_index = columns[0]
+    elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]):
+        atom_index = columns[1]
+    return atom_index
+
+def get_residues(columns, headers):
+    if re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]): # Modify as example cases builds up
+        residues = columns[0]
+        return residues
 
 def get_atom_index_column(columns):
     """Enumerate the list of columns so that positional index and atom_index can be returned"""
@@ -321,6 +338,16 @@ def data_to_grid(numcomps, aindex, cspec, ctype, hspec, hmult, hcoup):
         data.extend([cspec[j], ctype[j], hspec[j], hmult[j], hcoup[j]])
     return headers, data
 
+def data_to_grid_residue(numcomps,resi ,aindex, cspec, ctype, hspec, hmult, hcoup):
+    headers = ["residues", "atom_index"]
+    data = [resi, aindex]
+    hstring = "{0}_cspec,{0}_ctype,{0}_hspec,{0}_multi,{0}_coupling"
+    for i in range(1, numcomps + 1):
+        hl = hstring.format(i).split(",")
+        headers.extend(hl)
+    for j in range(numcomps):
+        data.extend([cspec[j], ctype[j], hspec[j], hmult[j], hcoup[j]])
+    return headers, data
 
 def data_to_grid_Ca(numcomps, aindex, hspec, hmult, hcoup):
     headers = ["atom_index"]

@@ -14,7 +14,7 @@ from nmr_html_parser import souping
 
 def main():
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("html_files/JOL_test1.html")
+    inp_file = Path("html_files/residue_test.html")
 
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
@@ -24,7 +24,9 @@ def main():
     # Used stored results from previous functions calls to run
     compound_num = souping.compound_number(comps, headers)
     columns = souping.get_columns(rows, headers)
-    atom_index = columns[0]
+    atom_index = souping.get_atom_index(columns, headers)
+    residues = souping.get_residues(columns,headers)
+
     hspec, cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(columns)
     float_hspec = souping.column2dlist_string_to_float(hspec)
     float_cspec = souping.column2dlist_string_to_float(cspec)
@@ -33,11 +35,14 @@ def main():
     print(comps)
     print(compound_num)
     print(columns)
+    print(residues)
     print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
+
+
 
     # 1. First check for float_spec
     if float_cspec and float_hspec:
-       souping.tableto_csv(*souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
+        souping.tableto_csv(*souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
 
     # 1A. If not either spec, with columns containing specific data check float averages as last resort.
     elif not float_cspec:
@@ -65,6 +70,9 @@ def main():
     elif not ctype:
        souping.tableto_csv(*souping.data_to_grid_Cb(compound_num, atom_index, float_cspec, float_hspec, hmult, jcoup))
 
+    # TODO: Make residues work only if only one data type.
+    if souping.isListEmpty(residues) == True:
+        souping.tableto_csv(*souping.data_to_grid_residue(compound_num,residues,atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
 # Best practice to use this for scripts
 if __name__ == "__main__":
     main()
