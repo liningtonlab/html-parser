@@ -14,7 +14,7 @@ from nmr_html_parser import souping
 
 def main():
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("html_files/residue_test.html")
+    inp_file = Path("tests/inputs/test_1.html")
 
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
@@ -70,8 +70,8 @@ def main():
     elif not ctype:
        souping.tableto_csv(*souping.data_to_grid_Cb(compound_num, atom_index, float_cspec, float_hspec, hmult, jcoup))
 
-    # TODO: Make residues work only if only one data type.
-    if souping.isListEmpty(residues) == True:
+    # TODO: Make residues work only if only one data type. Also code not working
+    if residues:
         souping.tableto_csv(*souping.data_to_grid_residue(compound_num,residues,atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
 # Best practice to use this for scripts
 if __name__ == "__main__":

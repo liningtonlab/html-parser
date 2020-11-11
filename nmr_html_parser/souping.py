@@ -148,6 +148,8 @@ def get_residues(columns, headers):
     if re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]): # Modify as example cases builds up
         residues = columns[0]
         return residues
+    else:
+        return None
 
 def get_atom_index_column(columns):
     """Enumerate the list of columns so that positional index and atom_index can be returned"""
