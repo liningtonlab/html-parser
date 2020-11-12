@@ -14,7 +14,7 @@ from nmr_html_parser import souping
 
 def main():
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("tests/inputs/test_1.html")
+    inp_file = Path("html_files/test_123.html")
 
     soup = souping.inputs(inp_file)
     headers = souping.soup_id_headers(soup)
