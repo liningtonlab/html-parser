@@ -17,7 +17,7 @@ def parse(path, filepath):
     # Used stored results from previous functions calls to run
     compound_num = souping.compound_number(comps, headers)
     columns = souping.get_columns(rows, headers)
-    atom_index = columns[0]
+    atom_index = souping.get_atom_index(columns, headers)
     hspec, cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(columns)
     float_hspec = souping.column2dlist_string_to_float(hspec)
     float_cspec = souping.column2dlist_string_to_float(cspec)

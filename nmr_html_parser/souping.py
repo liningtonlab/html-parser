@@ -18,7 +18,7 @@ def inputs(filepath):
         f = "".join([x.strip() for x in f.read().split("\n")])
         # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
         f = str(f).replace("&nbsp;", " ")
-        # f = f.encode("cp1252")  # I don't understand, but this is required.
+        f = f.encode("cp1252")  # I don't understand, but this is required.
         # (Also must go from webpage html source code into new html file created in python)
         soup = BeautifulSoup(f, "lxml")
     return soup
