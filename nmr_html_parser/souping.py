@@ -18,7 +18,7 @@ def inputs(filepath):
         f = "".join([x.strip() for x in f.read().split("\n")])
         # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
         f = str(f).replace("&nbsp;", " ")
-        f = f.encode("cp1252")  # I don't understand, but this is required.
+        # f = f.encode("cp1252")  # I don't understand, but this is required.
         # (Also must go from webpage html source code into new html file created in python)
         soup = BeautifulSoup(f, "lxml")
     return soup
@@ -131,25 +131,31 @@ def get_columns(rows, headers):
         columns = [[x[j] for x in rows] for j in range(len(headers))]
     return columns
 
+
 def isListEmpty(inList):
     for item in inList:
         if item:
             return True
     return False
 
-def get_atom_index(columns,headers):
+
+def get_atom_index(columns, headers):
     if re.search(r"(^position$|^pos\.?$|^number$|^no\.?$)", headers[0]):
         atom_index = columns[0]
     elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]):
         atom_index = columns[1]
     return atom_index
 
+
 def get_residues(columns, headers):
-    if re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]): # Modify as example cases builds up
+    if re.search(
+        r"(^residue$|^amino\s?acid$|^unit$)", headers[0]
+    ):  # Modify as example cases builds up
         residues = columns[0]
         return residues
     else:
         return None
+
 
 def get_atom_index_column(columns):
     """Enumerate the list of columns so that positional index and atom_index can be returned"""
@@ -329,80 +335,42 @@ def column2dlist_string_to_float(d2_list):
     return new_result
 
 
-def data_to_grid(numcomps, aindex, cspec, ctype, hspec, hmult, hcoup):
-    headers = ["atom_index"]
-    data = [aindex]
-    hstring = "{0}_cspec,{0}_ctype,{0}_hspec,{0}_multi,{0}_coupling"
+# def data_to_grid(numcomps, resi,  cspec, ctype, hspec, hmult, hcoup):
+def data_to_grid(numcomps, aindex, **kwargs):
+    if kwargs.get("resi"):
+        headers = ["residues", "atom_index"]
+        data = [kwargs.get("resi"), aindex]
+    else:
+        headers = ["atom_index"]
+        data = [aindex]
+
+    # Search for specified variables and create header and access dict
+    possible_variables = {
+        "cspec": "{0}_cspec",
+        "ctype": "{0}_ctype",
+        "hspec": "{0}_hspec",
+        "hmult": "{0}_multi",
+        "hcoup": "{0}_coupling",
+    }
+    found_variables = {
+        k: v
+        for k, v in possible_variables.items()
+        if k in kwargs.keys() and bool(kwargs.get(k))
+    }
+    hstring = ",".join(found_variables.values())
     for i in range(1, numcomps + 1):
         hl = hstring.format(i).split(",")
         headers.extend(hl)
-    for j in range(numcomps):
-        data.extend([cspec[j], ctype[j], hspec[j], hmult[j], hcoup[j]])
-    return headers, data
 
-def data_to_grid_residue(numcomps,resi ,aindex, cspec, ctype, hspec, hmult, hcoup):
-    headers = ["residues", "atom_index"]
-    data = [resi, aindex]
-    hstring = "{0}_cspec,{0}_ctype,{0}_hspec,{0}_multi,{0}_coupling"
-    for i in range(1, numcomps + 1):
-        hl = hstring.format(i).split(",")
-        headers.extend(hl)
     for j in range(numcomps):
-        data.extend([cspec[j], ctype[j], hspec[j], hmult[j], hcoup[j]])
-    return headers, data
-
-def data_to_grid_Ca(numcomps, aindex, hspec, hmult, hcoup):
-    headers = ["atom_index"]
-    data = [aindex]
-    hstring = "{0}_hspec,{0}_multi,{0}_coupling"
-    for i in range(1, numcomps + 1):
-        hl = hstring.format(i).split(",")
-        headers.extend(hl)
-    for j in range(numcomps):
-        data.extend([hspec[j], hmult[j], hcoup[j]])
+        # data.extend([cspec[j], ctype[j], hspec[j], hmult[j], hcoup[j]])
+        data.extend([kwargs.get(k)[j] for k in found_variables.keys()])
     return headers, data
 
 
-def data_to_grid_Cb(numcomps, aindex, cspec, hspec, hmult, hcoup):
-    headers = ["atom_index"]
-    data = [aindex]
-    hstring = "{0}_cspec,{0}_hspec,{0}_multi,{0}_coupling"
-    for i in range(1, numcomps + 1):
-        hl = hstring.format(i).split(",")
-        headers.extend(hl)
-    for j in range(numcomps):
-        data.extend([cspec[j], hspec[j], hmult[j], hcoup[j]])
-    return headers, data
-
-
-#  TODO: def function for each H/C if only one type
-def data_to_grid_Ha(numcomps, aindex, cspec, ctype):
-    headers = ["atom_index"]
-    data = [aindex]
-    hstring = "{0}_cspec,{0}_ctype"
-    for i in range(1, numcomps + 1):
-        hl = hstring.format(i).split(",")
-        headers.extend(hl)
-    for j in range(numcomps):
-        data.extend([cspec[j], ctype[j]])
-    return headers, data
-
-
-def data_to_grid_Hb(numcomps, aindex, cspec, ctype, hspec):
-    headers = ["atom_index"]
-    data = [aindex]
-    hstring = "{0}_cspec,{0}_ctype,{0}_hspec"
-    for i in range(1, numcomps + 1):
-        hl = hstring.format(i).split(",")
-        headers.extend(hl)
-    for j in range(numcomps):
-        data.extend([cspec[j], ctype[j], hspec[j]])
-    return headers, data
-
-
-def tableto_csv(headers, data):
+def tableto_csv(headers, data, filename="html_parse_output.csv"):
     rows = zip(*data)
-    with open("html_parse_output.csv", "w", encoding="UTF-8", newline="") as myfile:
+    with open(filename, "w", encoding="UTF-8", newline="") as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
         wr.writerow(headers)
         for row in rows:
@@ -421,7 +389,7 @@ def get_float_avg(dict2):
                 value_list.append(value)
         if not all_same(value_list):
             average = sum(value_list) / len(value_list)
-            average_list.append(average)
+            # average_list.append(average)
             if 14.0 <= average <= 250.0:
                 cspec.append(list(item))
             elif 0.0 <= average <= 13.5:

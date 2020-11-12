@@ -7,72 +7,104 @@ Created on Mon Oct 12 11:41:54 2020
 # Use this file as a personal testing group to make sure all the functions
 # work (return what you expect) and work as part of the overall data pipeline
 
-from pprint import pprint  # Pretty Printer
 from pathlib import Path
-from nmr_html_parser import souping
+from nmr_html_parser import souping, runner
 
 
 def main():
+
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("html_files/test_123.html")
+    inp_file = Path("tests/inputs/test_5_c.html")
 
-    soup = souping.inputs(inp_file)
-    headers = souping.soup_id_headers(soup)
-    rows = souping.soup_id_rows(soup)
-    comps = souping.soup_comp_id(soup)
+    # test full thing
+    runner.parse(inp_file, "html_parse_output.csv")
 
-    # Used stored results from previous functions calls to run
-    compound_num = souping.compound_number(comps, headers)
-    columns = souping.get_columns(rows, headers)
-    atom_index = souping.get_atom_index(columns, headers)
-    residues = souping.get_residues(columns,headers)
+    # testing individual parts
+    # soup = souping.inputs(inp_file)
+    # headers = souping.soup_id_headers(soup)
+    # rows = souping.soup_id_rows(soup)
+    # comps = souping.soup_comp_id(soup)
 
-    hspec, cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(columns)
-    float_hspec = souping.column2dlist_string_to_float(hspec)
-    float_cspec = souping.column2dlist_string_to_float(cspec)
+    # # Used stored results from previous functions calls to run
+    # compound_num = souping.compound_number(comps, headers)
+    # columns = souping.get_columns(rows, headers)
+    # atom_index = souping.get_atom_index(columns, headers)
+    # residues = souping.get_residues(columns, headers)
 
-    print(headers)
-    print(comps)
-    print(compound_num)
-    print(columns)
-    print(residues)
-    print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
+    # hspec, cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(columns)
+    # float_hspec = souping.column2dlist_string_to_float(hspec)
+    # float_cspec = souping.column2dlist_string_to_float(cspec)
+
+    # # print(headers)
+    # # print(comps)
+    # # print(compound_num)
+    # # print(columns)
+    # # print(residues)
+    # # print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
+
+    # # 1. First check for float_spec
+    # # souping.tableto_csv(
+    # #     *souping.data_to_grid(
+    # #         compound_num,
+    # #         atom_index,
+    # #         resi=residues,
+    # #         cspec=float_cspec or cspec,
+    # #         ctype=ctype,
+    # #         hspec=float_hspec or cspec,
+    # #         hmult=hmult,
+    # #         hcoup=jcoup,
+    # #     )
+    # # )
+    # if not float_cspec or not float_hspec:
+    #     columns = souping.column2dlist_string_to_float(columns)
+    #     float_cspec, float_hspec = souping.get_float_avg(columns)
+
+    # # if float_cspec and float_hspec:
+    # souping.tableto_csv(
+    #     *souping.data_to_grid(
+    #         compound_num,
+    #         atom_index,
+    #         resi=residues,
+    #         cspec=float_cspec,
+    #         ctype=ctype,
+    #         hspec=float_hspec,
+    #         hmult=hmult,
+    #         hcoup=jcoup,
+    #     )
+    # )
+
+    # # # 1A. If not either spec, with columns containing specific data check float averages as last resort.
+    # elif not float_cspec:
+    #     columns = souping.column2dlist_string_to_float(columns)
+    #     float_cspec,float_hspec = souping.get_float_avg(columns)
+    #     # ctype = souping.blanks_list(float_cspec)
+    # elif not float_hspec:
+    #     columns = souping.column2dlist_string_to_float(columns)
+    #     float_cspec, hspec = souping.get_float_avg(columns)
+    #     if hspec:
+    #         float_hspec = hspec
+    #         hmult = souping.blanks_list(float_hspec)
+    #         jcoup = souping.blanks_list(float_hspec)
+
+    # # 2. Second pass for float of either spec
+    # if float_cspec and float_hspec and not ctype:
+    #     souping.tableto_csv(*souping.data_to_grid_Cb(compound_num, atom_index, float_cspec, float_hspec, hmult, jcoup))
+    # elif float_cspec and float_hspec:
+    #     souping.tableto_csv(*souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
+    # elif not float_hspec:
+    #     souping.tableto_csv(*souping.data_to_grid_Ha(compound_num, atom_index, float_cspec, ctype))
+    # elif float_hspec and not hmult and not jcoup:
+    #    souping.tableto_csv(*souping.data_to_grid_Hb(compound_num, atom_index, float_cspec, ctype, float_hspec))
+    # elif not float_cspec:
+    #     souping.tableto_csv(*souping.data_to_grid_Ca(compound_num, atom_index, float_hspec, hmult, jcoup))
+    # elif not ctype:
+    #    souping.tableto_csv(*souping.data_to_grid_Cb(compound_num, atom_index, float_cspec, float_hspec, hmult, jcoup))
+
+    # # TODO: Make residues work only if only one data type. Also code not working
+    # if residues:
+    #     souping.tableto_csv(*souping.data_to_grid_residue(compound_num,residues,atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
 
 
-
-    # 1. First check for float_spec
-    if float_cspec and float_hspec:
-        souping.tableto_csv(*souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
-
-    # 1A. If not either spec, with columns containing specific data check float averages as last resort.
-    elif not float_cspec:
-        columns = souping.column2dlist_string_to_float(columns)
-        float_cspec,float_hspec = souping.get_float_avg(columns)
-        ctype = souping.blanks_list(float_cspec)
-    elif not float_hspec:
-        columns = souping.column2dlist_string_to_float(columns)
-        float_cspec, hspec = souping.get_float_avg(columns)
-        if hspec:
-            float_hspec = hspec
-            hmult = souping.blanks_list(float_hspec)
-            jcoup = souping.blanks_list(float_hspec)
-    # 2. Second pass for float of either spec
-    if float_cspec and float_hspec and not ctype:
-        souping.tableto_csv(*souping.data_to_grid_Cb(compound_num, atom_index, float_cspec, float_hspec, hmult, jcoup))
-    elif float_cspec and float_hspec:
-        souping.tableto_csv(*souping.data_to_grid(compound_num, atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
-    elif not float_hspec:
-        souping.tableto_csv(*souping.data_to_grid_Ha(compound_num, atom_index, float_cspec, ctype))
-    elif float_hspec and not hmult and not jcoup:
-       souping.tableto_csv(*souping.data_to_grid_Hb(compound_num, atom_index, float_cspec, ctype, float_hspec))
-    elif not float_cspec:
-        souping.tableto_csv(*souping.data_to_grid_Ca(compound_num, atom_index, float_hspec, hmult, jcoup))
-    elif not ctype:
-       souping.tableto_csv(*souping.data_to_grid_Cb(compound_num, atom_index, float_cspec, float_hspec, hmult, jcoup))
-
-    # TODO: Make residues work only if only one data type. Also code not working
-    if residues:
-        souping.tableto_csv(*souping.data_to_grid_residue(compound_num,residues,atom_index, float_cspec, ctype, float_hspec, hmult, jcoup))
 # Best practice to use this for scripts
 if __name__ == "__main__":
     main()
