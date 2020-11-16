@@ -140,7 +140,7 @@ def isListEmpty(inList):
 
 
 def get_atom_index(columns, headers):
-    if re.search(r"(^position$|^pos\.?$|^number$|^no\.?$)", headers[0]):
+    if re.search(r"(^position$|^pos\.?$|^number$|no\.?$)", headers[0]):
         atom_index = columns[0]
     elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]):
         atom_index = columns[1]
