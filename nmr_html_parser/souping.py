@@ -17,7 +17,7 @@ def inputs(filepath):
         # minifies html
         f = "".join([x.strip() for x in f.read().split("\n")])
         # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
-        f = str(f).replace("&nbsp;", " ").replace("&nbsp"," ")
+        f = str(f).replace("&nbsp;", " ").replace("&nbsp", " ")
         if os.name == "nt":
             f = f.encode("cp1252")  # I don't understand, but this is required.
         # (Also must go from webpage html source code into new html file created in python)
@@ -100,6 +100,7 @@ def soup_id_rows(soup):
 
 
 # TODO: fixed above TODO by swapping if and first elif statment; must be better solution
+# TODO: this breaks for test_error_characters_noai_1
 def compound_number(compounds, headers):
     """Takes primary headers and compound id headers and returns the number of compounds.
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC"""
@@ -140,11 +141,22 @@ def isListEmpty(inList):
     return False
 
 
+def atom_index_like(col):
+    count = 0
+    for c in col:
+        if c in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+            count += 1
+    return count > 4
+
+
 def get_atom_index(columns, headers):
     if re.search(r"(^position$|^pos\.?$|^number$|no\.?$)", headers[0]):
         return columns[0], 0
     elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]):
         return columns[1], 1
+    elif atom_index_like(columns[0]):
+        # print("found unlabeled atom index")
+        return columns[0], 0
 
 
 def get_residues(columns, headers):
@@ -228,6 +240,9 @@ def str_list_average(input_list):
 
 
 def clean_cell_str(cell):
+    # cleanup dashes
+    cell = re.sub(r"-|‒|–|—|―|⁓", "-", cell)
+    # regularize and common typos
     return (
         cell.replace("..", ".")
         .replace(",", " ")
@@ -247,9 +262,9 @@ def column_id_cleaner_list(columns, ignore_cols):
     # TODO: Add other possible multiplicity regex patterns
     # 1. Other less common H splitting pattern
 
-    multi_regex = re.compile(r"(dd|tt|td|sept|s|d|t|q|h|br\s?s|br\s?q|br\s?t|br\s?d|m)")
+    multi_regex = re.compile(r"(?:(?:sept|s|d|t|q|h|br\s?s|br\s?d|br\s?t|br\s?q|m))+")
     ctype_pattern = re.compile(r"CH3|CH2|CH|q?C|NH2|NH|N")
-    coup_pattern = re.compile(r"[\d.]+")
+    coup_pattern = re.compile(r"\d+(?:\.\d+)?")
 
     # will be outputs
     H_spec = []
@@ -331,32 +346,6 @@ def column_id_cleaner_list(columns, ignore_cols):
                 J_coupling.append(coups)
 
     return H_spec, Carbon_spec, H_multiplicity, J_coupling, C_type
-
-
-def column2dlist_string_to_float(d2_list):
-    """ Takes 2dlist that has been cleaned by column_id_cleaner()(or any dictionary), will just take decimal number
-    if string begins with it (regex pattern(^\d*[0-9].{1}\d*[0-9]) recognized) and convert to float in a new list
-    INPUT: 2dlist
-    OUTPUT: returns 2dlist with float numbers if regex pattern recognized"""
-    float_pattern = re.compile(r"(^\d*[0-9].{1}\d*[0-9])")
-    new_result = []
-    for item in d2_list:
-        spec_float1 = []
-        for value in item:
-            if float_pattern.search(value):
-                for spec_value in float_pattern.findall(value):
-                    spec_float1.append(spec_value)
-            elif "" == value:
-                spec_float1.append(value)
-        if all_same(spec_float1) == False:
-            spec_results = []
-            for i in spec_float1:
-                if not if_blank(i):
-                    spec_results.append(float(i))
-                elif "" == i:
-                    spec_results.append(i)
-            new_result.append(spec_results)
-    return new_result
 
 
 # def data_to_grid(numcomps, resi,  cspec, ctype, hspec, hmult, hcoup):

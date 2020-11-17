@@ -36,15 +36,7 @@ def main():
     float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
         columns, ignore_cols
     )
-    # print(hspec, cspec, hmult, jcoup, ctype)
-    # float_hspec = souping.column2dlist_string_to_float(hspec)
-    # float_cspec = souping.column2dlist_string_to_float(cspec)
 
-    # if not float_cspec or not float_hspec:
-    #     columns = souping.column2dlist_string_to_float(columns)
-    #     float_cspec, float_hspec = souping.get_float_avg(columns)
-
-    # if float_cspec and float_hspec:
     souping.tableto_csv(
         *souping.data_to_grid(
             compound_num,
@@ -59,12 +51,12 @@ def main():
         filename="html_parse_output.csv"
     )
 
-    # # print(headers)
-    # # print(comps)
-    # # print(compound_num)
-    # # print(columns)
-    # # print(residues)
-    # # print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
+    # print(headers)
+    # print(comps)
+    # print(compound_num)
+    # print(columns)
+    # print(residues)
+    # print(atom_index, float_hspec, float_cspec, hmult, jcoup, ctype)
 
 
 # Best practice to use this for scripts
