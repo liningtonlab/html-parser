@@ -3,7 +3,7 @@
 Created on Fri Oct  9 16:04:54 2020
 
 @author: maras"""
-
+import os
 from pathlib import Path
 from bs4 import BeautifulSoup
 import re
@@ -18,7 +18,8 @@ def inputs(filepath):
         f = "".join([x.strip() for x in f.read().split("\n")])
         # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
         f = str(f).replace("&nbsp;", " ")
-        f = f.encode("cp1252")  # I don't understand, but this is required.
+        if os.name == "nt":
+            f = f.encode("cp1252")  # I don't understand, but this is required.
         # (Also must go from webpage html source code into new html file created in python)
         soup = BeautifulSoup(f, "lxml")
     return soup
@@ -141,10 +142,9 @@ def isListEmpty(inList):
 
 def get_atom_index(columns, headers):
     if re.search(r"(^position$|^pos\.?$|^number$|no\.?$)", headers[0]):
-        atom_index = columns[0]
+        return columns[0], 0
     elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]):
-        atom_index = columns[1]
-    return atom_index
+        return columns[1], 1
 
 
 def get_residues(columns, headers):
@@ -152,9 +152,9 @@ def get_residues(columns, headers):
         r"(^residue$|^amino\s?acid$|^unit$)", headers[0]
     ):  # Modify as example cases builds up
         residues = columns[0]
-        return residues
+        return residues, 0
     else:
-        return None
+        return None, None
 
 
 def get_atom_index_column(columns):
@@ -221,91 +221,115 @@ def table_detect(soup, d2list, float_d2list):
                 return None
 
 
-def column_id_cleaner_list(d2_list):
+def str_list_average(input_list):
+    """Takes a list of numerical strings and returns the average. Is able to ignore empty strings in list"""
+    vals = [float(i) for i in input_list if i]
+    return sum(vals) / len(vals)
+
+
+def clean_cell_str(cell):
+    return (
+        cell.replace("..", ".")
+        .replace(",", " ")
+        .replace("(", "")
+        .replace(")", "")
+        .strip()
+    )
+
+
+def all_blank(input_list):
+    return all(x == "" for x in input_list)
+
+
+def column_id_cleaner_list(columns, ignore_cols):
     """Takes 2dlist of columns . Searchs cells first for regex patterns to detect if column will contain H/C NMR, then each cell for regex patterns"""
     # Regex patterns; detect the table type to determine which column type
     # TODO: Add other possible multiplicity regex patterns
     # 1. Other less common H splitting pattern
 
-    CNMR_pattern_1 = re.compile(r"\,\sCH3|\,\sCH2|\,\sCH|\,\sC")
-    CNMR_pattern_2 = re.compile(r"CH3|CH2|CH|C")
+    multi_regex = re.compile(r"(dd|tt|td|sept|s|d|t|q|h|br\s?s|br\s?d|m)")
+    ctype_pattern = re.compile(r"CH3|CH2|CH|q?C|NH2|NH|N")
+    coup_pattern = re.compile(r"[\d.]+")
 
-    HNMR_pattern_1 = re.compile(
-        r"(\,{1}\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?|\,{1}\s\w*[stdmqbrqh]\s?|\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\,?\))"
-    )
-    HNMR_pattern_2 = re.compile(
-        r"(\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9]\)|\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\,?\)|\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\,?\)|\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?|\s?\w*[stdmqbrqh]\s?)"
-    )
-    HNMR_pattern_2a = re.compile(
-        r"(\s?\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?$|\s?\w*[stdmqbrqh]\s?$)"
-    )
-
-    HNMR_pattern_2b = re.compile(
-        r"(\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9]\)|\s\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\)|\s\w*[stdmqbrqh]\s?\w*[stdmqbrqh]\s?\([0-9]+\.[0-9](?:\,\s?[0-9]+\.[0-9])*\))"
-    )
-    HNMR_pattern_2ba = re.compile(r"(?<=\()([^\)]+)(?=\))")
-    HNMR_pattern_2bb = re.compile(r"(\w*[stdmqbrqh]\s?\w*[stdmqbrqh]|\w*[stdmqbrqh])")
-
-    C_type = []
-    Carbon_spec = []
+    # will be outputs
     H_spec = []
-    H_multiplicity_J = []
-    for item in d2_list:
-        c_type1 = []
-        Carbon_spec1 = []
-        H_spec1 = []
-        H_multiplicity_J1 = []
-
-        for value in item:
-            if CNMR_pattern_1.search(
-                value
-            ):  # if CNMR_pattern_1 found with .search regex:
-                c_type1.append(
-                    CNMR_pattern_2.search(value).group()
-                )  # append item to new list
-                Carbon_spec1.append(
-                    CNMR_pattern_1.sub("", value)
-                )  # while removing from original by adding everything but pattern to new list
-            elif HNMR_pattern_1.search(value):  # Same as CNMR, but for HNMR
-                H_multiplicity_J1.append(HNMR_pattern_2.search(value).group())
-                H_spec1.append(HNMR_pattern_1.sub("", value))
-            elif (
-                "" == value
-            ):  # elif " "(blank space, could be from regex search; append to list, but keep in original
-                c_type1.append(value)
-                Carbon_spec1.append(value)
-                H_spec1.append(value)
-                H_multiplicity_J1.append(value)
-            else:
-                None
-        # Removing irrelevant list, also replacing dict with new cleaned chemical shift column
-        if all_same(c_type1) == False:
-            C_type.append(c_type1)
-        if all_same(Carbon_spec1) == False:
-            Carbon_spec.append(Carbon_spec1)
-        if all_same(H_multiplicity_J1) == False:
-            H_multiplicity_J.append(H_multiplicity_J1)
-        if all_same(H_spec1) == False:
-            H_spec.append(H_spec1)
-
-    # Split up coupling and multiplicity into separate lists
-    J_coupling = []
+    Carbon_spec = []
     H_multiplicity = []
-    for compound in H_multiplicity_J:
-        J_coupling1 = []
-        H_multiplicity1 = []
-        for val in compound:
-            if HNMR_pattern_2b.search(val):
-                J_coupling1.append(HNMR_pattern_2ba.search(val).group())
-                H_multiplicity1.append(HNMR_pattern_2bb.search(val).group())
-            elif HNMR_pattern_2a.search(val):
-                H_multiplicity1.append(HNMR_pattern_2bb.search(val).group())
-                J_coupling1.append("")
-            elif "" == val:
-                J_coupling1.append(val)
-                H_multiplicity1.append(val)
-        J_coupling.append(J_coupling1)
-        H_multiplicity.append(H_multiplicity1)
+    J_coupling = []
+    C_type = []
+
+    for idc, col in enumerate(columns):
+        if idc in ignore_cols:
+            continue
+        # Get all the chemical shifts first
+        shifts = []
+        for cell in col:
+            # regularize strings
+            cell = clean_cell_str(cell)
+            # split on whitespace and get real strings
+            cell_contents = [x for x in cell.split() if x]
+            shift = ""
+            if cell_contents:
+                shift = cell_contents.pop(0)
+                # find ranges
+                # TODO: expand for multiple types of dashes (using regex probably)
+                if "-" in shift:
+                    shift = str_list_average(shift.split("-"))
+                try:
+                    shift = float(shift)
+                except ValueError:
+                    pass
+            shifts.append(shift)
+
+        avg = str_list_average(shifts)
+
+        ctypes = []
+        mults = []
+        coups = []
+        c_nmr = False
+        h_nmr = False
+        if 14.0 <= avg <= 250.0:
+            c_nmr = True
+            # print("This is a C NMR column")
+            for idx, cell in enumerate(col):
+                cell = clean_cell_str(cell.replace(str(shifts[idx]), ""))
+                ctype = ctype_pattern.findall(cell)
+                if ctype:
+                    ctypes.append(ctype[0])
+                else:
+                    ctypes.append("")
+
+        elif 0.0 <= avg <= 13.5:
+            h_nmr = True
+            # print("This is a H NMR column")
+            for idx, cell in enumerate(col):
+                cell_contents = [x for x in clean_cell_str(cell).split() if x]
+                if cell_contents:
+                    # remove shift from shift
+                    cell_contents.pop(0)
+                    cell = " ".join(cell_contents)
+                    # get multiplicity
+                    mults.append("".join(multi_regex.findall(cell)))
+                    # get j-couplings
+                    coups.append(", ".join(coup_pattern.findall(cell)))
+                else:
+                    mults.append("")
+                    coups.append("")
+
+        else:
+            print("WARNING - cannot handle this column")
+
+        if c_nmr:
+            Carbon_spec.append(shifts)
+            if not all_blank(ctypes):
+                C_type.append(ctypes)
+        if h_nmr:
+            H_spec.append(shifts)
+            if not all_blank(mults):
+                H_multiplicity.append(mults)
+            if not all_blank(coups):
+                J_coupling.append(coups)
+
     return H_spec, Carbon_spec, H_multiplicity, J_coupling, C_type
 
 

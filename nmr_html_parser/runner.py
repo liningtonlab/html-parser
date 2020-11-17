@@ -17,15 +17,20 @@ def parse(path, filepath):
     # Used stored results from previous functions calls to run
     compound_num = souping.compound_number(comps, headers)
     columns = souping.get_columns(rows, headers)
-    atom_index = souping.get_atom_index(columns, headers)
-    hspec, cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(columns)
-    float_hspec = souping.column2dlist_string_to_float(hspec)
-    float_cspec = souping.column2dlist_string_to_float(cspec)
-    residues = souping.get_residues(columns, headers)
+    atom_index, atom_col_index = souping.get_atom_index(columns, headers)
+    residues, residue_col_index = souping.get_residues(columns, headers)
+    ignore_cols = [atom_col_index]
+    if residue_col_index is not None:
+        ignore_cols.append(residue_col_index)
+    float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
+        columns, ignore_cols
+    )
+    # float_hspec = souping.column2dlist_string_to_float(hspec)
+    # float_cspec = souping.column2dlist_string_to_float(cspec)
 
-    if not float_cspec or not float_hspec:
-        columns = souping.column2dlist_string_to_float(columns)
-        float_cspec, float_hspec = souping.get_float_avg(columns)
+    # if not float_cspec or not float_hspec:
+    #     columns = souping.column2dlist_string_to_float(columns)
+    #     float_cspec, float_hspec = souping.get_float_avg(columns)
 
     # if float_cspec and float_hspec:
     souping.tableto_csv(

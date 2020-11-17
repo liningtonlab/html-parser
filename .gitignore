@@ -1,3 +1,4 @@
+html_parse_output.csv
 test_outputs/
 .idea/
 .pytest_cache/
