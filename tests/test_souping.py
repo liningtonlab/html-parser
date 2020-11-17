@@ -27,14 +27,14 @@ FILES = sorted(
         "test_error_characters_noai_2",
         "test_mult_ai_1",
         "test_mult_ai_2",
-        "test_multi_aiwres_2",
+        "test_mult_aiwres",
+        "test_mult_aiwres_2",
         "test_multi_data_dash_2",
         "test_multi_data_semi_1",
         "test_oneline",
         "test_other_mult_1",
         "test_residue_4_2DNMR",
         "test_residue_3",
-        "test_residue_2",
         "test_residue_1",
         "test_rowspan2_3",
         "test_rowspan2_2",
@@ -54,8 +54,8 @@ FILES = sorted(
         "test_CNMR_no_headers",
         "test_CNMR_number_headers",
         "test_CNMR_ONLY",
-        "test_HNMR_no_headers",
-        "test_HNMR_ONLY",
+        "test_multi_h_semi",
+        "test_multi_h_space",
     ]
 )
 

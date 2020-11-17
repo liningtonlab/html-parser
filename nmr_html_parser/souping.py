@@ -17,7 +17,7 @@ def inputs(filepath):
         # minifies html
         f = "".join([x.strip() for x in f.read().split("\n")])
         # TODO: Ensure this is working properly to clear junk; check other parts that used I^ in search b/c now δ
-        f = str(f).replace("&nbsp;", " ")
+        f = str(f).replace("&nbsp;", " ").replace("&nbsp"," ")
         if os.name == "nt":
             f = f.encode("cp1252")  # I don't understand, but this is required.
         # (Also must go from webpage html source code into new html file created in python)
@@ -247,7 +247,7 @@ def column_id_cleaner_list(columns, ignore_cols):
     # TODO: Add other possible multiplicity regex patterns
     # 1. Other less common H splitting pattern
 
-    multi_regex = re.compile(r"(dd|tt|td|sept|s|d|t|q|h|br\s?s|br\s?d|m)")
+    multi_regex = re.compile(r"(dd|tt|td|sept|s|d|t|q|h|br\s?s|br\s?q|br\s?t|br\s?d|m)")
     ctype_pattern = re.compile(r"CH3|CH2|CH|q?C|NH2|NH|N")
     coup_pattern = re.compile(r"[\d.]+")
 
