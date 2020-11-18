@@ -250,7 +250,8 @@ def clean_cell_str(cell):
         cell.replace("..", ".")
         .replace(",", " ")
         .replace("(", "")
-        .replace(")", "").replace(";", "")
+        .replace(")", "")
+        .replace(";", "")
         .strip()
     )
 
@@ -425,9 +426,9 @@ def fix_multidata(columns, ignore_cols):
             val_count = len(MULTI_REGEX.findall(cell))
             if val_count > rows_data_count[row_idx]:
                 rows_data_count[row_idx] = val_count
-
     # Step 2: adds rows as required
-    for row_idx, count in rows_data_count.items():
+    for row_idx in sorted(rows_data_count.keys(), reverse=True):
+        count = rows_data_count[row_idx]
         if count > 1:
             # add count - 1 rows and
             for col in columns:
@@ -439,20 +440,19 @@ def fix_multidata(columns, ignore_cols):
             for col in columns:
                 cell = clean_cell_str(col[row_idx])
                 cell_contents = [x for x in cell.split() if x]
-                match = MULTI_REGEX.findall(' '.join(cell_contents))
-                if len(match)>1:
+                match = MULTI_REGEX.findall(" ".join(cell_contents))
+                if len(match) > 1:
                     # Get index for second match multiplicity.
 
-                    index = cell_contents.index([i for i in cell_contents if MULTI_REGEX.findall(i)][1])
+                    index = cell_contents.index(
+                        [i for i in cell_contents if MULTI_REGEX.findall(i)][1]
+                    )
 
-                    data = cell_contents[index-2:]
+                    data = cell_contents[index - 2 :]
                     print(index)
                     print(cell_contents)
-                    print(' '.join(cell_contents))
+                    print(" ".join(cell_contents))
                     print(data)
-
-
-
 
             # Use MULTI_REGEX to find second multiplicity
             # Take multiplicity match, previous item in cell_contents and any couplings after multiplicity
