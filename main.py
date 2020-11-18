@@ -33,6 +33,8 @@ def main():
     ignore_cols = [atom_col_index]
     if residue_col_index is not None:
         ignore_cols.append(residue_col_index)
+
+    souping.fix_multidata(columns, ignore_cols)
     float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
         columns, ignore_cols
     )

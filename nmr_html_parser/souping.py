@@ -8,6 +8,9 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 import re
 import csv
+from collections import defaultdict
+
+MULTI_REGEX = re.compile(r"(?:(?:sept|s|d|t|q|h|br\s?s|br\s?d|br\s?t|br\s?q|m))+")
 
 
 def inputs(filepath):
@@ -247,7 +250,7 @@ def clean_cell_str(cell):
         cell.replace("..", ".")
         .replace(",", " ")
         .replace("(", "")
-        .replace(")", "").replace("ax","").replace("eq","")  # replace α/β, also with () or : beginning  for all
+        .replace(")", "")
         .strip()
     )
 
@@ -262,7 +265,6 @@ def column_id_cleaner_list(columns, ignore_cols):
     # TODO: Add other possible multiplicity regex patterns
     # 1. Other less common H splitting pattern
 
-    multi_regex = re.compile(r"(?:(?:sept|s|d|t|q|h|br\s?s|br\s?d|br\s?t|br\s?q|m))+")
     ctype_pattern = re.compile(r"CH3|CH2|CH|q?C|NH2|NH|N")
     coup_pattern = re.compile(r"\d+(?:\.\d+)?")
 
@@ -283,17 +285,15 @@ def column_id_cleaner_list(columns, ignore_cols):
             cell = clean_cell_str(cell)
             # split on whitespace and get real strings
             cell_contents = [x for x in cell.split() if x]
-            if len(multi_regex.findall(cell)) > 1:
+            if len(MULTI_REGEX.findall(cell)) > 1:
                 print(cell_contents)
 
-# Use multi_regex to find second multiplicity
-    # Take multiplicity match, previous item in cell_contents and any couplings after multiplicity
-        # Put into next col cell position, while  pushing the rest down(col[idx+1])
+            # Use MULTI_REGEX to find second multiplicity
+            # Take multiplicity match, previous item in cell_contents and any couplings after multiplicity
+            # Put into next col cell position, while  pushing the rest down(col[idx+1])
 
-        # For cells that don't contain multi-cell data in the same row(columns[i][8]) with multi-cell data match
+            # For cells that don't contain multi-cell data in the same row(columns[i][8]) with multi-cell data match
             # Blank needs to be inserted into next col cell(columns[i+1][8]), pushing the rest of the col cells down one
-
-
 
             shift = ""
             if cell_contents:
@@ -329,20 +329,18 @@ def column_id_cleaner_list(columns, ignore_cols):
         elif 0.0 <= avg <= 13.5:
             h_nmr = True
             # print("This is a H NMR column")
-            for idx, cell in enumerate(col): #for idr, r in enumerate(rows):
+            for idx, cell in enumerate(col):  # for idr, r in enumerate(rows):
                 cell_contents = [x for x in clean_cell_str(cell).split() if x]
 
-                    # Add the second value inserted into next row pushing the rest down(column[idx+1])
+                # Add the second value inserted into next row pushing the rest down(column[idx+1])
 
-
-
-                                # Also for all blank needs to be inserted for the rest of the next row
+                # Also for all blank needs to be inserted for the rest of the next row
                 if cell_contents:
                     # remove shift from shift
                     cell_contents.pop(0)
                     cell = " ".join(cell_contents)
                     # get multiplicity
-                    mults.append("".join(multi_regex.findall(cell)))
+                    mults.append("".join(MULTI_REGEX.findall(cell)))
                     # get j-couplings
                     coups.append(", ".join(coup_pattern.findall(cell)))
                 else:
@@ -426,4 +424,33 @@ def get_float_avg(dict2):
             elif 0.0 <= average <= 13.5:
                 hspec.append(list(item))
     return cspec, hspec
+
+
+def fix_multidata(columns, ignore_cols):
+    """Want to iterate over rows in columns and add rows when mulitdata present in at least one cell in a row.
+    May require adding more than one cell?
+    """
+    # Step 1: detect when there are multidata cells
+    rows_data_count = defaultdict(int)
+    for idc, col in enumerate(columns):
+        # skips aindex and residues
+        if idc in ignore_cols:
+            continue
+        for row_idx, cell in enumerate(col):
+            val_count = len(MULTI_REGEX.findall(cell))
+            if val_count > rows_data_count[row_idx]:
+                rows_data_count[row_idx] = val_count
+
+    # Step 2: adds rows as required
+    for row_idx, count in rows_data_count.items():
+        if count > 1:
+            # add count - 1 rows and
+            for col in columns:
+                for i in range(1, count):
+                    col.insert(row_idx + i, "")
+
+            # TODO: split data in to new rows created above
+            # split data into them
+            for col in columns:
+                cell = col[row_idx]
 
