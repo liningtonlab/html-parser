@@ -247,7 +247,7 @@ def clean_cell_str(cell):
         cell.replace("..", ".")
         .replace(",", " ")
         .replace("(", "")
-        .replace(")", "")
+        .replace(")", "").replace("ax","").replace("eq","")  # replace α/β, also with () or : beginning  for all
         .strip()
     )
 
