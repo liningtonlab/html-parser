@@ -283,6 +283,18 @@ def column_id_cleaner_list(columns, ignore_cols):
             cell = clean_cell_str(cell)
             # split on whitespace and get real strings
             cell_contents = [x for x in cell.split() if x]
+            if len(multi_regex.findall(cell)) > 1:
+                print(cell_contents)
+
+# Use multi_regex to find second multiplicity
+    # Take multiplicity match, previous item in cell_contents and any couplings after multiplicity
+        # Put into next col cell position, while  pushing the rest down(col[idx+1])
+
+        # For cells that don't contain multi-cell data in the same row(columns[i][8]) with multi-cell data match
+            # Blank needs to be inserted into next col cell(columns[i+1][8]), pushing the rest of the col cells down one
+
+
+
             shift = ""
             if cell_contents:
                 shift = cell_contents.pop(0)
@@ -317,8 +329,14 @@ def column_id_cleaner_list(columns, ignore_cols):
         elif 0.0 <= avg <= 13.5:
             h_nmr = True
             # print("This is a H NMR column")
-            for idx, cell in enumerate(col):
+            for idx, cell in enumerate(col): #for idr, r in enumerate(rows):
                 cell_contents = [x for x in clean_cell_str(cell).split() if x]
+
+                    # Add the second value inserted into next row pushing the rest down(column[idx+1])
+
+
+
+                                # Also for all blank needs to be inserted for the rest of the next row
                 if cell_contents:
                     # remove shift from shift
                     cell_contents.pop(0)
