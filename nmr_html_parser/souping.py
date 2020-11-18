@@ -250,7 +250,7 @@ def clean_cell_str(cell):
         cell.replace("..", ".")
         .replace(",", " ")
         .replace("(", "")
-        .replace(")", "")
+        .replace(")", "").replace(";", "")
         .strip()
     )
 
@@ -274,7 +274,6 @@ def column_id_cleaner_list(columns, ignore_cols):
     H_multiplicity = []
     J_coupling = []
     C_type = []
-
     for idc, col in enumerate(columns):
         if idc in ignore_cols:
             continue
@@ -285,16 +284,6 @@ def column_id_cleaner_list(columns, ignore_cols):
             cell = clean_cell_str(cell)
             # split on whitespace and get real strings
             cell_contents = [x for x in cell.split() if x]
-            if len(MULTI_REGEX.findall(cell)) > 1:
-                print(cell_contents)
-
-            # Use MULTI_REGEX to find second multiplicity
-            # Take multiplicity match, previous item in cell_contents and any couplings after multiplicity
-            # Put into next col cell position, while  pushing the rest down(col[idx+1])
-
-            # For cells that don't contain multi-cell data in the same row(columns[i][8]) with multi-cell data match
-            # Blank needs to be inserted into next col cell(columns[i+1][8]), pushing the rest of the col cells down one
-
             shift = ""
             if cell_contents:
                 shift = cell_contents.pop(0)
@@ -331,10 +320,6 @@ def column_id_cleaner_list(columns, ignore_cols):
             # print("This is a H NMR column")
             for idx, cell in enumerate(col):  # for idr, r in enumerate(rows):
                 cell_contents = [x for x in clean_cell_str(cell).split() if x]
-
-                # Add the second value inserted into next row pushing the rest down(column[idx+1])
-
-                # Also for all blank needs to be inserted for the rest of the next row
                 if cell_contents:
                     # remove shift from shift
                     cell_contents.pop(0)
@@ -452,5 +437,26 @@ def fix_multidata(columns, ignore_cols):
             # TODO: split data in to new rows created above
             # split data into them
             for col in columns:
-                cell = col[row_idx]
+                cell = clean_cell_str(col[row_idx])
+                cell_contents = [x for x in cell.split() if x]
+                match = MULTI_REGEX.findall(' '.join(cell_contents))
+                if len(match)>1:
+                    # Get index for second match multiplicity.
 
+                    index = cell_contents.index([i for i in cell_contents if MULTI_REGEX.findall(i)][1])
+
+                    data = cell_contents[index-2:]
+                    print(index)
+                    print(cell_contents)
+                    print(' '.join(cell_contents))
+                    print(data)
+
+
+
+
+            # Use MULTI_REGEX to find second multiplicity
+            # Take multiplicity match, previous item in cell_contents and any couplings after multiplicity
+            # Put into next col cell position, while  pushing the rest down(col[idx+1])
+
+            # For cells that don't contain multi-cell data in the same row(columns[i][8]) with multi-cell data match
+            # Blank needs to be inserted into next col cell(columns[i+1][8]), pushing the rest of the col cells down one
