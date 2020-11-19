@@ -39,6 +39,11 @@ def main():
     float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
         columns, ignore_cols
     )
+    # print columns as csv like grid
+    # for i in range(len(columns[0])):
+    #     for c in columns:
+    #         print(c[i], end="\t")
+    #     print("")
 
     souping.tableto_csv(
         *souping.data_to_grid(

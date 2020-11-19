@@ -412,6 +412,14 @@ def get_float_avg(dict2):
     return cspec, hspec
 
 
+def is_float(s: str) -> bool:
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
 def fix_multidata(columns, ignore_cols):
     """Want to iterate over rows in columns and add rows when mulitdata present in at least one cell in a row.
     May require adding more than one cell?
@@ -430,7 +438,7 @@ def fix_multidata(columns, ignore_cols):
     for row_idx in sorted(rows_data_count.keys(), reverse=True):
         count = rows_data_count[row_idx]
         if count > 1:
-            # add count - 1 rows and
+            # add count - 1 blank   rows
             for col in columns:
                 for i in range(1, count):
                     col.insert(row_idx + i, "")
@@ -440,23 +448,30 @@ def fix_multidata(columns, ignore_cols):
             for col in columns:
                 cell = clean_cell_str(col[row_idx])
                 cell_contents = [x for x in cell.split() if x]
-                match = MULTI_REGEX.findall(" ".join(cell_contents))
-                if len(match) > 1:
-                    # Get index for second match multiplicity.
+                if len(MULTI_REGEX.findall(" ".join(cell_contents))) > 1:
+                    # print(" ".join(cell_contents))
+                    data = []
+                    for idc, _ in enumerate(cell_contents):
+                        sub_cell = " ".join(cell_contents[idc:])
+                        # this regex capture the following patterns -> groups
+                        # '1.74 td' -> ('1.74 td', None)
+                        # '1.74 td 1.67 m' -> ('1.74 td 1.67', ' 1.67')
+                        # '1.74 td 13.8 3.5 1.67 m' -> ('1.74 td 13.8 3.5 1.67', ' 1.67')
+                        # That is, it will only return a second group if there is a float following
+                        # also, it will only capture the last trailing float, so it can be
+                        # string subtracted from the right side of the string if there are more than 1 trailing floats
+                        sub_match = re.search(
+                            r"(^\d+(?:\.\d+) (?:(?:sept|s|d|t|q|h|br\s?s|br\s?d|br\s?t|br\s?q|m))+( ?\d+(?:\.\d+))*)",
+                            sub_cell,
+                        )
+                        if sub_match:
+                            g1, g2 = sub_match.groups()
+                            if (
+                                g2 and len(MULTI_REGEX.findall(sub_cell)) > 1
+                            ):  # and there is a trailing multiplicty
+                                # right hand string subtraction
+                                g1 = "".join(g1.rsplit(g2, 1))
+                            data.append(g1)
+                    for idd, d in enumerate(data):
+                        col[row_idx + idd] = d
 
-                    index = cell_contents.index(
-                        [i for i in cell_contents if MULTI_REGEX.findall(i)][1]
-                    )
-
-                    data = cell_contents[index - 2 :]
-                    print(index)
-                    print(cell_contents)
-                    print(" ".join(cell_contents))
-                    print(data)
-
-            # Use MULTI_REGEX to find second multiplicity
-            # Take multiplicity match, previous item in cell_contents and any couplings after multiplicity
-            # Put into next col cell position, while  pushing the rest down(col[idx+1])
-
-            # For cells that don't contain multi-cell data in the same row(columns[i][8]) with multi-cell data match
-            # Blank needs to be inserted into next col cell(columns[i+1][8]), pushing the rest of the col cells down one
