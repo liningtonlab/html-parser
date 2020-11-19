@@ -153,7 +153,7 @@ def atom_index_like(col):
             count += 1
     return count > 4
 
-
+# TODO: Search headers for 2d data, if so remove
 def get_atom_index(columns, headers):
     if re.search(r"(^position$|^pos\.?$|^number$|no\.?$)", headers[0]):
         return columns[0], 0
@@ -290,17 +290,10 @@ def column_id_cleaner_list(columns, ignore_cols):
             cell_contents = [x for x in cell.split() if x]
             shift = ""
             if cell_contents:
-                # if a/b, ax/eq or anything else: TODO: Make search until first re.search(coup_pattern, cell_contents[i])
-                    # cell_contents.pop(0) grabs the junk, not the shift after it
-                if re.search(coup_pattern, cell_contents[0]):
-                    shift = cell_contents.pop(0)
-                elif re.search(coup_pattern, cell_contents[1]):
-                    shift = cell_contents.pop(1)
-
-                    # TODO
-                   # for idn, item in enumerate(cell_contents):
-                      #  if re.search(coup_pattern, cell_contents[idn]):
-                         #   shift = cell_contents.pop(idn)
+                for idn, item in enumerate(cell_contents):
+                    if re.search(coup_pattern, cell_contents[idn]):
+                        shift = cell_contents.pop(idn)
+                        break
 
 
                 # find ranges
@@ -336,10 +329,10 @@ def column_id_cleaner_list(columns, ignore_cols):
             for idx, cell in enumerate(col):  # for idr, r in enumerate(rows):
                 cell_contents = [x for x in clean_cell_str(cell).split() if x]
                 if cell_contents:
-                    if re.search(coup_pattern, cell_contents[0]):
-                        shift = cell_contents.pop(0)
-                    elif re.search(coup_pattern, cell_contents[1]):
-                        shift = cell_contents.pop(1)
+                    for idn, item in enumerate(cell_contents):
+                        if re.search(coup_pattern, cell_contents[idn]):
+                            cell_contents.pop(idn)
+                            break
 
                     cell = " ".join(cell_contents)
                     # get multiplicity
