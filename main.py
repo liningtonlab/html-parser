@@ -27,6 +27,7 @@ def main():
 
     # Used stored results from previous functions calls to run
     compound_num = souping.compound_number(comps, headers)
+    print(compound_num)
     columns = souping.get_columns(rows, headers)
     atom_index, atom_col_index = souping.get_atom_index(columns, headers)
     residues, residue_col_index = souping.get_residues(columns, headers)

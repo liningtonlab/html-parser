@@ -102,8 +102,7 @@ def soup_id_rows(soup):
     return clean_rows
 
 
-# TODO: fixed above TODO by swapping if and first elif statment; must be better solution
-# TODO: this breaks for test_error_characters_noai_1
+# TODO: Had to add case for if comp_len != header_len
 def compound_number(compounds, headers):
     """Takes primary headers and compound id headers and returns the number of compounds.
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC"""
@@ -116,7 +115,10 @@ def compound_number(compounds, headers):
             elif comp_len == header_len:
                 return header_len
             elif comp_len != header_len:
-                return max(comp_len, header_len)
+                if header_len/2 == comp_len:
+                    return comp_len
+                else:
+                    return max(comp_len, header_len)
     if any("δC" or "δH" in s for s in headers):
         search = ["δH", "δC"]
         result = {k: 0 for k in search}
@@ -288,9 +290,19 @@ def column_id_cleaner_list(columns, ignore_cols):
             cell_contents = [x for x in cell.split() if x]
             shift = ""
             if cell_contents:
+                # if a/b, ax/eq or anything else: TODO: Make search until first re.search(coup_pattern, cell_contents[i])
+                    # cell_contents.pop(0) grabs the junk, not the shift after it
+                if re.search(coup_pattern, cell_contents[0]):
+                    shift = cell_contents.pop(0)
+                elif re.search(coup_pattern, cell_contents[1]):
+                    shift = cell_contents.pop(1)
 
-                # TODO: IF ax/eq or a/b or anything else leading before shift will, mess up parsing
-                shift = cell_contents.pop(0)
+                    # TODO
+                   # for idn, item in enumerate(cell_contents):
+                      #  if re.search(coup_pattern, cell_contents[idn]):
+                         #   shift = cell_contents.pop(idn)
+
+
                 # find ranges
                 if "-" in shift:
                     shift = str_list_average(shift.split("-"))
@@ -324,8 +336,11 @@ def column_id_cleaner_list(columns, ignore_cols):
             for idx, cell in enumerate(col):  # for idr, r in enumerate(rows):
                 cell_contents = [x for x in clean_cell_str(cell).split() if x]
                 if cell_contents:
-                    # remove shift from shift
-                    cell_contents.pop(0)
+                    if re.search(coup_pattern, cell_contents[0]):
+                        shift = cell_contents.pop(0)
+                    elif re.search(coup_pattern, cell_contents[1]):
+                        shift = cell_contents.pop(1)
+
                     cell = " ".join(cell_contents)
                     # get multiplicity
                     mults.append("".join(MULTI_REGEX.findall(cell)))

@@ -19,6 +19,7 @@ FILES_RESULTS = [("test_1", [['2', '', '3a', '4', '4a', '5', '7a', '8', '8a', '9
 # fmt: on
 FILES = sorted(
     [
+        "test_error_characters_ab_2",
         "test_error_characters_ab_3",
         "test_error_characters_axeq_3",
         "test_error_characters_c_2",
