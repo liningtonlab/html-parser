@@ -243,6 +243,7 @@ def str_list_average(input_list):
 
 
 def clean_cell_str(cell):
+    # multiple types of dashes
     # cleanup dashes
     cell = re.sub(r"-|‒|–|—|―|⁓", "-", cell)
     # regularize and common typos
@@ -287,9 +288,10 @@ def column_id_cleaner_list(columns, ignore_cols):
             cell_contents = [x for x in cell.split() if x]
             shift = ""
             if cell_contents:
+
+                # TODO: IF ax/eq or a/b or anything else leading before shift will, mess up parsing
                 shift = cell_contents.pop(0)
                 # find ranges
-                # TODO: expand for multiple types of dashes (using regex probably)
                 if "-" in shift:
                     shift = str_list_average(shift.split("-"))
                 try:
@@ -442,8 +444,6 @@ def fix_multidata(columns, ignore_cols):
             for col in columns:
                 for i in range(1, count):
                     col.insert(row_idx + i, "")
-
-            # TODO: split data in to new rows created above
             # split data into them
             for col in columns:
                 cell = clean_cell_str(col[row_idx])
