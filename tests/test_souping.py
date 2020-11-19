@@ -26,7 +26,6 @@ FILES = sorted(
         "test_error_characters_noai_1",
         "test_error_characters_noai_2",
         "test_mult_ai_1",
-        "test_mult_ai_2",
         "test_mult_aiwres",
         "test_mult_aiwres_2",
         "test_multi_data_dash_2",
