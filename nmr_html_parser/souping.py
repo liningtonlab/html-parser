@@ -159,32 +159,28 @@ def atom_index_like(col):
 def get_atom_index(columns, headers):
     atom_index_list = []
     atom_ignore_col_list = []
-    residue_ignore_col_list = []
-    residue_index_list = []
     for idx,item in enumerate(headers):
         if re.search(r"(^position$|^pos\.?$|^number$|no\.?$)", headers[idx]):
             atom_index_list.append(columns[idx])
             atom_ignore_col_list.append(idx)
-
-        elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[idx]):
-            residue_index_list.append(columns[idx])
-            residue_ignore_col_list.append(idx)
-
-    return  atom_index_list, residue_index_list, atom_ignore_col_list, residue_ignore_col_list
+    #if len(atom_index_list)
+    return  atom_index_list, atom_ignore_col_list
     #elif atom_index_like(columns[0]):
       #  print(atom_index_like(columns[0]))
         # print("found unlabeled atom index")
        # return columns[0], 0
 
-
 def get_residues(columns, headers):
-    if re.search(
-        r"(^residue$|^amino\s?acid$|^unit$)", headers[0]
-    ):  # Modify as example cases builds up
-        residues = columns[0]
-        return residues, 0
-    else:
-        return None, None
+    residue_ignore_col_list = []
+    residue_index_list = []
+    for idx, item in enumerate(headers):
+        if re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[idx]):
+            residue_index_list.append(columns[idx])
+            residue_ignore_col_list.append(idx)
+
+    return residue_index_list, residue_ignore_col_list
+
+#def is_multi_index()
 
 def is_2D_NMR(headers):
     NMR2D_col_index = []
@@ -374,9 +370,13 @@ def column_id_cleaner_list(columns, ignore_cols):
 
     return H_spec, Carbon_spec, H_multiplicity, J_coupling, C_type
 
-
+# TODO:
 # def data_to_grid(numcomps, resi,  cspec, ctype, hspec, hmult, hcoup):
-def data_to_grid(numcomps, aindex, **kwargs):
+
+def data_to_grid(numcomps, aindex, **kwargs): # input should include the lists then iterate over them
+
+    # Put in first atom_index,resi if included
+
     if kwargs.get("resi"):
         headers = ["residues", "atom_index"]
         data = [kwargs.get("resi"), aindex]
@@ -397,14 +397,19 @@ def data_to_grid(numcomps, aindex, **kwargs):
         for k, v in possible_variables.items()
         if k in kwargs.keys() and bool(kwargs.get(k))
     }
+
     hstring = ",".join(found_variables.values())
     for i in range(1, numcomps + 1):
         hl = hstring.format(i).split(",")
         headers.extend(hl)
+    # add conditon for if last column index + 1 = next value in list of column for atom/resi index
+            # if met, add residues/atom index headers
 
     for j in range(numcomps):
         # data.extend([cspec[j], ctype[j], hspec[j], hmult[j], hcoup[j]])
         data.extend([kwargs.get(k)[j] for k in found_variables.keys()])
+        # add conditon for if last column index + 1 = next value in list of column for atom/resi index
+             # if met, add residues/atom index columns into data
     return headers, data
 
 
