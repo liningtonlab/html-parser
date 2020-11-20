@@ -19,7 +19,8 @@ def parse(path, filepath):
     columns = souping.get_columns(rows, headers)
     atom_index, atom_col_index = souping.get_atom_index(columns, headers)
     residues, residue_col_index = souping.get_residues(columns, headers)
-    ignore_cols = [atom_col_index]
+    two_d_NMR_col_index = souping.is_2D_NMR(columns, headers)
+    ignore_cols = [atom_col_index] + two_d_NMR_col_index
     if residue_col_index is not None:
         ignore_cols.append(residue_col_index)
 

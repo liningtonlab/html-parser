@@ -148,8 +148,11 @@ def isListEmpty(inList):
 
 def atom_index_like(col):
     count = 0
+    list_1 = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    list_1a = ["1a", "2a", "3a", "4a", "5a", "6a", "7a", "8a", "9a"]
+    list_1b = ["1b", "2b", "3b", "4b", "5b", "6b", "7b", "8b", "9b"]
     for c in col:
-        if c in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+        if c in list_1 or list_1a or list_1b: #or list_1a or list_1b:
             count += 1
     return count > 4
 
@@ -160,6 +163,7 @@ def get_atom_index(columns, headers):
     elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]):
         return columns[1], 1
     elif atom_index_like(columns[0]):
+        print(atom_index_like(columns[0]))
         # print("found unlabeled atom index")
         return columns[0], 0
 
@@ -173,6 +177,12 @@ def get_residues(columns, headers):
     else:
         return None, None
 
+def is_2D_NMR(columns,headers):
+    NMR2D_col_index = []
+    for idx,i in enumerate(headers):
+        if re.search(r"(HMBC)|(HSQC)|(([E]?CO|TOC|NOE|ROE)SY)", headers[idx]):
+            NMR2D_col_index.append(idx)
+    return NMR2D_col_index
 
 def get_atom_index_column(columns):
     """Enumerate the list of columns so that positional index and atom_index can be returned"""

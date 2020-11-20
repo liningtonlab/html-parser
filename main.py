@@ -14,7 +14,7 @@ from nmr_html_parser import souping, runner
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("tests/inputs/test_error_characters_axeq_3.html")
+    inp_file = Path("tests/inputs/test_2DNMR.html")
 
     # test full thing
     # runner.parse(inp_file, "html_parse_output.csv")
@@ -27,13 +27,14 @@ def main():
 
     # Used stored results from previous functions calls to run
     compound_num = souping.compound_number(comps, headers)
-    print(compound_num)
     columns = souping.get_columns(rows, headers)
     atom_index, atom_col_index = souping.get_atom_index(columns, headers)
     residues, residue_col_index = souping.get_residues(columns, headers)
-    ignore_cols = [atom_col_index]
+    two_d_NMR_col_index = souping.is_2D_NMR(columns, headers)
+    ignore_cols = [atom_col_index] + two_d_NMR_col_index
     if residue_col_index is not None:
         ignore_cols.append(residue_col_index)
+
 
     souping.fix_multidata(columns, ignore_cols)
     float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
