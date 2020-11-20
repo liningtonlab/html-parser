@@ -14,7 +14,7 @@ from nmr_html_parser import souping, runner
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("tests/inputs/test_2DNMR.html")
+    inp_file = Path("tests/inputs/test_mult_aiwres.html")
 
     # test full thing
     # runner.parse(inp_file, "html_parse_output.csv")
@@ -27,13 +27,17 @@ def main():
 
     # Used stored results from previous functions calls to run
     compound_num = souping.compound_number(comps, headers)
+    print(compound_num)
     columns = souping.get_columns(rows, headers)
-    atom_index, atom_col_index = souping.get_atom_index(columns, headers)
-    residues, residue_col_index = souping.get_residues(columns, headers)
-    two_d_NMR_col_index = souping.is_2D_NMR(columns, headers)
-    ignore_cols = [atom_col_index] + two_d_NMR_col_index
-    if residue_col_index is not None:
-        ignore_cols.append(residue_col_index)
+
+    atom_index_list, residue_index_list, atom_ignore_col_list, residue_ignore_col_list = souping.get_atom_index(columns, headers)
+    print(atom_index_list, residue_index_list, atom_ignore_col_list, residue_ignore_col_list)
+    #residues, residue_col_index = souping.get_residues(columns, headers)
+
+    two_d_NMR_col_index = souping.is_2D_NMR(headers)
+    ignore_cols = atom_ignore_col_list+residue_ignore_col_list+two_d_NMR_col_index
+   # if residue_col_index is not None:
+      #  ignore_cols.append(residue_col_index)
 
 
     souping.fix_multidata(columns, ignore_cols)
@@ -46,19 +50,21 @@ def main():
     #         print(c[i], end="\t")
     #     print("")
 
-    souping.tableto_csv(
-        *souping.data_to_grid(
-            compound_num,
-            atom_index,
-            resi=residues,
-            cspec=float_cspec,
-            ctype=ctype,
-            hspec=float_hspec,
-            hmult=hmult,
-            hcoup=jcoup,
-        ),
-        filename="html_parse_output.csv"
-    )
+    for atom_index,residues in atom_index_list,residue_index_list:
+
+        souping.tableto_csv(
+            *souping.data_to_grid(
+                compound_num,
+                atom_index,
+                resi=residues,
+                cspec=float_cspec,
+                ctype=ctype,
+                hspec=float_hspec,
+                hmult=hmult,
+                hcoup=jcoup,
+            ),
+            filename="html_parse_output.csv"
+        )
 
     # print(headers)
     # print(comps)

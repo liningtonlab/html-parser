@@ -102,7 +102,6 @@ def soup_id_rows(soup):
     return clean_rows
 
 
-# TODO: Had to add case for if comp_len != header_len
 def compound_number(compounds, headers):
     """Takes primary headers and compound id headers and returns the number of compounds.
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC"""
@@ -156,16 +155,26 @@ def atom_index_like(col):
             count += 1
     return count > 4
 
-# TODO: Search headers for 2d data, if so remove
+# TODO
 def get_atom_index(columns, headers):
-    if re.search(r"(^position$|^pos\.?$|^number$|no\.?$)", headers[0]):
-        return columns[0], 0
-    elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]):
-        return columns[1], 1
-    elif atom_index_like(columns[0]):
-        print(atom_index_like(columns[0]))
+    atom_index_list = []
+    atom_ignore_col_list = []
+    residue_ignore_col_list = []
+    residue_index_list = []
+    for idx,item in enumerate(headers):
+        if re.search(r"(^position$|^pos\.?$|^number$|no\.?$)", headers[idx]):
+            atom_index_list.append(columns[idx])
+            atom_ignore_col_list.append(idx)
+
+        elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[idx]):
+            residue_index_list.append(columns[idx])
+            residue_ignore_col_list.append(idx)
+
+    return  atom_index_list, residue_index_list, atom_ignore_col_list, residue_ignore_col_list
+    #elif atom_index_like(columns[0]):
+      #  print(atom_index_like(columns[0]))
         # print("found unlabeled atom index")
-        return columns[0], 0
+       # return columns[0], 0
 
 
 def get_residues(columns, headers):
@@ -177,18 +186,12 @@ def get_residues(columns, headers):
     else:
         return None, None
 
-def is_2D_NMR(columns,headers):
+def is_2D_NMR(headers):
     NMR2D_col_index = []
     for idx,i in enumerate(headers):
         if re.search(r"(HMBC)|(HSQC)|(([E]?CO|TOC|NOE|ROE)SY)", headers[idx]):
             NMR2D_col_index.append(idx)
     return NMR2D_col_index
-
-def get_atom_index_column(columns):
-    """Enumerate the list of columns so that positional index and atom_index can be returned"""
-    return list(enumerate(columns))[0]
-    # atom_index should be first column so can take that list and go from there
-
 
 def table_detect(soup, d2list, float_d2list):
     """Takes soup object, 2dlist of column cells, 2dlist of cell floats. Uses regex/string arguments and calculates float averages to detect and return table type"""
@@ -299,6 +302,8 @@ def column_id_cleaner_list(columns, ignore_cols):
             # split on whitespace and get real strings
             cell_contents = [x for x in cell.split() if x]
             shift = ""
+
+
             if cell_contents:
                 for idn, item in enumerate(cell_contents):
                     if re.search(coup_pattern, cell_contents[idn]):
