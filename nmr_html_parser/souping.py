@@ -160,7 +160,7 @@ def atom_index_like(col):
 def get_atom_index(columns, headers):
     if re.search(r"(^position$|^pos\.?$|^number$|no\.?$)", headers[0]):
         return columns[0], 0
-    elif re.search(r"(^residue$|^amino\s?acid$|^unit$)", headers[0]):
+    elif re.search(r"(^residue$|^amino\s?acid$|^unit\ws?$)", headers[0]):
         return columns[1], 1
     elif atom_index_like(columns[0]):
         print(atom_index_like(columns[0]))
@@ -170,7 +170,7 @@ def get_atom_index(columns, headers):
 
 def get_residues(columns, headers):
     if re.search(
-        r"(^residue$|^amino\s?acid$|^unit$)", headers[0]
+        r"(^residue$|^amino\s?acid$|^unit\ws?$)", headers[0]
     ):  # Modify as example cases builds up
         residues = columns[0]
         return residues, 0
@@ -264,7 +264,7 @@ def clean_cell_str(cell):
         .replace(",", " ")
         .replace("(", "")
         .replace(")", "")
-        .replace(";", "")
+        .replace(";", "").replace("/", " ")
         .strip()
     )
 
