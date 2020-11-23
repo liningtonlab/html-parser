@@ -25,6 +25,7 @@ def inputs(filepath):
             f = f.encode("cp1252")  # I don't understand, but this is required.
         # (Also must go from webpage html source code into new html file created in python)
         soup = BeautifulSoup(f, "lxml")
+        [soup.a.decompose() for i in soup.find_all("a")]
     return soup
 
 
