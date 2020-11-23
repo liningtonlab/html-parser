@@ -107,6 +107,7 @@ def soup_id_rows(soup):
 def compound_number(compounds, headers):
     """Takes primary headers and compound id headers and returns the number of compounds.
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC"""
+
     comp_len = len(compounds)
     for i in headers:
         if re.compile(r"\d*[0-9]").search(i):
@@ -164,8 +165,11 @@ def get_atom_index(columns, headers):
     elif re.search(r"(^residue$|^amino\s?acid$|^unit(s)?$)", headers[0]):
         return columns[1], 1
     elif atom_index_like(columns[0]):
+        headers[0] = "position"
         print(atom_index_like(columns[0]))
+
         # print("found unlabeled atom index")
+        # TODO: add way to add position as atom_index, need to pass headers elif atom_index_like to other functions in order to change other headers
         return columns[0], 0
 
 

@@ -14,7 +14,7 @@ from nmr_html_parser import souping, runner
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("html_files/files/123.html")
+    inp_file = Path("tests/inputs/test_atag_3.html")
 
     # test full thing
     # runner.parse(inp_file, "html_parse_output.csv")
@@ -34,7 +34,6 @@ def main():
     ignore_cols = [atom_col_index] + two_d_NMR_col_index
     if residue_col_index is not None:
         ignore_cols.append(residue_col_index)
-
 
     souping.fix_multidata(columns, ignore_cols)
     float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
