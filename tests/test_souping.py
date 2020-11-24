@@ -75,6 +75,11 @@ FILES = sorted(
         "test_CNMR_ONLY",
         "test_multi_h_semi",
         "test_multi_h_space",
+        "test_ND_1",
+        "test_ND_2",
+        "test_ND_3",
+        "test_ND_4",
+        "test_ND_5",
     ]
 )
 
