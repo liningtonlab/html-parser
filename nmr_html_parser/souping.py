@@ -10,7 +10,9 @@ import re
 import csv
 from collections import defaultdict
 
-MULTI_REGEX = re.compile(r"(?:(?:sept|s|d|t|q|h|br\s?s|br\s?d|br\s?t|br\s?q|m))+")
+MULTI_REGEX = re.compile(r"(?:(?:sept|\bs|\bt+d*|\bd+t*d*|\btt*|\bt|\bd|q|h|br\s?s|br\s?d+|br\s?t|br\s?q|m))+")
+
+REGEX_V1 = re.compile(r"(?:(?:sept|s|d|t|q|h|br\s?s|br\s?d|br\s?t|br\s?q|m))+")
 
 
 def inputs(filepath):
@@ -284,7 +286,7 @@ def column_id_cleaner_list(columns, ignore_cols):
     # TODO: Add other possible multiplicity regex patterns
     # 1. Other less common H splitting pattern
 
-    ctype_pattern = re.compile(r"CH3|CH2|CH|q?C|NH2|NH|N")
+    ctype_pattern = re.compile(r"CH3|CH2|CH|q?C|NH2|NH|N[^D]|\bN$")
     coup_pattern = re.compile(r"\d+(?:\.\d+)?")
 
     # will be outputs

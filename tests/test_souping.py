@@ -91,7 +91,7 @@ def test_parse(fname):
     expected = load_expected(f"{fname}.csv")
     runner.parse(TESTDIR / "inputs" / f"{fname}.html", filepath)
     output = pd.read_csv(filepath)
-    # print(expected, output)
+    print(expected, output)
     assert_frame_equal(expected, output)
 
 
