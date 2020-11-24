@@ -14,7 +14,7 @@ from nmr_html_parser import souping, runner
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("tests/inputs/test_atag_3.html")
+    inp_file = Path("html_files/files/123.html")
 
     # test full thing
     # runner.parse(inp_file, "html_parse_output.csv")
@@ -27,6 +27,7 @@ def main():
 
     # Used stored results from previous functions calls to run
     compound_num = souping.compound_number(comps, headers)
+    print(compound_num)
     columns = souping.get_columns(rows, headers)
     atom_index, atom_col_index = souping.get_atom_index(columns, headers)
     residues, residue_col_index = souping.get_residues(columns, headers)
