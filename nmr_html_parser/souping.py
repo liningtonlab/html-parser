@@ -10,7 +10,7 @@ import re
 import csv
 from collections import defaultdict
 
-MULTI_REGEX = re.compile(r"(?:(?:sept|s\s?br|(?!\whown)(?=\s)?\bs|\bt+d*|\bd+t*d*|\btt*|\bt|\bd|q|\bh|br\s?s|br\s?d+|br\s?t|br\s?q|m))+")
+MULTI_REGEX = re.compile(r"(?:(?:hept|sept|s\s?br|(?!\whown)(?=\s)?\bs|\bt+d*|\bd+t*d*|\btt*|\bt|\bd|qd?|\bh|br\s?s|br\s?d+|br\s?t|br\s?q|m))+")
 
 REGEX_V1 = re.compile(r"(?:(?:sept|s|d|t|q|h|br\s?s|br\s?d|br\s?t|br\s?q|m))+")
 
