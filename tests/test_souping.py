@@ -99,6 +99,29 @@ FILES = sorted(
         "test_v1f_10",
         "test_v1f_11",
         "test_v1f_12",
+
+
+        "test_v1f_13",
+        "test_v1f_14",
+        "test_v1f_15",
+        "test_v1f_16",
+        "test_v1f_17",
+        "test_v1f_18",
+        "test_v1f_19",
+        "test_v1f_20",
+        "test_v1f_21",
+        "test_v1f_22",
+        "test_v1f_23",
+        "test_v1f_24",
+        "test_v1f_25",
+        "test_v1f_26",
+        "test_v1f_27",
+        "test_v1f_28",
+        "test_v1f_29",
+        "test_v1f_30",
+        "test_v1f_31",
+        "test_v1f_32",
+        "test_v1f_33",
     ]
 )
 

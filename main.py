@@ -14,7 +14,7 @@ from nmr_html_parser import souping, runner
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("tests/inputs/test_v1f_13.html")
+    inp_file = Path("tests/inputs/test_v1f_33.html")
 
     # test full thing
     # runner.parse(inp_file, "html_parse_output.csv")

@@ -10,7 +10,7 @@ import re
 import csv
 from collections import defaultdict
 
-MULTI_REGEX = re.compile(r"(?:(?:hept|sept|s\s?br|(?!\whown)(?=\s)?\bs|\bt+d*|\bd+t*d*|\btt*|\bt|\bd|qd?|\bh|br\s?s|br\s?d+|br\s?t|br\s?q|m))+")
+MULTI_REGEX = re.compile(r"(?:(?:hept|sept|sex|qui|s\s?br|(?!\whown)(?=\s)?\bs|\bt+d*|\bd+t*d*|\btt*|\bt|\bd|qd?|\bh|br\s?s|br\s?d+|br\s?t|br\s?q|m))+")
 
 REGEX_V1 = re.compile(r"(?:(?:sept|s|d|t|q|h|br\s?s|br\s?d|br\s?t|br\s?q|m))+")
 
@@ -309,6 +309,9 @@ def column_id_cleaner_list(columns, ignore_cols):
             if cell_contents:
                 for idn, item in enumerate(cell_contents):
                     if re.search(coup_pattern, cell_contents[idn]):
+
+                        # TODO: Maybe clean out anything not a number to prevent parsing errors;
+                            # HAD error like 23.0brd(Prob unfixable if multiplicity not spaced), 23.0a (would get random typos out tho)
                         shift = cell_contents.pop(idn)
                         break
 
