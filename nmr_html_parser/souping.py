@@ -332,13 +332,13 @@ def column_id_cleaner_list(columns, ignore_cols):
         if 14.0 <= avg <= 250.0:
             c_nmr = True
             # print("This is a C NMR column")
-            for idx, cell in enumerate(col):
-                cell = clean_cell_str(cell.replace(str(shifts[idx]), ""))
-                ctype = ctype_pattern.findall(cell)
-                if ctype:
-                    ctypes.append(ctype[0])
-                else:
-                    ctypes.append("")
+            #for idx, cell in enumerate(col):# TODO
+                #cell = clean_cell_str(cell.replace(str(shifts[idx]), ""))
+                #ctype = ctype_pattern.findall(cell)
+               # if ctype:
+                 #   ctypes.append(ctype[0])
+              #  else:
+                 #   ctypes.append("")
 
         elif 0.0 <= avg <= 13.5:
             h_nmr = True
@@ -365,8 +365,8 @@ def column_id_cleaner_list(columns, ignore_cols):
 
         if c_nmr:
             Carbon_spec.append(shifts)
-            if not all_blank(ctypes):
-                C_type.append(ctypes)
+            #if not all_blank(ctypes): # TODO
+                #C_type.append(ctypes)
         if h_nmr:
             H_spec.append(shifts)
             if not all_blank(mults):
@@ -389,7 +389,7 @@ def data_to_grid(numcomps, aindex, **kwargs):
     # Search for specified variables and create header and access dict
     possible_variables = {
         "cspec": "{0}_cspec",
-        "ctype": "{0}_ctype",
+        #"ctype": "{0}_ctype", # TODO
         "hspec": "{0}_hspec",
         "hmult": "{0}_multi",
         "hcoup": "{0}_coupling",

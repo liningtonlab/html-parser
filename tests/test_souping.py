@@ -45,6 +45,7 @@ FILES = sorted(
         "test_rowspan2_3",
         "test_rowspan2_2",
         "test_rowspan2_1",
+        "test_semi_coup",
         "test_1",
         "test_2",
         "test_2DNMR",
