@@ -75,7 +75,7 @@ def soup_id_headers(soup):
     """Takes soup object and returns column headers"""
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="colsep0 rowsep0")]
     return no_space_list(header_1)
-
+    #TODO: See if way to include blanks; look at cell_clean
 
 def soup_comp_id(soup):
     """Takes soup object and returns compound identification headers"""
@@ -105,7 +105,6 @@ def soup_id_rows(soup):
     return clean_rows
 
 
-# TODO: Had to add case for if comp_len != header_len
 def compound_number(compounds, headers):
     """Takes primary headers and compound id headers and returns the number of compounds.
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC"""
@@ -123,7 +122,7 @@ def compound_number(compounds, headers):
                     return comp_len
                 else:
                     return max(comp_len, header_len)
-    if any("δC" or "δH" in s for s in headers):
+    if any("δC" or "δH" in s for s in headers):  # TODO: LOOK at and see if can add other cases(1st find diff pattern)
         search = ["δH", "δC"]
         result = {k: 0 for k in search}
         for item in headers:
@@ -160,99 +159,34 @@ def atom_index_like(col):
             count += 1
     return count > 4
 
-# TODO: Search headers for 2d data, if so remove
+
 def get_atom_index(columns, headers):
-    if re.search(r"(^position$|^pos\.?$|^number$|no\.?$)", headers[0]):
+    if re.search(r"(position|^pos\.?|number|^no\.?|^[CH])", headers[0]):
         return columns[0], 0
     elif re.search(r"(^residue$|^amino\s?acid$|^unit(s)?$)", headers[0]):
         return columns[1], 1
-    elif atom_index_like(columns[0]):
-        headers[0] = "position"
-        print(atom_index_like(columns[0]))
-
-        # print("found unlabeled atom index")
-        # TODO: add way to add position as atom_index, need to pass headers elif atom_index_like to other functions in order to change other headers
-        return columns[0], 0
+    else:
+        return None, None
+    #elif atom_index_like(columns[0]):
+        #headers[0] = "position"
+        #print(atom_index_like(columns[0]))
 
 
 def get_residues(columns, headers):
-    if re.search(
-        r"(^residue$|^amino\s?acid$|^unit(s)?$)", headers[0]
-    ):  # Modify as example cases builds up
+    if re.search(r"(^residue$|^amino\s?acid$|^unit(s)?$)", headers[0]):  # Modify as example cases builds up
         residues = columns[0]
         return residues, 0
     else:
         return None, None
 
-def is_2D_NMR(columns,headers):
-    NMR2D_col_index = []
-    for idx,i in enumerate(headers):
-        if re.search(r"(HMBC)|(HSQC)|(([E]?CO|TOC|NOE|ROE)SY)", headers[idx]):
-            NMR2D_col_index.append(idx)
-    return NMR2D_col_index
+def is_2_d_nmr(headers):
+    nmr2d_col_index = [idx for idx,i in enumerate(headers) if re.search(r"(HMBC)|(HSQC)|(([E]?CO|TOC|NOE|ROE)SY)", headers[idx])]
+    return nmr2d_col_index
 
 def get_atom_index_column(columns):
     """Enumerate the list of columns so that positional index and atom_index can be returned"""
     return list(enumerate(columns))[0]
     # atom_index should be first column so can take that list and go from there
-
-
-def table_detect(soup, d2list, float_d2list):
-    """Takes soup object, 2dlist of column cells, 2dlist of cell floats. Uses regex/string arguments and calculates float averages to detect and return table type"""
-    # TODO: If use this, can do soup.find("th",string=re.compile("δ")).find("sub",string=re.compile("C"))
-    Carbon = soup.find("sub", string=re.compile("C"))
-    Proton = soup.find("sub", string=re.compile("H"))
-    if Carbon and Proton:
-        return "Both H1/C13 NMR Table Detected!"
-    elif Carbon:
-        return "C13 NMR Table Detected!"
-    elif Proton:
-        return "H1 NMR Table Detected!"
-    else:
-        for item in d2list:
-            for value in item:
-                if re.search(
-                    r"(\d*[0-9]\.\d*[0-9]\,\s{1}\w*[s,t,d,m,q,b,r]\s{1})|(\([0-9]+\.[0-9]\)|\([0-9]+\.[0-9](?:\,\s{1}[0-9]+\.[0-9])*\))",
-                    value,
-                ):
-                    HNMR_Search = True
-                elif re.search(
-                    r"(\d*[0-9]\.\d*[0-9])(\,\sCH3|\,\sCH2|\,\sCH|\,\sC)", value
-                ):
-                    CNMR_Search = True
-                else:
-                    continue
-        if HNMR_Search and CNMR_Search:
-            return "Both H1/C13 NMR Detected! - From Cells!"
-        elif HNMR_Search and not CNMR_Search:
-            return "H1 NMR Detected! -  From Cells!"
-        elif CNMR_Search and not HNMR_Search:
-            return "H1 NMR Table Detected! - From cells"
-        else:
-            average_list = []
-            for item in float_d2list:
-                value_list = []
-                for value in item:
-                    if type(value) == float:
-                        value_list.append(value)
-                if all_same(value_list) == False:
-                    average = sum(value_list) / len(value_list)
-                    average_list.append(average)
-                    print(average_list)
-                    if 14.0 <= average <= 250.0:
-                        CNMR = True
-                        continue
-                    elif 0.0 <= average <= 13.5:
-                        HNMR = True
-                        continue
-            if CNMR and HNMR == True:
-                return "Both H1/C13 NMR Detected! - From chemical shifts!"
-            elif HNMR and not CNMR:
-                return "H1 NMR Detected! -  From chemical shifts!"
-            elif CNMR and not HNMR:
-                return "H1 NMR Table Detected! - From chemical shifts!"
-            else:
-                return None
 
 
 def str_list_average(input_list):
@@ -282,10 +216,8 @@ def all_blank(input_list):
 
 def column_id_cleaner_list(columns, ignore_cols):
     """Takes 2dlist of columns . Searchs cells first for regex patterns to detect if column will contain H/C NMR, then each cell for regex patterns"""
-    # Regex patterns; detect the table type to determine which column type
-    # TODO: Add other possible multiplicity regex patterns
-    # 1. Other less common H splitting pattern
 
+    # Regex patterns; detect the table type to determine which column type
     ctype_pattern = re.compile(r"CH3|CH2|CH|q?C|NH2|NH|N[^D]|\bN$")
     coup_pattern = re.compile(r"\d+(?:\.\d+)?")
 
@@ -309,13 +241,10 @@ def column_id_cleaner_list(columns, ignore_cols):
             if cell_contents:
                 for idn, item in enumerate(cell_contents):
                     if re.search(coup_pattern, cell_contents[idn]):
-
-                        # TODO: Maybe clean out anything not a number to prevent parsing errors;
-                            # HAD error like 23.0brd(Prob unfixable if multiplicity not spaced), 23.0a (would get random typos out tho)
-                        shift = cell_contents.pop(idn)
+                        shift = re.sub("[a-z]+$|^[a-z]+", '', cell_contents.pop(idn))
                         break
 
-
+                # TODO: make case for: '213.0-123.0' or '2.23 - 22.123' then if '-0.13' or '- 0.13'
                 # find ranges
                 if "-" in shift:
                     shift = str_list_average(shift.split("-"))
@@ -334,8 +263,7 @@ def column_id_cleaner_list(columns, ignore_cols):
         h_nmr = False
         if 14.0 <= avg <= 250.0:
             c_nmr = True
-            # print("This is a C NMR column")
-            #for idx, cell in enumerate(col):# TODO
+            #for idx, cell in enumerate(col):
                 #cell = clean_cell_str(cell.replace(str(shifts[idx]), ""))
                 #ctype = ctype_pattern.findall(cell)
                # if ctype:
@@ -345,8 +273,7 @@ def column_id_cleaner_list(columns, ignore_cols):
 
         elif 0.0 <= avg <= 13.5:
             h_nmr = True
-            # print("This is a H NMR column")
-            for idx, cell in enumerate(col):  # for idr, r in enumerate(rows):
+            for idx, cell in enumerate(col):
                 cell_contents = [x for x in clean_cell_str(cell).split() if x]
                 if cell_contents:
                     for idn, item in enumerate(cell_contents):
@@ -368,7 +295,7 @@ def column_id_cleaner_list(columns, ignore_cols):
 
         if c_nmr:
             Carbon_spec.append(shifts)
-            #if not all_blank(ctypes): # TODO
+            #if not all_blank(ctypes):
                 #C_type.append(ctypes)
         if h_nmr:
             H_spec.append(shifts)
@@ -376,7 +303,6 @@ def column_id_cleaner_list(columns, ignore_cols):
                 H_multiplicity.append(mults)
             if not all_blank(coups):
                 J_coupling.append(coups)
-
     return H_spec, Carbon_spec, H_multiplicity, J_coupling, C_type
 
 
@@ -392,7 +318,7 @@ def data_to_grid(numcomps, aindex, **kwargs):
     # Search for specified variables and create header and access dict
     possible_variables = {
         "cspec": "{0}_cspec",
-        #"ctype": "{0}_ctype", # TODO
+        #"ctype": "{0}_ctype",
         "hspec": "{0}_hspec",
         "hmult": "{0}_multi",
         "hcoup": "{0}_coupling",

@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from nmr_html_parser import souping
-
+import re
 
 def parse(path, filepath):
     inp_file = Path(path)
@@ -19,7 +19,15 @@ def parse(path, filepath):
     columns = souping.get_columns(rows, headers)
     atom_index, atom_col_index = souping.get_atom_index(columns, headers)
     residues, residue_col_index = souping.get_residues(columns, headers)
-    two_d_NMR_col_index = souping.is_2D_NMR(columns, headers)
+
+    # Remove atom_index_like from get_atom index
+    if atom_index is None and souping.atom_index_like(columns[0]):
+        atom_col_index, atom_index = 0, columns[0]
+        headers = ["no."] + headers
+        columns = souping.get_columns(rows, headers)
+
+
+    two_d_NMR_col_index = souping.is_2_d_nmr(headers)
     ignore_cols = [atom_col_index] + two_d_NMR_col_index
     if residue_col_index is not None:
         ignore_cols.append(residue_col_index)
