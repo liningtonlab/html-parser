@@ -87,6 +87,7 @@ FILES = sorted(
         "test_ND_3",
         "test_ND_4",
         "test_ND_5",
+        "test_negative_shift",
         "test_v1f_1",
         "test_v1f_2",
         "test_v1f_3",
@@ -99,8 +100,6 @@ FILES = sorted(
         "test_v1f_10",
         "test_v1f_11",
         "test_v1f_12",
-
-
         "test_v1f_13",
         "test_v1f_14",
         "test_v1f_15",

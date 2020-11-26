@@ -14,7 +14,7 @@ import re
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("tests/inputs/test_error_characters_noai_1.html")
+    inp_file = Path("tests/inputs/test_multi_data_dash_2.html")
 
     # test full thing
     # runner.parse(inp_file, "html_parse_output.csv")
@@ -39,7 +39,7 @@ def main():
         columns = souping.get_columns(rows, headers)
 
 
-    two_d_NMR_col_index = souping.is_2_d_nmr(columns, headers)
+    two_d_NMR_col_index = souping.is_2_d_nmr(headers)
     ignore_cols = [atom_col_index] + two_d_NMR_col_index
     if residue_col_index is not None:
         ignore_cols.append(residue_col_index)

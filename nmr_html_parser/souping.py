@@ -188,11 +188,22 @@ def get_atom_index_column(columns):
     return list(enumerate(columns))[0]
     # atom_index should be first column so can take that list and go from there
 
+def is_float_test(value,list):
+    try:
+        val = float(value)
+        list.append(val)
+    except ValueError:
+        pass
 
 def str_list_average(input_list):
     """Takes a list of numerical strings and returns the average. Is able to ignore empty strings in list"""
-    vals = [float(i) for i in input_list if i]
-    return sum(vals) / len(vals)
+    #vals = [float(i) for i in input_list if i]
+
+    vals = []
+    for i in input_list:
+        if i:
+            is_float_test(i, vals)
+    return float("{:.2f}".format(sum(vals) / len(vals)))
 
 
 def clean_cell_str(cell):
@@ -246,8 +257,14 @@ def column_id_cleaner_list(columns, ignore_cols):
 
                 # TODO: make case for: '213.0-123.0' or '2.23 - 22.123' then if '-0.13' or '- 0.13'
                 # find ranges
-                if "-" in shift:
+                if re.search("\d+(?:\.\d+)\s?\-{1}\s?\d+(?:\.\d+)", shift):
+                    shift.replace("-", "-")
                     shift = str_list_average(shift.split("-"))
+                #if re.search("\−{1}\s?\d+(?:\.\d+)", shift):
+                   # shift.replace("-", "-")
+
+                #if "-" in shift:
+                  #  shift = str_list_average(shift.split("-"))
                 try:
                     shift = float(shift)
                 except ValueError:
