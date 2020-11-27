@@ -8,8 +8,7 @@ Created on Mon Oct 12 11:41:54 2020
 # work (return what you expect) and work as part of the overall data pipeline
 
 from pathlib import Path
-from nmr_html_parser import souping, runner
-import re
+from nmr_html_parser import souping
 
 def main():
 
