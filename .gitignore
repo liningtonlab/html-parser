@@ -3,7 +3,7 @@ test_outputs/
 .idea/
 .pytest_cache/
 .vscode/
-# Byte-compiled / optimized / DLL files
+# Byte-compiled / optimized / DLL html_files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -33,7 +33,7 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
+#  Usually these html_files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
@@ -103,7 +103,7 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 
-# SageMath parsed files
+# SageMath parsed html_files
 *.sage.py
 
 # Environments
