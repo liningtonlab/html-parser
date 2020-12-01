@@ -13,7 +13,8 @@ from nmr_html_parser import souping
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("tests/inputs/test_multi_data_dash_2.html")
+    inp_file = Path("tests/inputs/test_multi_data_dash_2.html") # TODO: Test. Certain, string of path can be input
+                                                                        # See soupling.inputs()
 
     # test full thing
     # runner.parse(inp_file, "html_parse_output.csv")
