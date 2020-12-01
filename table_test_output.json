@@ -143,43 +143,57 @@
           "shift": 4.76,
           "atom_index": "2",
           "multiplicity": "d",
-          "coupling": 9.8
+          "coupling": [
+            9.8
+          ]
         },
         {
           "shift": 5.73,
           "atom_index": "3",
           "multiplicity": "d",
-          "coupling": 9.9
+          "coupling": [
+            9.9
+          ]
         },
         {
           "shift": 7.22,
           "atom_index": "4",
           "multiplicity": "d",
-          "coupling": 9.9
+          "coupling": [
+            9.9
+          ]
         },
         {
           "shift": 7.51,
           "atom_index": "9",
           "multiplicity": "d",
-          "coupling": 2.2
+          "coupling": [
+            2.2
+          ]
         },
         {
           "shift": 6.86,
           "atom_index": "10",
           "multiplicity": "d",
-          "coupling": 2.2
+          "coupling": [
+            2.2
+          ]
         },
         {
           "shift": 4.53,
           "atom_index": "11",
           "multiplicity": "d",
-          "coupling": 7.0
+          "coupling": [
+            7.0
+          ]
         },
         {
           "shift": 5.3,
           "atom_index": "12",
           "multiplicity": "t",
-          "coupling": 7.0
+          "coupling": [
+            7.0
+          ]
         },
         {
           "shift": 1.54,
@@ -197,13 +211,17 @@
           "shift": 6.1,
           "atom_index": "3\u2032",
           "multiplicity": "d",
-          "coupling": 9.8
+          "coupling": [
+            9.8
+          ]
         },
         {
           "shift": 8.06,
           "atom_index": "4\u2032",
           "multiplicity": "d",
-          "coupling": 9.8
+          "coupling": [
+            9.8
+          ]
         },
         {
           "shift": 7.15,
@@ -215,7 +233,9 @@
           "shift": 7.59,
           "atom_index": "9\u2032",
           "multiplicity": "d",
-          "coupling": 2.4
+          "coupling": [
+            2.4
+          ]
         },
         {
           "shift": 7.1,
@@ -230,13 +250,17 @@
           "shift": 4.86,
           "atom_index": "11\u2032",
           "multiplicity": "d",
-          "coupling": 6.4
+          "coupling": [
+            6.4
+          ]
         },
         {
           "shift": 4.44,
           "atom_index": "12\u2032",
           "multiplicity": "t",
-          "coupling": 6.4
+          "coupling": [
+            6.4
+          ]
         },
         {
           "shift": 1.65,
@@ -403,25 +427,33 @@
           "shift": 5.67,
           "atom_index": "3",
           "multiplicity": "d",
-          "coupling": 9.9
+          "coupling": [
+            9.9
+          ]
         },
         {
           "shift": 7.24,
           "atom_index": "4",
           "multiplicity": "d",
-          "coupling": 9.9
+          "coupling": [
+            9.9
+          ]
         },
         {
           "shift": 7.52,
           "atom_index": "9",
           "multiplicity": "d",
-          "coupling": 2.1
+          "coupling": [
+            2.1
+          ]
         },
         {
           "shift": 6.87,
           "atom_index": "10",
           "multiplicity": "d",
-          "coupling": 2.1
+          "coupling": [
+            2.1
+          ]
         },
         {
           "shift": 4.71,
@@ -434,7 +466,7 @@
         },
         {
           "shift": 4.73,
-          "atom_index": "",
+          "atom_index": "11",
           "multiplicity": "dd",
           "coupling": [
             11.3,
@@ -445,7 +477,9 @@
           "shift": 5.6,
           "atom_index": "12",
           "multiplicity": "t",
-          "coupling": 7.0
+          "coupling": [
+            7.0
+          ]
         },
         {
           "shift": 1.69,
@@ -463,13 +497,17 @@
           "shift": 6.2,
           "atom_index": "3\u2032",
           "multiplicity": "d",
-          "coupling": 9.8
+          "coupling": [
+            9.8
+          ]
         },
         {
           "shift": 8.12,
           "atom_index": "4\u2032",
           "multiplicity": "d",
-          "coupling": 9.8
+          "coupling": [
+            9.8
+          ]
         },
         {
           "shift": 7.2,
@@ -481,7 +519,9 @@
           "shift": 7.6,
           "atom_index": "9\u2032",
           "multiplicity": "d",
-          "coupling": 2.4
+          "coupling": [
+            2.4
+          ]
         },
         {
           "shift": 6.95,
@@ -503,7 +543,7 @@
         },
         {
           "shift": 4.54,
-          "atom_index": "",
+          "atom_index": "11\u2032",
           "multiplicity": "dd",
           "coupling": [
             10.2,

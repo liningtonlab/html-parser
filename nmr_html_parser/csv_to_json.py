@@ -54,7 +54,7 @@ def c_nmr_shift_creator(shifts_list, atom_input_list):
 def coupling_float(coup):
     try:
         if no_blank(coup):
-            return float(coup)
+            return [float(coup)]
     except ValueError:
         coup_list = [float(x.strip()) for x in coup.split(",")]
         return coup_list
@@ -68,12 +68,16 @@ def multi_blank(multi):
 
 def h_nmr_shift_multi_coup_creator(shifts_list, atom_input_list, multi_list, coup_list):
     # Collects hnmr data together into a dictionary for each atom
-    #float_coup = [float(item) for item in coup_list if no_blank(item)]
 
-    return [({"shift": float(shift), "atom_index": atom, "multiplicity": multi_blank(multi), "coupling": coupling_float(coup)})
+    data = [{"shift": float(shift), "atom_index": atom, "multiplicity": multi_blank(multi), "coupling": coupling_float(coup)}
             for shift, atom, multi, coup in zip(shifts_list, atom_input_list, multi_list, coup_list)
             if no_blank(shift)]
+    #return data
 
+    for i, val in enumerate(data):
+        if not val["atom_index"]:
+            data[i]["atom_index"] = data[i-1]["atom_index"]
+    return data
     # TODO: Work with residue table types, not sure about
     # if new_dict["residues"]:
     # else: new_dict["atom_index"]
