@@ -47,14 +47,31 @@ def dictionary_parser(num_comps, csv_dict):
 
 def c_nmr_shift_creator(shifts_list, atom_input_list):
     # Collects cnmr data together into a dictionary for each atom
-    return [({"shift": shift, "atom_index": atom})
+    return [({"shift": float(shift), "atom_index": atom})
             for shift, atom in zip(shifts_list, atom_input_list) if no_blank(shift)]
 
 
-def h_nmr_shift_multi_coup_creator(shifts_list, multi_list, coup_list, atom_input_list):
+def coupling_float(coup):
+    try:
+        if no_blank(coup):
+            return float(coup)
+    except ValueError:
+        coup_list = [float(x.strip()) for x in coup.split(",")]
+        return coup_list
+
+
+def multi_blank(multi):
+    if no_blank(multi):
+        return multi
+    else:
+        pass
+
+def h_nmr_shift_multi_coup_creator(shifts_list, atom_input_list, multi_list, coup_list):
     # Collects hnmr data together into a dictionary for each atom
-    return [({"shift": shift, "atom_index": atom, "multiplicity": multi, "coupling": coup})
-            for shift, atom, multi, coup in zip(shifts_list, multi_list, coup_list, atom_input_list)
+    #float_coup = [float(item) for item in coup_list if no_blank(item)]
+
+    return [({"shift": float(shift), "atom_index": atom, "multiplicity": multi_blank(multi), "coupling": coupling_float(coup)})
+            for shift, atom, multi, coup in zip(shifts_list, atom_input_list, multi_list, coup_list)
             if no_blank(shift)]
 
     # TODO: Work with residue table types, not sure about
@@ -72,7 +89,7 @@ def json_structuring(comps_data, csv_dict):
         comp_dictionary = {"name": kk, "c_nmr": {"spectrum": c_nmr_shift_creator(
             comps_data["compound_" + str(index + 1)][str(index + 1) + "_cspec"], csv_dict["atom_index"])},
                            "h_nmr": {"spectrum": h_nmr_shift_multi_coup_creator(
-                               comps_data["compound_" + str(index + 1)][str(index + 1) + "_cspec"],
+                               comps_data["compound_" + str(index + 1)][str(index + 1) + "_hspec"],
                                csv_dict["atom_index"],
                                comps_data["compound_" + str(index + 1)][str(index + 1) + "_multi"],
                                comps_data["compound_" + str(index + 1)][str(index + 1) + "_coupling"])}}

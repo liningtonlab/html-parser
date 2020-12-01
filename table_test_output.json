@@ -4,135 +4,135 @@
     "c_nmr": {
       "spectrum": [
         {
-          "shift": "118.6",
+          "shift": 118.6,
           "atom_index": "2"
         },
         {
-          "shift": "117.5",
+          "shift": 117.5,
           "atom_index": "3"
         },
         {
-          "shift": "125.0",
+          "shift": 125.0,
           "atom_index": "4"
         },
         {
-          "shift": "108.0",
+          "shift": 108.0,
           "atom_index": "4a"
         },
         {
-          "shift": "144.0",
+          "shift": 144.0,
           "atom_index": "5"
         },
         {
-          "shift": "113.5",
+          "shift": 113.5,
           "atom_index": "6"
         },
         {
-          "shift": "149.1",
+          "shift": 149.1,
           "atom_index": "7"
         },
         {
-          "shift": "128.1",
+          "shift": 128.1,
           "atom_index": "8"
         },
         {
-          "shift": "141.7",
+          "shift": 141.7,
           "atom_index": "8a"
         },
         {
-          "shift": "143.7",
+          "shift": 143.7,
           "atom_index": "9"
         },
         {
-          "shift": "105.0",
+          "shift": 105.0,
           "atom_index": "10"
         },
         {
-          "shift": "69.9",
+          "shift": 69.9,
           "atom_index": "11"
         },
         {
-          "shift": "120.4",
+          "shift": 120.4,
           "atom_index": "12"
         },
         {
-          "shift": "137.8",
+          "shift": 137.8,
           "atom_index": "13"
         },
         {
-          "shift": "17.9",
+          "shift": 17.9,
           "atom_index": "14"
         },
         {
-          "shift": "25.7",
+          "shift": 25.7,
           "atom_index": "15"
         },
         {
-          "shift": "161.0",
+          "shift": 161.0,
           "atom_index": "2\u2032"
         },
         {
-          "shift": "112.6",
+          "shift": 112.6,
           "atom_index": "3\u2032"
         },
         {
-          "shift": "139.0",
+          "shift": 139.0,
           "atom_index": "4\u2032"
         },
         {
-          "shift": "107.1",
+          "shift": 107.1,
           "atom_index": "4a\u2032"
         },
         {
-          "shift": "148.4",
+          "shift": 148.4,
           "atom_index": "5\u2032"
         },
         {
-          "shift": "114.2",
+          "shift": 114.2,
           "atom_index": "6\u2032"
         },
         {
-          "shift": "158.1",
+          "shift": 158.1,
           "atom_index": "7\u2032"
         },
         {
-          "shift": "94.6",
+          "shift": 94.6,
           "atom_index": "8\u2032"
         },
         {
-          "shift": "152.5",
+          "shift": 152.5,
           "atom_index": "8a\u2032"
         },
         {
-          "shift": "145.0",
+          "shift": 145.0,
           "atom_index": "9\u2032"
         },
         {
-          "shift": "104.9",
+          "shift": 104.9,
           "atom_index": "10\u2032"
         },
         {
-          "shift": "72.6",
+          "shift": 72.6,
           "atom_index": "11\u2032"
         },
         {
-          "shift": "82.8",
+          "shift": 82.8,
           "atom_index": "12\u2032"
         },
         {
-          "shift": "82.5",
+          "shift": 82.5,
           "atom_index": "13\u2032"
         },
         {
-          "shift": "22.8",
+          "shift": 22.8,
           "atom_index": "14\u2032"
         },
         {
-          "shift": "29.1",
+          "shift": 29.1,
           "atom_index": "15\u2032"
         },
         {
-          "shift": "60.9",
+          "shift": 60.9,
           "atom_index": "OCH3-5"
         }
       ]
@@ -140,202 +140,121 @@
     "h_nmr": {
       "spectrum": [
         {
-          "shift": "118.6",
+          "shift": 4.76,
           "atom_index": "2",
           "multiplicity": "d",
-          "coupling": "9.8"
+          "coupling": 9.8
         },
         {
-          "shift": "117.5",
+          "shift": 5.73,
           "atom_index": "3",
           "multiplicity": "d",
-          "coupling": "9.9"
+          "coupling": 9.9
         },
         {
-          "shift": "125.0",
+          "shift": 7.22,
           "atom_index": "4",
           "multiplicity": "d",
-          "coupling": "9.9"
+          "coupling": 9.9
         },
         {
-          "shift": "108.0",
-          "atom_index": "4a",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "144.0",
-          "atom_index": "5",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "113.5",
-          "atom_index": "6",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "149.1",
-          "atom_index": "7",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "128.1",
-          "atom_index": "8",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "141.7",
-          "atom_index": "8a",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "143.7",
+          "shift": 7.51,
           "atom_index": "9",
           "multiplicity": "d",
-          "coupling": "2.2"
+          "coupling": 2.2
         },
         {
-          "shift": "105.0",
+          "shift": 6.86,
           "atom_index": "10",
           "multiplicity": "d",
-          "coupling": "2.2"
+          "coupling": 2.2
         },
         {
-          "shift": "69.9",
+          "shift": 4.53,
           "atom_index": "11",
           "multiplicity": "d",
-          "coupling": "7.0"
+          "coupling": 7.0
         },
         {
-          "shift": "120.4",
+          "shift": 5.3,
           "atom_index": "12",
           "multiplicity": "t",
-          "coupling": "7.0"
+          "coupling": 7.0
         },
         {
-          "shift": "137.8",
-          "atom_index": "13",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "17.9",
+          "shift": 1.54,
           "atom_index": "14",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "25.7",
+          "shift": 1.59,
           "atom_index": "15",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "161.0",
-          "atom_index": "2\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "112.6",
+          "shift": 6.1,
           "atom_index": "3\u2032",
           "multiplicity": "d",
-          "coupling": "9.8"
+          "coupling": 9.8
         },
         {
-          "shift": "139.0",
+          "shift": 8.06,
           "atom_index": "4\u2032",
           "multiplicity": "d",
-          "coupling": "9.8"
+          "coupling": 9.8
         },
         {
-          "shift": "107.1",
-          "atom_index": "4a\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "148.4",
-          "atom_index": "5\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "114.2",
-          "atom_index": "6\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "158.1",
-          "atom_index": "7\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "94.6",
+          "shift": 7.15,
           "atom_index": "8\u2032",
           "multiplicity": "brs",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "152.5",
-          "atom_index": "8a\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "145.0",
+          "shift": 7.59,
           "atom_index": "9\u2032",
           "multiplicity": "d",
-          "coupling": "2.4"
+          "coupling": 2.4
         },
         {
-          "shift": "104.9",
+          "shift": 7.1,
           "atom_index": "10\u2032",
           "multiplicity": "dd",
-          "coupling": "2.4, 1.0"
+          "coupling": [
+            2.4,
+            1.0
+          ]
         },
         {
-          "shift": "72.6",
+          "shift": 4.86,
           "atom_index": "11\u2032",
           "multiplicity": "d",
-          "coupling": "6.4"
+          "coupling": 6.4
         },
         {
-          "shift": "82.8",
+          "shift": 4.44,
           "atom_index": "12\u2032",
           "multiplicity": "t",
-          "coupling": "6.4"
+          "coupling": 6.4
         },
         {
-          "shift": "82.5",
-          "atom_index": "13\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "22.8",
+          "shift": 1.65,
           "atom_index": "14\u2032",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "29.1",
+          "shift": 1.55,
           "atom_index": "15\u2032",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "60.9",
+          "shift": 4.04,
           "atom_index": "OCH3-5",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         }
       ]
     }
@@ -345,135 +264,135 @@
     "c_nmr": {
       "spectrum": [
         {
-          "shift": "117.6",
+          "shift": 117.6,
           "atom_index": "2"
         },
         {
-          "shift": "117.0",
+          "shift": 117.0,
           "atom_index": "3"
         },
         {
-          "shift": "125.4",
+          "shift": 125.4,
           "atom_index": "4"
         },
         {
-          "shift": "108.0",
+          "shift": 108.0,
           "atom_index": "4a"
         },
         {
-          "shift": "144.2",
+          "shift": 144.2,
           "atom_index": "5"
         },
         {
-          "shift": "113.3",
+          "shift": 113.3,
           "atom_index": "6"
         },
         {
-          "shift": "149.6",
+          "shift": 149.6,
           "atom_index": "7"
         },
         {
-          "shift": "128.2",
+          "shift": 128.2,
           "atom_index": "8"
         },
         {
-          "shift": "142.0",
+          "shift": 142.0,
           "atom_index": "8a"
         },
         {
-          "shift": "143.8",
+          "shift": 143.8,
           "atom_index": "9"
         },
         {
-          "shift": "104.9",
+          "shift": 104.9,
           "atom_index": "10"
         },
         {
-          "shift": "70.2",
+          "shift": 70.2,
           "atom_index": "11"
         },
         {
-          "shift": "120.5",
+          "shift": 120.5,
           "atom_index": "12"
         },
         {
-          "shift": "138.5",
+          "shift": 138.5,
           "atom_index": "13"
         },
         {
-          "shift": "18.1",
+          "shift": 18.1,
           "atom_index": "14"
         },
         {
-          "shift": "25.8",
+          "shift": 25.8,
           "atom_index": "15"
         },
         {
-          "shift": "160.9",
+          "shift": 160.9,
           "atom_index": "2\u2032"
         },
         {
-          "shift": "113.2",
+          "shift": 113.2,
           "atom_index": "3\u2032"
         },
         {
-          "shift": "138.9",
+          "shift": 138.9,
           "atom_index": "4\u2032"
         },
         {
-          "shift": "107.3",
+          "shift": 107.3,
           "atom_index": "4a\u2032"
         },
         {
-          "shift": "148.1",
+          "shift": 148.1,
           "atom_index": "5\u2032"
         },
         {
-          "shift": "114.0",
+          "shift": 114.0,
           "atom_index": "6\u2032"
         },
         {
-          "shift": "158.1",
+          "shift": 158.1,
           "atom_index": "7\u2032"
         },
         {
-          "shift": "95.0",
+          "shift": 95.0,
           "atom_index": "8\u2032"
         },
         {
-          "shift": "152.6",
+          "shift": 152.6,
           "atom_index": "8a\u2032"
         },
         {
-          "shift": "145.3",
+          "shift": 145.3,
           "atom_index": "9\u2032"
         },
         {
-          "shift": "104.6",
+          "shift": 104.6,
           "atom_index": "10\u2032"
         },
         {
-          "shift": "71.3",
+          "shift": 71.3,
           "atom_index": "11\u2032"
         },
         {
-          "shift": "81.1",
+          "shift": 81.1,
           "atom_index": "12\u2032"
         },
         {
-          "shift": "82.0",
+          "shift": 82.0,
           "atom_index": "13\u2032"
         },
         {
-          "shift": "22.8",
+          "shift": 22.8,
           "atom_index": "14\u2032"
         },
         {
-          "shift": "27.8",
+          "shift": 27.8,
           "atom_index": "15\u2032"
         },
         {
-          "shift": "60.9",
+          "shift": 60.9,
           "atom_index": "OCH3-5"
         }
       ]
@@ -481,202 +400,142 @@
     "h_nmr": {
       "spectrum": [
         {
-          "shift": "117.6",
-          "atom_index": "2",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "117.0",
+          "shift": 5.67,
           "atom_index": "3",
           "multiplicity": "d",
-          "coupling": "9.9"
+          "coupling": 9.9
         },
         {
-          "shift": "125.4",
+          "shift": 7.24,
           "atom_index": "4",
           "multiplicity": "d",
-          "coupling": "9.9"
+          "coupling": 9.9
         },
         {
-          "shift": "108.0",
-          "atom_index": "4a",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "144.2",
-          "atom_index": "5",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "113.3",
-          "atom_index": "6",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "149.6",
-          "atom_index": "7",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "128.2",
-          "atom_index": "8",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "142.0",
-          "atom_index": "8a",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "143.8",
+          "shift": 7.52,
           "atom_index": "9",
           "multiplicity": "d",
-          "coupling": "2.1"
+          "coupling": 2.1
         },
         {
-          "shift": "104.9",
+          "shift": 6.87,
           "atom_index": "10",
           "multiplicity": "d",
-          "coupling": "2.1"
+          "coupling": 2.1
         },
         {
-          "shift": "70.2",
+          "shift": 4.71,
           "atom_index": "11",
           "multiplicity": "dd",
-          "coupling": "11.3, 7.0"
+          "coupling": [
+            11.3,
+            7.0
+          ]
         },
         {
-          "shift": "120.5",
+          "shift": 4.73,
+          "atom_index": "",
+          "multiplicity": "dd",
+          "coupling": [
+            11.3,
+            7.0
+          ]
+        },
+        {
+          "shift": 5.6,
           "atom_index": "12",
           "multiplicity": "t",
-          "coupling": "7.0"
+          "coupling": 7.0
         },
         {
-          "shift": "138.5",
-          "atom_index": "13",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "18.1",
+          "shift": 1.69,
           "atom_index": "14",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "25.8",
+          "shift": 1.75,
           "atom_index": "15",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "160.9",
-          "atom_index": "2\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "113.2",
+          "shift": 6.2,
           "atom_index": "3\u2032",
           "multiplicity": "d",
-          "coupling": "9.8"
+          "coupling": 9.8
         },
         {
-          "shift": "138.9",
+          "shift": 8.12,
           "atom_index": "4\u2032",
           "multiplicity": "d",
-          "coupling": "9.8"
+          "coupling": 9.8
         },
         {
-          "shift": "107.3",
-          "atom_index": "4a\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "148.1",
-          "atom_index": "5\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "114.0",
-          "atom_index": "6\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "158.1",
-          "atom_index": "7\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "95.0",
+          "shift": 7.2,
           "atom_index": "8\u2032",
           "multiplicity": "brs",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "152.6",
-          "atom_index": "8a\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "145.3",
+          "shift": 7.6,
           "atom_index": "9\u2032",
           "multiplicity": "d",
-          "coupling": "2.4"
+          "coupling": 2.4
         },
         {
-          "shift": "104.6",
+          "shift": 6.95,
           "atom_index": "10\u2032",
           "multiplicity": "dd",
-          "coupling": "2.4, 0.9"
+          "coupling": [
+            2.4,
+            0.9
+          ]
         },
         {
-          "shift": "71.3",
+          "shift": 4.57,
           "atom_index": "11\u2032",
           "multiplicity": "dd",
-          "coupling": "10.2, 6.4"
+          "coupling": [
+            10.2,
+            6.4
+          ]
         },
         {
-          "shift": "81.1",
+          "shift": 4.54,
+          "atom_index": "",
+          "multiplicity": "dd",
+          "coupling": [
+            10.2,
+            5.4
+          ]
+        },
+        {
+          "shift": 4.79,
           "atom_index": "12\u2032",
           "multiplicity": "dd",
-          "coupling": "6.4, 5.4"
+          "coupling": [
+            6.4,
+            5.4
+          ]
         },
         {
-          "shift": "82.0",
-          "atom_index": "13\u2032",
-          "multiplicity": "",
-          "coupling": ""
-        },
-        {
-          "shift": "22.8",
+          "shift": 1.35,
           "atom_index": "14\u2032",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "27.8",
+          "shift": 1.71,
           "atom_index": "15\u2032",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         },
         {
-          "shift": "60.9",
+          "shift": 4.05,
           "atom_index": "OCH3-5",
           "multiplicity": "s",
-          "coupling": ""
+          "coupling": null
         }
       ]
     }
