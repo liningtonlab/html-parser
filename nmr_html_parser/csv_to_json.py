@@ -47,7 +47,7 @@ def dictionary_parser(num_comps, csv_dict):
 
 def c_nmr_shift_creator(shifts_list, atom_input_list):
     # Collects cnmr data together into a dictionary for each atom
-    return [({"shift": float(shift), "atom_index": atom})
+    return [({"rdkit_index": None, "shift": float(shift), "atom_index": atom})
             for shift, atom in zip(shifts_list, atom_input_list) if no_blank(shift)]
 
 
@@ -69,7 +69,7 @@ def multi_blank(multi):
 def h_nmr_shift_multi_coup_creator(shifts_list, atom_input_list, multi_list, coup_list):
     # Collects hnmr data together into a dictionary for each atom
 
-    data = [{"shift": float(shift), "atom_index": atom, "multiplicity": multi_blank(multi), "coupling": coupling_float(coup)}
+    data = [{"rdkit_index": None, "shift": float(shift), "atom_index": atom, "multiplicity": multi_blank(multi), "coupling": coupling_float(coup)}
             for shift, atom, multi, coup in zip(shifts_list, atom_input_list, multi_list, coup_list)
             if no_blank(shift)]
     #return data
@@ -90,9 +90,10 @@ def json_structuring(comps_data, csv_dict):
     list_comp_dictionary = []
     # iterating over each compound
     for index, (kk, vv) in enumerate(comps_data.items()):
-        comp_dictionary = {"name": kk, "c_nmr": {"spectrum": c_nmr_shift_creator(
+        comp_dictionary = {"name": None, "smiles": None, "c_nmr": {"solvent": None,"temperature": None,"reference": None,"frequency": None,"spectrum": c_nmr_shift_creator(
             comps_data["compound_" + str(index + 1)][str(index + 1) + "_cspec"], csv_dict["atom_index"])},
-                           "h_nmr": {"spectrum": h_nmr_shift_multi_coup_creator(
+                           "h_nmr": {"solvent": None, "temperature": None, "reference": None, "frequency": None,
+                                     "spectrum": h_nmr_shift_multi_coup_creator(
                                comps_data["compound_" + str(index + 1)][str(index + 1) + "_hspec"],
                                csv_dict["atom_index"],
                                comps_data["compound_" + str(index + 1)][str(index + 1) + "_multi"],
