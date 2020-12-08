@@ -10,9 +10,19 @@ import re
 import csv
 from collections import defaultdict
 
-MULTI_REGEX = re.compile(r"(?:(?:hept|sept|sex|qui|s\s?br|(?!\whown)(?=\s)?\bs|\bt+d*|\bd+t*d*|\btt*|\bt|\bd|qd?|\bh|br\s?s|br\s?d+|br\s?t|br\s?q|m))+")
+MULTI_REGEX = re.compile(
+    r"(?:(?:hept|sept|sex|qui|s\s?br|(?!\whown)(?=\s)?\bs|\bt+d*|\bd+t*d*|\btt*|\bt|\bd|qd?|\bh|br\s?s|br\s?d+|br\s?t|br\s?q|m))+"
+)
 
 REGEX_V1 = re.compile(r"(?:(?:sept|s|d|t|q|h|br\s?s|br\s?d|br\s?t|br\s?q|m))+")
+
+
+def input_str(input_str):
+    """Takes str as input and returns BeautifulSoup object"""
+    f = "".join([x.strip() for x in input_str.split("\n")])
+    soup = BeautifulSoup(f.replace("&nbsp;", " ").replace("&nbsp", " "), "lxml")
+    [soup.a.decompose() for i in soup.find_all("a")]
+    return soup
 
 
 def inputs(filepath):
@@ -75,7 +85,8 @@ def soup_id_headers(soup):
     """Takes soup object and returns column headers"""
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="colsep0 rowsep0")]
     return no_space_list(header_1)
-    #TODO: See if way to include blanks; look at cell_clean
+    # TODO: See if way to include blanks; look at cell_clean
+
 
 def soup_comp_id(soup):
     """Takes soup object and returns compound identification headers"""
@@ -118,11 +129,13 @@ def compound_number(compounds, headers):
             elif comp_len == header_len:
                 return header_len
             elif comp_len != header_len:
-                if header_len/2 == comp_len:
+                if header_len / 2 == comp_len:
                     return comp_len
                 else:
                     return max(comp_len, header_len)
-    if any("δC" or "δH" in s for s in headers):  # TODO: LOOK at and see if can add other cases(1st find diff pattern)
+    if any(
+        "δC" or "δH" in s for s in headers
+    ):  # TODO: LOOK at and see if can add other cases(1st find diff pattern)
         search = ["δH", "δC"]
         result = {k: 0 for k in search}
         for item in headers:
@@ -155,7 +168,7 @@ def atom_index_like(col):
     list_1a = ["1a", "2a", "3a", "4a", "5a", "6a", "7a", "8a", "9a"]
     list_1b = ["1b", "2b", "3b", "4b", "5b", "6b", "7b", "8b", "9b"]
     for c in col:
-        if c in list_1 or list_1a or list_1b: #or list_1a or list_1b:
+        if c in list_1 or list_1a or list_1b:  # or list_1a or list_1b:
             count += 1
     return count > 4
 
@@ -167,37 +180,47 @@ def get_atom_index(columns, headers):
         return columns[1], 1
     else:
         return None, None
-    #elif atom_index_like(columns[0]):
-        #headers[0] = "position"
-        #print(atom_index_like(columns[0]))
+    # elif atom_index_like(columns[0]):
+    # headers[0] = "position"
+    # print(atom_index_like(columns[0]))
 
 
 def get_residues(columns, headers):
-    if re.search(r"(^residue$|^amino\s?acid$|^unit(s)?$)", headers[0]):  # Modify as example cases builds up
+    if re.search(
+        r"(^residue$|^amino\s?acid$|^unit(s)?$)", headers[0]
+    ):  # Modify as example cases builds up
         residues = columns[0]
         return residues, 0
     else:
         return None, None
 
+
 def is_2_d_nmr(headers):
-    nmr2d_col_index = [idx for idx,i in enumerate(headers) if re.search(r"(HMBC)|(HSQC)|(([E]?CO|TOC|NOE|ROE)SY)", headers[idx])]
+    nmr2d_col_index = [
+        idx
+        for idx, i in enumerate(headers)
+        if re.search(r"(HMBC)|(HSQC)|(([E]?CO|TOC|NOE|ROE)SY)", headers[idx])
+    ]
     return nmr2d_col_index
+
 
 def get_atom_index_column(columns):
     """Enumerate the list of columns so that positional index and atom_index can be returned"""
     return list(enumerate(columns))[0]
     # atom_index should be first column so can take that list and go from there
 
-def is_float_test(value,list):
+
+def is_float_test(value, list):
     try:
         val = float(value)
         list.append(val)
     except ValueError:
         pass
 
+
 def str_list_average(input_list):
     """Takes a list of numerical strings and returns the average. Is able to ignore empty strings in list"""
-    #vals = [float(i) for i in input_list if i]
+    # vals = [float(i) for i in input_list if i]
 
     vals = []
     for i in input_list:
@@ -209,14 +232,15 @@ def str_list_average(input_list):
 def clean_cell_str(cell):
     # multiple types of dashes
     # cleanup dashes
-    cell = re.sub(r"-|‒|–|—|―|⁓", "-", cell)
+    cell = re.sub(r"-|‒|–|—|―|⁓|−", "-", cell)
     # regularize and common typos
     return (
         cell.replace("..", ".")
         .replace(",", " ")
         .replace("(", " ")
         .replace(")", " ")
-        .replace(";", "").replace("/", " ")
+        .replace(";", "")
+        .replace("/", " ")
         .strip()
     )
 
@@ -252,7 +276,7 @@ def column_id_cleaner_list(columns, ignore_cols):
             if cell_contents:
                 for idn, item in enumerate(cell_contents):
                     if re.search(coup_pattern, cell_contents[idn]):
-                        shift = re.sub("[a-z]+$|^[a-z]+", '', cell_contents.pop(idn))
+                        shift = re.sub("[a-z]+$|^[a-z]+", "", cell_contents.pop(idn))
                         break
 
                 # TODO: make case for: '213.0-123.0' or '2.23 - 22.123' then if '-0.13' or '- 0.13'
@@ -260,11 +284,11 @@ def column_id_cleaner_list(columns, ignore_cols):
                 if re.search("\d+(?:\.\d+)\s?\-{1}\s?\d+(?:\.\d+)", shift):
                     shift.replace("-", "-")
                     shift = str_list_average(shift.split("-"))
-                #if re.search("\−{1}\s?\d+(?:\.\d+)", shift):
-                   # shift.replace("-", "-")
+                # if re.search("\−{1}\s?\d+(?:\.\d+)", shift):
+                # shift.replace("-", "-")
 
-                #if "-" in shift:
-                  #  shift = str_list_average(shift.split("-"))
+                # if "-" in shift:
+                #  shift = str_list_average(shift.split("-"))
                 try:
                     shift = float(shift)
                 except ValueError:
@@ -280,13 +304,13 @@ def column_id_cleaner_list(columns, ignore_cols):
         h_nmr = False
         if 14.0 <= avg <= 250.0:
             c_nmr = True
-            #for idx, cell in enumerate(col):
-                #cell = clean_cell_str(cell.replace(str(shifts[idx]), ""))
-                #ctype = ctype_pattern.findall(cell)
-               # if ctype:
-                 #   ctypes.append(ctype[0])
-              #  else:
-                 #   ctypes.append("")
+            # for idx, cell in enumerate(col):
+            # cell = clean_cell_str(cell.replace(str(shifts[idx]), ""))
+            # ctype = ctype_pattern.findall(cell)
+            # if ctype:
+            #   ctypes.append(ctype[0])
+            #  else:
+            #   ctypes.append("")
 
         elif 0.0 <= avg <= 13.5:
             h_nmr = True
@@ -312,8 +336,8 @@ def column_id_cleaner_list(columns, ignore_cols):
 
         if c_nmr:
             Carbon_spec.append(shifts)
-            #if not all_blank(ctypes):
-                #C_type.append(ctypes)
+            # if not all_blank(ctypes):
+            # C_type.append(ctypes)
         if h_nmr:
             H_spec.append(shifts)
             if not all_blank(mults):
@@ -335,7 +359,7 @@ def data_to_grid(numcomps, aindex, **kwargs):
     # Search for specified variables and create header and access dict
     possible_variables = {
         "cspec": "{0}_cspec",
-        #"ctype": "{0}_ctype",
+        # "ctype": "{0}_ctype",
         "hspec": "{0}_hspec",
         "hmult": "{0}_multi",
         "hcoup": "{0}_coupling",

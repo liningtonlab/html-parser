@@ -1,4 +1,7 @@
-import csv, json
+import copy
+import csv
+import json
+import re
 from pathlib import Path
 
 # CSV reformatting to structure for JSON
@@ -33,22 +36,29 @@ def csv_dict_reader_extraction(input_list):
 def dictionary_parser(num_comps, csv_dict):
     # Sorts data and separates out for each compound
     comps_shift_data = {}
-    for i in range(1,num_comps + 1):
+    for i in range(1, num_comps + 1):
         possible_variables = [
             str(i) + "_cspec",
             str(i) + "_hspec",
             str(i) + "_multi",
-            str(i) + "_coupling"]
+            str(i) + "_coupling",
+        ]
         found_variables = {
-            key: val for key, val in csv_dict.items() if key in possible_variables and bool(csv_dict.get(key))}
-        comps_shift_data["compound_"+str(i)] = found_variables
+            key: val
+            for key, val in csv_dict.items()
+            if key in possible_variables and bool(csv_dict.get(key))
+        }
+        comps_shift_data[str(i)] = found_variables
     return comps_shift_data
 
 
 def c_nmr_shift_creator(shifts_list, atom_input_list):
     # Collects cnmr data together into a dictionary for each atom
-    return [({"rdkit_index": None, "shift": float(shift), "atom_index": atom})
-            for shift, atom in zip(shifts_list, atom_input_list) if no_blank(shift)]
+    return [
+        ({"rdkit_index": None, "shift": float(shift), "atom_index": atom})
+        for shift, atom in zip(shifts_list, atom_input_list)
+        if no_blank(shift)
+    ]
 
 
 def coupling_float(coup):
@@ -66,17 +76,29 @@ def multi_blank(multi):
     else:
         pass
 
-def h_nmr_shift_multi_coup_creator(shifts_list, atom_input_list, multi_list, coup_list):
+
+def h_nmr_shift_multi_coup_creator(
+    atom_index, lit_atom_index, shifts_list, multi_list, coup_list
+):
     # Collects hnmr data together into a dictionary for each atom
 
-    data = [{"rdkit_index": None, "shift": float(shift), "atom_index": atom, "multiplicity": multi_blank(multi), "coupling": coupling_float(coup)}
-            for shift, atom, multi, coup in zip(shifts_list, atom_input_list, multi_list, coup_list)
-            if no_blank(shift)]
-    #return data
+    data = [
+        {
+            "shift": float(shift),
+            "multiplicity": multi_blank(multi),
+            "coupling": coupling_float(coup),
+            "lit_atom_index": laidx,
+            "atom_index": aidx,
+            "rdkit_index": None,
+            "interchangable_index": None,
+        }
+        for aidx, laidx, shift, multi, coup in zip(
+            atom_index, lit_atom_index, shifts_list, multi_list, coup_list
+        )
+        if no_blank(shift)
+    ]
+    # return data
 
-    for i, val in enumerate(data):
-        if not val["atom_index"]:
-            data[i]["atom_index"] = data[i-1]["atom_index"]
     return data
     # TODO: Work with residue table types, not sure about
     # if new_dict["residues"]:
@@ -89,15 +111,36 @@ def json_structuring(comps_data, csv_dict):
     # Requires formatting data into JSON output
     list_comp_dictionary = []
     # iterating over each compound
-    for index, (kk, vv) in enumerate(comps_data.items()):
-        comp_dictionary = {"name": None, "smiles": None, "c_nmr": {"solvent": None,"temperature": None,"reference": None,"frequency": None,"spectrum": c_nmr_shift_creator(
-            comps_data["compound_" + str(index + 1)][str(index + 1) + "_cspec"], csv_dict["atom_index"])},
-                           "h_nmr": {"solvent": None, "temperature": None, "reference": None, "frequency": None,
-                                     "spectrum": h_nmr_shift_multi_coup_creator(
-                               comps_data["compound_" + str(index + 1)][str(index + 1) + "_hspec"],
-                               csv_dict["atom_index"],
-                               comps_data["compound_" + str(index + 1)][str(index + 1) + "_multi"],
-                               comps_data["compound_" + str(index + 1)][str(index + 1) + "_coupling"])}}
+    # for index, (kk, vv) in enumerate(comps_data.items()):
+    for idx in comps_data.keys():
+        comp_dictionary = {
+            "name": None,
+            "smiles": None,
+            "c_nmr": {
+                "solvent": None,
+                "temperature": None,
+                "reference": None,
+                "frequency": None,
+                "spectrum": c_nmr_shift_creator(
+                    # comps_data["compound_" + str(index + 1)][str(index + 1) + "_cspec"]
+                    comps_data.get(idx, {}).get(f"{idx}_cspec", []),
+                    csv_dict["atom_index"],
+                ),
+            },
+            "h_nmr": {
+                "solvent": None,
+                "temperature": None,
+                "reference": None,
+                "frequency": None,
+                "spectrum": h_nmr_shift_multi_coup_creator(
+                    csv_dict["atom_index"],
+                    csv_dict["lit_atom_index"],
+                    comps_data.get(idx, {}).get(f"{idx}_hspec", []),
+                    comps_data.get(idx, {}).get(f"{idx}_multi", []),
+                    comps_data.get(idx, {}).get(f"{idx}_coupling", []),
+                ),
+            },
+        }
         list_comp_dictionary.append(comp_dictionary)
     return list_comp_dictionary
 
@@ -108,3 +151,47 @@ def json_dump(data, filename):
         # json.dump(data, f)
         # nicer output
         f.write(json.dumps(data, indent=2))  # indent=2 instead of just f.
+
+
+def merge_atom_indices(csv_dict):
+    """Problem consecutive rows with different atom indices relating to same 
+    carbon atom index
+    """
+    # safety check, i would never expect this to happen
+    aidx = csv_dict.get("atom_index")
+    # Add copy of original atom_indices to dict
+    csv_dict["lit_atom_index"] = copy.deepcopy(aidx)
+    if not aidx:
+        print("WARNING - no atom index!")
+        return
+    # Check for any atom indices with look like 1a/1b or 1alpha/1beta
+    # Using regex to parse int
+    for i, val in enumerate(aidx):
+        # skips the first one or any ominous other bugs
+        try:
+            last_idx = aidx[i - 1]
+        except IndexError:
+            continue
+        # Replace atom index blank with previous
+        if not val:
+            aidx[i] = last_idx
+            csv_dict["lit_atom_index"][i] = last_idx
+        # Check for same int value as previous
+        # Also need to make sure relevant
+        # this usually indicates attachement to another group
+        if "-" in val:
+            continue
+        try:
+            last_idx_int = int(re.match(r"\d+", last_idx).group())
+            this_idx_int = int(re.match(r"\d+", aidx[i]).group())
+        except (TypeError, AttributeError):
+            continue
+        if last_idx_int != this_idx_int:
+            continue
+        # relevance here = testing for 13C in this row
+        for k in filter(lambda x: "cspec" in x, csv_dict.keys()):
+            v = csv_dict[k]
+            # If there are any values in carbon spec for this row, then don't merge
+            if not v[i]:
+                aidx[i] = last_idx
+
