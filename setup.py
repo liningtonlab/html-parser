@@ -15,7 +15,7 @@ with open("LICENSE.txt", "r") as f:
 
 setuptools.setup(
     name="nmr_html_parser",  # Replace with your own username
-    version="0.0.1",
+    version="0.0.2",
     author="Andrew Maras",
     author_email="andrew_maras@sfu.ca",
     description="html parser extracts data from ACS table HTML tables and gathers information about the table.",
@@ -30,5 +30,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.8.3",
+    python_requires=">=3.7",
 )
