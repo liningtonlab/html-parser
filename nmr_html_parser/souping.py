@@ -88,10 +88,31 @@ def soup_id_headers(soup):
     # TODO: See if way to include blanks; look at cell_clean
 
 
+def elsevier_headers(soup):
+    """Takes soup object and returns column headers"""
+    thead_tags = soup.thead.contents
+    if len(thead_tags) > 1:
+        # TODO: Must account for position in first row, rowspan = 2
+        return [item.text for item in thead_tags[1].contents]
+    else:
+        return [item.text for item in thead_tags[0].contents]
+
+
 def soup_comp_id(soup):
     """Takes soup object and returns compound identification headers"""
     header_1 = [cell_clean(i) for i in soup.find_all("th", class_="rowsep1 colsep0")]
     return header_1
+
+
+def elsevier_comp_headers(soup):
+    thead_tags = soup.thead.contents
+    if len(thead_tags) > 1:
+        # Must account for position in first row, rowspan = 2
+        # TODO: Actually, can just use first row to get comp numbers, need headers for determining comp_num and for row to column
+        #return [item.text for item in thead_tags[0].contents]
+        return thead_tags[0].descendants
+    else:
+        return None
 
 
 def create_new_td(soup):
@@ -116,15 +137,40 @@ def soup_id_rows(soup):
     return clean_rows
 
 
+def blank_or_not(value):
+    if value.string:
+        return value.string
+    elif not value.string:
+        return ""
+
+
+def elsevier_rows(soup):
+    '''list_rows = []
+    for item in soup.tbody.contents:
+        list_row_subset = []
+        for i in item.contents:
+            if not i.string:
+                list_row_subset.append("")
+            elif i.string:
+                cell = i.string
+                list_row_subset.append(cell)
+        list_rows.append(list_row_subset)'''
+    return [[blank_or_not(i) for i in item.contents] for item in soup.tbody.contents]
+# TODO: Logic to detect if the td has two values; seems similar to acs parser problem with rowspan=2
+# TODO: Seems to have <br> tag in parent <td> if multi-cell data, but can get other cases of more than one tag in <td>
+    # Also, cant remember where blanks were removed. Certain it was later.
+
+
 def compound_number(compounds, headers):
     """Takes primary headers and compound id headers and returns the number of compounds.
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC"""
 
-    comp_len = len(compounds)
+    if compounds is not None:
+        comp_len = len(compounds)
     for i in headers:
         if re.compile(r"\d*[0-9]").search(i):
             header_len = len(headers) - 1
-            if not comp_len:
+            if not compounds:
                 return header_len
             elif comp_len == header_len:
                 return header_len
@@ -174,7 +220,7 @@ def atom_index_like(col):
 
 
 def get_atom_index(columns, headers):
-    if re.search(r"(position|^pos\.?|number|^no\.?|^[CH])", headers[0]):
+    if re.search(r"((p|P)osition|^pos\.?|number|^(N|n)o\.?|^[CH])", headers[0]):
         return columns[0], 0
     elif re.search(r"(^residue$|^amino\s?acid$|^unit(s)?$)", headers[0]):
         return columns[1], 1
