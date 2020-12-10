@@ -13,7 +13,7 @@ from nmr_html_parser import souping
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("Files/html_files/elsevier_test.html") # TODO: had to remove extra tags within <td>
+    inp_file = Path("Files/html_files/elsevier/test_elsevier_num_headers.html") # TODO: had to remove extra tags within <td>
 
     # testing individual parts
     soup = souping.inputs(inp_file)# TODO: **Might not need to change**
@@ -32,7 +32,7 @@ def main():
     columns = souping.get_columns(rows, headers)# TODO: Get format of elsevier into input arguments for get_columns
     atom_index, atom_col_index = souping.get_atom_index(columns, headers)
     residues, residue_col_index = souping.get_residues(columns, headers)
-
+    print(columns)
     # Remove atom_index_like from get_atom index
     if atom_index is None and souping.atom_index_like(columns[0]):
         atom_col_index, atom_index = 0, columns[0]
