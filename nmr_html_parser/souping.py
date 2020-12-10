@@ -109,8 +109,8 @@ def elsevier_comp_headers(soup):
     if len(thead_tags) > 1:
         # Must account for position in first row, rowspan = 2
         # TODO: Actually, can just use first row to get comp numbers, need headers for determining comp_num and for row to column
-        #return [item.text for item in thead_tags[0].contents]
-        return thead_tags[0].descendants
+        return [item.text for item in thead_tags[0].contents]
+        #return thead_tags[0].descendants
     else:
         return None
 
@@ -145,17 +145,40 @@ def blank_or_not(value):
 
 
 def elsevier_rows(soup):
-    '''list_rows = []
-    for item in soup.tbody.contents:
+    list_rows = []
+    for index, item in enumerate(soup.tbody.contents):
         list_row_subset = []
-        for i in item.contents:
-            if not i.string:
-                list_row_subset.append("")
+        new_list = []
+        for idx, i in enumerate(item.contents):
+            if len(i) > 1:
+                mutli_cell_vals = []
+                for idn, x in enumerate(i.descendants):
+                    val = x.string
+                    if None:
+                        pass
+                    else:
+                        try:
+                            if re.search(MULTI_REGEX, val):
+                                mutli_cell_vals.append(x.string)
+                        except:
+                            pass
+                if mutli_cell_vals:
+                    list_row_subset.append(mutli_cell_vals[0])
+                    new_list.append(mutli_cell_vals[1])
+                else:
+                    list_row_subset.append(i.text)
             elif i.string:
                 cell = i.string
                 list_row_subset.append(cell)
-        list_rows.append(list_row_subset)'''
-    return [[blank_or_not(i) for i in item.contents] for item in soup.tbody.contents]
+                new_list.append("")
+            else:
+                list_row_subset.append("")
+                new_list.append("")
+        list_rows.append(list_row_subset)
+        if not all_blank(new_list):
+            list_rows.append(new_list)
+    return list_rows
+    #return [[blank_or_not(i) for i in item.contents] for item in soup.tbody.contents]
 # TODO: Logic to detect if the td has two values; seems similar to acs parser problem with rowspan=2
 # TODO: Seems to have <br> tag in parent <td> if multi-cell data, but can get other cases of more than one tag in <td>
     # Also, cant remember where blanks were removed. Certain it was later.
