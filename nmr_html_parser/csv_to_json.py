@@ -89,8 +89,8 @@ def h_nmr_shift_multi_coup_creator(
             "coupling": coupling_float(coup),
             "lit_atom_index": laidx,
             "atom_index": aidx,
-            "rdkit_index": None,
-            "interchangable_index": None,
+            "rdkit_index": [],
+            "interchangable_index": [],
         }
         for aidx, laidx, shift, multi, coup in zip(
             atom_index, lit_atom_index, shifts_list, multi_list, coup_list
@@ -116,6 +116,7 @@ def json_structuring(comps_data, csv_dict):
         comp_dictionary = {
             "name": None,
             "smiles": None,
+            "original_isolation": False,
             "origin_doi": None,
             "origin_type": None,
             "origin_genus": None,

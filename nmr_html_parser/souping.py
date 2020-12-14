@@ -152,7 +152,9 @@ def get_columns(rows, headers):
     """Takes rows and length of headers to get columns based on 2D list index from rows"""
     if headers:
         columns = [[x[j] for x in rows] for j in range(len(headers))]
-    return columns
+        return columns
+    else:
+        raise Exception("Could not parse columns because of irregular headers")
 
 
 def isListEmpty(inList):
