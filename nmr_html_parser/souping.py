@@ -94,8 +94,10 @@ def elsevier_headers(soup):
     if len(thead_tags) > 1:
         # TODO: Must account for position in first row, rowspan = 2
         return [item.text for item in thead_tags[1].contents]
-    else:
+    elif len(thead_tags) == 1:
         return [item.text for item in thead_tags[0].contents]
+    else:
+        return None
 
 
 def soup_comp_id(soup):
@@ -187,7 +189,6 @@ def elsevier_rows(soup):
 def compound_number(compounds, headers):
     """Takes primary headers and compound id headers and returns the number of compounds.
     Based on len of compound id headers, numbers in main headers or number of hits of IH/IC"""
-
     if compounds is not None:
         comp_len = len(compounds)
     for i in headers:

@@ -13,17 +13,19 @@ from nmr_html_parser import souping
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("Files/html_files/elsevier/test_elsevier_dash_semi.html") # TODO: had to remove extra tags within <td>
+    inp_file = Path("Files/html_files/elsevier/test_elsevier_num_headers_no_semi.html") # TODO: had to remove extra tags within <td>
 
     # testing individual parts
     soup = souping.inputs(inp_file)# TODO: **Might not need to change**
+
     headers = souping.elsevier_headers(soup)# TODO: Working for no primary headers!; with primary headers, positon included
-                                                    # Will have to likely change comp_num or swap position to main headers
+                                                   # Will have to likely change comp_num or swap position to main headers
 
     rows = souping.elsevier_rows(soup)# TODO: Have to add logic for multi data <td>
     comps = souping.elsevier_comp_headers(soup)# TODO:
     print(rows)
     print(headers)
+    #headers.pop(0)
     print(comps)
     # Used stored results from previous functions calls to run
     compound_num = souping.compound_number(comps, headers)# TODO:
@@ -32,36 +34,32 @@ def main():
     columns = souping.get_columns(rows, headers)# TODO: Get format of elsevier into input arguments for get_columns
     atom_index, atom_col_index = souping.get_atom_index(columns, headers)
     residues, residue_col_index = souping.get_residues(columns, headers)
-    print(columns)
+
     # Remove atom_index_like from get_atom index
     if atom_index is None and souping.atom_index_like(columns[0]):
-        atom_col_index, atom_index = 0, columns[0]
         headers = ["no."] + headers
         columns = souping.get_columns(rows, headers)
+        atom_col_index, atom_index = 0, columns[0]
 
-    print(columns)
+
     two_d_NMR_col_index = souping.is_2_d_nmr(headers)
     ignore_cols = [atom_col_index] + two_d_NMR_col_index
     if residue_col_index is not None:
         ignore_cols.append(residue_col_index)
 
-    new_cols = souping.fix_multidata(columns, ignore_cols)
+    souping.fix_multidata(columns, ignore_cols)
 
     float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
-        new_cols, ignore_cols
+        columns, ignore_cols
     )
-
-    # If no resisdues
-    atom_index = new_cols[0]
-    # Else atom_index = new_cols[1]
-
+    print(atom_index)
+    print(columns)
     souping.tableto_csv(
         *souping.data_to_grid(
             compound_num,
             atom_index,
             resi=residues,
             cspec=float_cspec,
-            ctype=ctype,
             hspec=float_hspec,
             hmult=hmult,
             hcoup=jcoup,

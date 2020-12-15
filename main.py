@@ -34,10 +34,9 @@ def main():
 
     # Remove atom_index_like from get_atom index
     if atom_index is None and souping.atom_index_like(columns[0]):
-        atom_col_index, atom_index = 0, columns[0]
         headers = ["no."] + headers
         columns = souping.get_columns(rows, headers)
-
+        atom_col_index, atom_index = 0, columns[0]
 
     two_d_NMR_col_index = souping.is_2_d_nmr(headers)
     ignore_cols = [atom_col_index] + two_d_NMR_col_index
