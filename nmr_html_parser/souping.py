@@ -538,4 +538,4 @@ def fix_multidata(columns, ignore_cols):
                             data.append(g1)
                     for idd, d in enumerate(data):
                         col[row_idx + idd] = d
-
+    return columns

@@ -13,7 +13,7 @@ from nmr_html_parser import souping
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("Files/html_files/elsevier/test_elsevier_num_headers.html") # TODO: had to remove extra tags within <td>
+    inp_file = Path("Files/html_files/elsevier/test_elsevier_dash_semi.html") # TODO: had to remove extra tags within <td>
 
     # testing individual parts
     soup = souping.inputs(inp_file)# TODO: **Might not need to change**
@@ -39,16 +39,21 @@ def main():
         headers = ["no."] + headers
         columns = souping.get_columns(rows, headers)
 
-
+    print(columns)
     two_d_NMR_col_index = souping.is_2_d_nmr(headers)
     ignore_cols = [atom_col_index] + two_d_NMR_col_index
     if residue_col_index is not None:
         ignore_cols.append(residue_col_index)
 
-    souping.fix_multidata(columns, ignore_cols)
+    new_cols = souping.fix_multidata(columns, ignore_cols)
+
     float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
-        columns, ignore_cols
+        new_cols, ignore_cols
     )
+
+    # If no resisdues
+    atom_index = new_cols[0]
+    # Else atom_index = new_cols[1]
 
     souping.tableto_csv(
         *souping.data_to_grid(
