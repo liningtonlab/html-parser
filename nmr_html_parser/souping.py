@@ -326,7 +326,7 @@ def column_id_cleaner_list(columns, ignore_cols):
     ctype_pattern = re.compile(r"CH3|CH2|CH|q?C|NH2|NH|N[^D]|\bN$")
     coup_pattern = re.compile(r"\d+(?:\.\d+)?")
 
-    # will be outputs
+    # will be outputs_acs
     H_spec = []
     Carbon_spec = []
     H_multiplicity = []
@@ -539,4 +539,4 @@ def fix_multidata(columns, ignore_cols):
                             data.append(g1)
                     for idd, d in enumerate(data):
                         col[row_idx + idd] = d
-    return columns
+

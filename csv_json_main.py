@@ -6,7 +6,7 @@ import glob
 
 
 def main():
-    for csv in sorted(glob.glob("tests/outputs/*csv")):
+    for csv in sorted(glob.glob("tests/outputs_acs/*csv")):
         print(csv)
         if "ai" in csv:
             print("SKIPPING MULTI ATOM INDEX")

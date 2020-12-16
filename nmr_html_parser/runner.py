@@ -98,6 +98,52 @@ def parse_file(path, filepath):
     )
 
 
+def parse_elsevier_file(path, filepath):
+    inp_file = Path(path)
+    out_file = Path(filepath)
+    if not out_file.parent.exists():
+        os.makedirs(out_file.parent)
+
+    soup = souping.inputs(inp_file)
+    headers = souping.elsevier_headers(soup)
+    rows = souping.elsevier_rows(soup)
+    comps = souping.elsevier_comp_headers(soup)
+
+    # Used stored results from previous functions calls to run
+    compound_num = souping.compound_number(comps, headers)
+    columns = souping.get_columns(rows, headers)
+    atom_index, atom_col_index = souping.get_atom_index(columns, headers)
+    residues, residue_col_index = souping.get_residues(columns, headers)
+
+    # Remove atom_index_like from get_atom index
+    if atom_index is None and souping.atom_index_like(columns[0]):
+        headers = ["no."] + headers
+        columns = souping.get_columns(rows, headers)
+        atom_col_index, atom_index = 0, columns[0]
+
+    two_d_NMR_col_index = souping.is_2_d_nmr(headers)
+    ignore_cols = [atom_col_index] + two_d_NMR_col_index
+    if residue_col_index is not None:
+        ignore_cols.append(residue_col_index)
+
+    souping.fix_multidata(columns, ignore_cols)
+    float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
+        columns, ignore_cols
+    )
+
+    souping.tableto_csv(
+        *souping.data_to_grid(
+            compound_num,
+            atom_index,
+            resi=residues,
+            cspec=float_cspec,
+            hspec=float_hspec,
+            hmult=hmult,
+            hcoup=jcoup,
+        ),
+        filename=filepath
+    )
+
 def convert_csv_to_json(csvfile, outputfile, num_comp):
     """Original csv_to_json from Andrew 
     """

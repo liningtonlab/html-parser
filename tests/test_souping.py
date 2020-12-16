@@ -17,7 +17,7 @@ FILES_RESULTS = [("test_1", [['2', '', '3a', '4', '4a', '5', '7a', '8', '8a', '9
 )]
 
 # fmt: on
-FILES = sorted(
+FILES_acs = sorted(
     [
         "test_error_characters_ab_2",
         "test_error_characters_ab_3",
@@ -125,47 +125,61 @@ FILES = sorted(
 )
 
 
+FILES_elsevier = sorted(
+    [
+        "test_elsevier_dash_semi",
+        "test_elsevier_double_td",
+        "test_elsevier_double_td_2",
+        "test_elsevier_num_head",
+        "test_elsevier_num_headers"
+    ]
+)
+
 def load_expected(fname):
-    fpath = TESTDIR / "outputs" / fname
+    fpath = TESTDIR / "outputs_acs" / fname
     return pd.read_csv(fpath)
 
 
-@pytest.mark.parametrize("fname", FILES)
-def test_parse(fname):
+def load_expected_elsevier(fname):
+    fpath = TESTDIR / "outputs_elsevier" / fname
+    return pd.read_csv(fpath)
+
+
+@pytest.mark.parametrize("fname", FILES_acs)
+def test_parse_acs(fname):
     print(fname)
-    filepath = Path() / "test_outputs" / f"{fname}.csv"
+    filepath = Path() / "test_outputs_acs" / f"{fname}.csv"
     expected = load_expected(f"{fname}.csv")
-    runner.parse_file(TESTDIR / "inputs" / f"{fname}.html", filepath)
+    runner.parse_file(TESTDIR / "inputs_acs" / f"{fname}.html", filepath)
     output = pd.read_csv(filepath)
     print(expected, output)
     assert_frame_equal(expected, output)
 
 
-# Useless as using list with parametrize
-# def load_columns(fname):
-# fpath = TESTDIR / "column_outputs" / fname
-# inp_file1 = Path(fpath)
-# with inp_file1.open() as f:
-#  f = f.read()
-#  f = str(f).replace("&nbsp;", " ")
-#  f = f.encode("cp1252")
-#  soup = BeautifulSoup(f, "lxml")
-# return soup.get_text()
+@pytest.mark.parametrize("fname", FILES_elsevier)
+def test_parse_elsevier(fname):
+    print(fname)
+    filepath = Path() / "test_outputs_elsevier" / f"{fname}.csv"
+    expected = load_expected_elsevier(f"{fname}.csv")
+    runner.parse_elsevier_file(TESTDIR / "inputs_elsevier" / f"{fname}.html", filepath)
+    output = pd.read_csv(filepath)
+    print(expected, output)
+    assert_frame_equal(expected, output)
 
 
 @pytest.mark.parametrize("fname, expected", FILES_RESULTS)
 def test_columns(fname, expected):
     # take file with expected columns results
-    filepath = Path() / "test_outputs" / f"{fname}.txt"
+    filepath = Path() / "test_outputs_acs" / f"{fname}.txt"
     # run input file, and create column
-    output = column_test.column(TESTDIR / "inputs" / f"{fname}.html", filepath)
+    output = column_test.column(TESTDIR / "inputs_acs" / f"{fname}.html", filepath)
     # Run assertions to check if output matches expected
     assert expected == output
 
 
 # def test_inputs():
 #     # Need to make this better
-#     soup = souping.inputs(TESTDIR / "test_table.html")
+#     soup = souping.inputs_acs(TESTDIR / "test_table.html")
 #     assert isinstance(soup, BeautifulSoup)
 #     assert soup.prettify()
 #     # This next line causes test to fail on purpose as a demonstration
