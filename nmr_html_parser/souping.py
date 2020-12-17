@@ -169,6 +169,7 @@ def elsevier_rows(soup):
                     new_list.append(mutli_cell_vals[1])
                 else:
                     list_row_subset.append(i.text)
+                    new_list.append("")
             elif i.string:
                 cell = i.string
                 list_row_subset.append(cell)

@@ -135,6 +135,16 @@ FILES_elsevier = sorted(
         "test_else_3",
         "test_else_4",
         "test_else_5",
+        "test_else_6",
+        "test_else_7",
+        "test_else_8",
+        "test_else_9",
+        "test_else_10",
+        "test_else_11",
+        "test_else_12",
+        "test_else_13",
+        "test_else_14",
+        "test_else_15",
         "test_elsevier_num_head",
         "test_elsevier_num_headers"
     ]

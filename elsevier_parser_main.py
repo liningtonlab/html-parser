@@ -13,7 +13,7 @@ from nmr_html_parser import souping
 def main():
 
     # Function which takes as an input and HTML file and writes output .csv file
-    inp_file = Path("tests/inputs_elsevier/test_else_5.html") # TODO: had to remove extra tags within <td>
+    inp_file = Path("tests/inputs_elsevier/test_else_15.html") # TODO: had to remove extra tags within <td>
 
     # testing individual parts
     soup = souping.inputs(inp_file)# TODO: **Might not need to change**
@@ -23,7 +23,6 @@ def main():
 
     rows = souping.elsevier_rows(soup)# TODO: Have to add logic for multi data <td>
     comps = souping.elsevier_comp_headers(soup)# TODO:
-    print(rows)
     print(headers)
     #headers.pop(0)
     print(comps)
@@ -48,7 +47,6 @@ def main():
         ignore_cols.append(residue_col_index)
 
     souping.fix_multidata(columns, ignore_cols)
-
     float_hspec, float_cspec, hmult, jcoup, ctype = souping.column_id_cleaner_list(
         columns, ignore_cols
     )
