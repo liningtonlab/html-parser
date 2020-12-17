@@ -130,6 +130,11 @@ FILES_elsevier = sorted(
         "test_elsevier_dash_semi",
         "test_elsevier_double_td",
         "test_elsevier_double_td_2",
+        "test_else_1",
+        "test_else_2",
+        "test_else_3",
+        "test_else_4",
+        "test_else_5",
         "test_elsevier_num_head",
         "test_elsevier_num_headers"
     ]
