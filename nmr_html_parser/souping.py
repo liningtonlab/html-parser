@@ -37,7 +37,8 @@ def inputs(filepath):
             f = f.encode("cp1252")  # I don't understand, but this is required.
         # (Also must go from webpage html source code into new html file created in python)
         soup = BeautifulSoup(f, "lxml")
-        [soup.a.decompose() for i in soup.find_all("a")]
+        [i.decompose() for i in soup.find_all("a")]
+        print(soup)
     return soup
 
 
@@ -164,7 +165,8 @@ def elsevier_rows(soup):
                                 mutli_cell_vals.append(x.string)
                         except:
                             pass
-                if mutli_cell_vals:
+                if mutli_cell_vals and len(mutli_cell_vals) > 1:
+                    print(mutli_cell_vals)
                     list_row_subset.append(mutli_cell_vals[0])
                     new_list.append(mutli_cell_vals[1])
                 else:
