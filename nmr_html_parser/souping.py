@@ -38,7 +38,7 @@ def inputs(filepath):
         # (Also must go from webpage html source code into new html file created in python)
         soup = BeautifulSoup(f, "lxml")
         [i.decompose() for i in soup.find_all("a")]
-        print(soup)
+
     return soup
 
 
