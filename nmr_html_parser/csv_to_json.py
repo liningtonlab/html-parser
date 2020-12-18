@@ -62,12 +62,13 @@ def c_nmr_shift_creator(shifts_list, atom_input_list):
 
 
 def coupling_float(coup):
+    coup_list = []
     try:
         if no_blank(coup):
-            return [float(coup)]
+            coup_list = [float(coup)]
     except ValueError:
         coup_list = [float(x.strip()) for x in coup.split(",")]
-        return coup_list
+    return coup_list
 
 
 def multi_blank(multi):
